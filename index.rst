@@ -51,17 +51,27 @@ lo que da la posibilidad de probar porciones de código en el modo interactivo an
 programa. Esto resulta útil tanto para las personas que se están familiarizando con el lenguaje como para los 
 programadores más avanzados.
 
+Para abrir la consola interactiva de Python, basta con ejecutar:
+
 .. code-block:: bash
 
+	$ python
+
+La cónsola interactiva de python puede evaluar expresiones del lenguaje python, incluyendo operaciones aritméticas.
+Es también posible asignar valores a variables, y los valores permanecerán en memoria mientras el intérprete esté 
+ejecutándose.
+	
+.. code-block:: bash
+
+	Python 2.5.2 (r252:60911, Oct  5 2008, 19:29:17) 
+	[GCC 4.3.2] on linux2
+	Type "help", "copyright", "credits" or "license" for more information.
 	>>> 1 + 1
 	2
 	>>> a = range(10)
 	>>> print a
 	[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
 
-La cónsola interactiva de python puede evaluar expresiones del lenguaje python, incluyendo operaciones aritméticas.
-Es también posible asignar valores a variables, y los valores permanecerán en memoria mientras el intérprete esté 
-ejecutándose.
 
 Tipos de datos
 --------------
@@ -70,13 +80,4 @@ Diccionarios
 ~~~~~~~~~~~~
 
 
-	+ Tipos básicos
-		- números
-		- cadenas
-		- booleanos
-	+ colecciones
-		- listas
-		- tuplas
-		- diccionarios
-* Estructuras de control de flujo
-* Funciones
+
