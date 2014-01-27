@@ -49,6 +49,17 @@ Características del lenguaje
 El intérprete de Python
 -----------------------
 
+Python incluye un intérprete interactivo en el cual se escriben las instrucciones en una especie de línea de comandos; las expresiones pueden ser introducidas una a una, pudiendo verse el resultado de su evaluación inmediatamente, lo que da la posibilidad de probar porciones de código en el modo interactivo antes de integrarlo como parte de un programa. Esto resulta útil tanto para las personas que se están familiarizando con el lenguaje como para los programadores más avanzados.
+
+.. code: bash
+
+	>>> 1 + 1
+	2
+	>>> a = range(10)
+	>>> print a
+	[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+
+
 
 
 Tipos de datos
