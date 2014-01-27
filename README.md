@@ -65,12 +65,24 @@ programadores más avanzados.
 	>>> print a
 	[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
 
+La cónsola interactiva de python puede evaluar expresiones del lenguaje python, incluyendo operaciones aritméticas.
+Es también posible asignar valores a variables, y los valores permanecerán en memoria mientras el intérprete esté 
+ejecutándose.
 
 Tipos de datos
 --------------
 
-Control de flujo
-----------------
+Diccionarios
+~~~~~~~~~~~~
 
-Funciones
----------
+
+	+ Tipos básicos
+		- números
+		- cadenas
+		- booleanos
+	+ colecciones
+		- listas
+		- tuplas
+		- diccionarios
+* Estructuras de control de flujo
+* Funciones
