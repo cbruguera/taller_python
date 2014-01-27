@@ -16,10 +16,12 @@ Aprendiendo Python
 * Estructuras de control de flujo
 * Funciones
 
+
 Introducción
 ------------
 
 Python es un lenguaje de programación de propósito general muy fácil de aprender, con una sintaxis característica que hace que los programas escritos en él sean muy legibles, ampliamente utilizado por empresas como Google o la NASA y, además, libre.
+
 
 ¿Por qué Python?
 ~~~~~~~~~~~~~~~~
@@ -29,6 +31,7 @@ Python es un lenguaje de programación de propósito general muy fácil de aprender
 * Sintáxis legible
 * Software libre
 * Fácil instalación de bibliotecas
+
 
 Características del lenguaje
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
