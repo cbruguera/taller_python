@@ -15,8 +15,8 @@ Introducción
 ------------
 
 Python es un lenguaje de programación de propósito general muy fácil de aprender, con una sintaxis característica que 
-hace que los programas escritos en él sean muy legibles, ampliamente utilizado por empresas como Google o la NASA y, 
-además, libre.
+hace que los programas escritos en él sean muy legibles, ampliamente utilizado por grandes empresas y programadores 
+independientes; y además, libre.
 
 
 ¿Por qué Python?
@@ -26,13 +26,13 @@ además, libre.
 * Altamente expresivo
 * Sintáxis legible
 * Software libre
-* Fácil instalación de bibliotecas
+* Gran cantidad de bibliotecas para diversos propósitos
 
 
 Características del lenguaje
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-* Interpretado
+* Interpretado: 
 * Multiparadigma
 	+ Programación imperativa
 	+ Programación Orientada a Objetos
