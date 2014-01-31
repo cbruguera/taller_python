@@ -122,10 +122,11 @@ Para explorar los atributos (incluyendo métodos) utilizamos la función ``dir()``
 .. code-block:: bash
 
 	>>> dir(math)
-	['__doc__', '__name__', '__package__', 'acos', 'acosh', 'asin', 'asinh', 'atan', 'atan2', 'atanh', 'ceil', 
-	'copysign', 'cos', 'cosh', 'degrees', 'e', 'erf', 'erfc', 'exp', 'expm1', 'fabs', 'factorial', 'floor', 
-	'fmod', 'frexp', 'fsum', 'gamma', 'hypot', 'isinf', 'isnan', 'ldexp', 'lgamma', 'log', 'log10', 'log1p', 
-	'modf', 'pi', 'pow', 'radians', 'sin', 'sinh', 'sqrt', 'tan', 'tanh', 'trunc']
+	['__doc__', '__name__', '__package__', 'acos', 'acosh', 'asin', 'asinh', 'atan', 'atan2', 
+	'atanh', 'ceil', 'copysign', 'cos', 'cosh', 'degrees', 'e', 'erf', 'erfc', 'exp', 'expm1', 
+	'fabs', 'factorial', 'floor', 'fmod', 'frexp', 'fsum', 'gamma', 'hypot', 'isinf', 'isnan', 
+	'ldexp', 'lgamma', 'log', 'log10', 'log1p', 'modf', 'pi', 'pow', 'radians', 'sin', 'sinh', 
+	'sqrt', 'tan', 'tanh', 'trunc']
 	>>> math.pi
 	3.141592653589793
 
@@ -133,8 +134,10 @@ Tipos de datos
 --------------
 
 Python implementa los tipos de datos habituales en otros lenguajes, como los tipos numéricos ``int`` y ``float``, 
-así como el tipo lógico o ``bool``. Merecen especial atención el tipo *string* y los tipos estructurados o 
-"colecciones", dentro de los cuales existen *diccionarios*, *tuplas*, *listas* y conjuntos.
+así como el tipo lógico o ``bool``. Para los valores nulos, se utiliza el valor ``None``.
+
+Merecen especial atención el tipo *string* y los tipos estructurados o "colecciones", 
+dentro de los cuales existen *diccionarios*, *tuplas*, *listas* y conjuntos.
 
 Cadenas de texto (``str``)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -339,51 +342,614 @@ Listas por comprensión
 ......................
 
 Una de las características más poderosas de Python es la posibilidad de definir *listas por comprensión*. Ésta es una
-característica muy propia de lenguajes funcionales como Haskell y Scheme.
+característica muy propia de lenguajes funcionales.
 
+La ventaja de las listas por comprensión radica en la posibilidad de definir una colección de elementos de una manera
+acorde a definiciones matemáticas. Por ejemplo, para generar una lista con todos los enteros impares hasta 99:
 
+.. code-block:: bash
+
+	>>> L = [x for x in range(100) if x % 2 != 0]
+	>>> L
+	[1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23, 25, 27, 29, 31, 
+	33, 35, 37, 39, 41, 43, 45, 47, 49, 51, 53, 55, 57, 59, 61, 
+	63, 65, 67, 69, 71, 73, 75, 77, 79, 81, 83, 85, 87, 89, 91, 
+	93, 95, 97, 99]
+
+	
 Tuplas
 ~~~~~~
-.. in, indexación, slicing
-.. asignación a tuplas de variables (x, y, z) = (1, 2, 3)
+
+Una tupla es una estructura parecida a una lista, con la diferencia de que ésta es *inmutable*, es decir, no pueden
+eliminarse o agregarse elementos, ni éstos pueden cambiar una vez creada la tupla.
+
+Las tuplas se definen como una secuencia de elementos separados por comas, y encerrados entre paréntesis.
+
+.. code-block:: bash
+
+	>>> t = ("tuples", "are", "immutable")
+	>>> t[0]
+	'tuples'
+	>>> t[0] = "assignment"
+	Traceback (most recent call last):
+	  File "<stdin>", line 1, in <module>
+	TypeError: 'tuple' object does not support item assignment
+
+Las operaciones de pertenencia, indexación y "slicing" funcionan de igual forma que en las listas:
+
+.. code-block:: bash
+
+	>>> t = (10, 11, 12)
+	>>> 10 in t
+	True
+	>>> t[-1]
+	12
+	>>> t[1:]
+	(11, 12)
+
+Una funcionalidad bastante útil en el caso de las tuplas, es la posibilidad de hacer asignaciones múltiples a un 
+conjunto de variables.
+
+.. code-block:: bash
+
+	>>> (x, y, z) = (7, 8, 9)
+	>>> x
+	7
+	>>> y
+	8
+	>>> z
+	9
+
+Las tuplas se usan en los casos en los que se sabe que los datos no necesitarán modificarse. Sin embargo, siempre
+es posible convertir de uno a otro tipo de dato con las funciones nativas ``list()`` y ``tuple()``.
+
+.. code-block:: bash
+
+	>>> t = ("x", "y", "hola")
+	>>> list(t)
+	['x', 'y', 'hola']
+	>>> tuple(range(10))
+	(0, 1, 2, 3, 4, 5, 6, 7, 8, 9)
+
 
 Diccionarios
 ~~~~~~~~~~~~
 
-.. - del d[42]
-.. - clear()
-.. - zip()
+Un diccionario define una relación 1 a 1 entre claves y valores, algo muy parecido a los objetos de la clase Hashtable
+en Java. Se define utilizando llaves, de manera similar a javascript.
+
+.. code-block:: bash
+
+	>>> d = {"server":"mpilgrim", "database":"master"}
+	>>> d
+	{'server': 'mpilgrim', 'database': 'master'}
+	>>> d["server"]
+	'mpilgrim'
+	>>> d["database"]
+	'master'
+	>>> d["mpilgrim"]
+	
+Los valores de los diccionarios pueden ser de cualquier tipo, incluso otros diccionarios. De igual forma, un diccionario
+puede contener simultáneamente valores de distintos tipos. Las claves deben ser de algún tipo *inmutable*, como números, 
+cadenas o incluso tuplas.
+
+Es importante acotar que los diccionarios en Python no siguen ningún tipo de orden entre sus elementos.
+
+.. code-block:: bash
+
+	>>> dict = {1: "uno", 2: "dos", 2.5: "dos punto cinco"}
+	>>> dict[2.5]
+	'dos punto cinco'
+	
+Para eliminar un registro en el diccionario se utiliza la función ``del(k)``:
+
+.. code-block:: bash
+	
+	>>> del(dict[2.5])
+	>>> dict
+	{1: "uno", 2: "dos"}
+	
+Para limpiar el contenido completo de un diccionario, se utiliza el método ``clear()``.
+
+.. code-block:: bash
+
+	>>> dict.clear()
+	>>> dict
+	{}
+
+Un par de funciones nativas de considerable utilidad son ``zip()`` y dict(). La función ``zip(L1, L2)`` retorna
+una lista de tuplas correspondiendo los valores de L1 y L2 respectivamente, y la función dict(L) recibe una lista
+de tuplas y retorna un diccionario que corresponde a dichas tuplas. Por ejemplo:
+
+.. code-block:: bash
+
+	>>> ciudades = ["Caracas", "Berlin", "Buenos Aires", "Lima"]
+	>>> paises = ["Venezuela", "Alemania", "Argentina", "Peru"]
+	>>> parejas = zip(paises, ciudades)
+	>>> parejas
+	[('Venezuela', 'Caracas'), ('Alemania', 'Berlin'), ('Argentina', 'Buenos Aires'), 
+	('Peru', 'Lima')]
+	>>> capitales = dict(parejas)
+	>>> capitales
+	{'Argentina': 'Buenos Aires', 'Venezuela': 'Caracas', 'Peru': 'Lima', 'Alemania': 'Berlin'}
+
 		
 Conjuntos
 ~~~~~~~~~
 
-.. - add()
-.. - clear()
-.. - copy()
-.. - difference()
-.. - difference_update()
-.. - discard()
-.. - remove()
-.. - intersection()
-.. - isdisjoint()
-.. - issubset()
-.. - issuperset()
-.. - pop()
+Python tiene la particularidad de implementar ``set`` como tipo de dato nativo, el cual corresponde al concepto
+matemático de conjunto, e implementa todas sus funciones básicas.
+
+Un conjunto se define como una secuencia de elementos entre llaves, o mediante la función ``set(L)`` a partir de una
+lista de elementos ``L``.
+
+.. code-block:: bash
+
+	>>> pares = {2, 4, 6, 8, 10}
+	>>> pares
+	set([8, 10, 4, 2, 6])
+	type(pares)
+	<type 'set'>
+	>>> impares = set([n for n in range(10) if n % 2 != 0])
+	>>> impares
+	set([1, 3, 9, 5, 7])
+
+	
+Correspondiendo con el principio matemático de los conjuntos, ningún elemento se repite.
+
+.. code-block:: bash
+
+	>>>set([1, 2, 3, 2, 1])
+	set([1, 2, 3])
+
+Un conjunto puede definirse a partir de una cadena de texto, y es útil para saber cuáles caracteres existen en un string.
+
+.. code-block:: bash
+
+	>>> zen = "If the implementation is hard to explain, it's a bad idea."
+	>>> set(zen)
+	set(['a', ' ', 'b', 'e', 'd', "'", 'f', 'I', 'h', 'm', 'l', 'p', 'n', 'i', 's', 
+	'r', 't', 'x', '.', ',', 'o'])
+
+El tipo ``set`` implementa los siguientes métodos:
+
+``add()``
+.........
+
+.. code-block:: bash
+
+	>>> conj = {1, 2, 3}
+	>>> conj.add(4)
+	>>> conj
+	set([1, 2, 3, 4])
+
+``clear()``
+...........
+
+.. code-block:: bash
+
+	>>> conj.clear()
+	>>> conj
+	set([])
+
+``copy()``
+..........
+
+.. code-block:: bash
+
+	>>> conj.add(1)
+	>>> conj.add(42)
+	>>> conj2 = conj.copy()
+	>>> conj2
+	set([1, 42])
+
+Copiar un conjunto no es lo mismo que asignárselo a otra variable, ya que en la asignación ambas variables se refieren
+a un mismo objeto, por lo que modificaciones a uno afectarían el valor del otro y viceversa.
+
+``difference()``
+................
+
+.. code-block:: bash
+
+	>>> x = {"a","b","c","d","e"}
+	>>> y = {"b","c"}
+	>>> z = {"c","d"}
+	>>> x.difference(y)
+	set(['a', 'e', 'd'])
+	>>> x.difference(y).difference(z)
+	set(['a', 'e'])
+
+En lugar de usar el método ``difference()``, podemos utilizar el operador ``-``:
+
+.. code-block:: bash
+
+	>>> x - y
+	set(['a', 'e', 'd'])
+	>>> x - y - z
+	set(['a', 'e'])
+	
+``discard()``
+.............
+
+Si un elemento se encuentra en un conjunto, este método lo elimina, y si el elemento no existe, no sucede nada.
+
+.. code-block:: bash
+
+	>>> x = {"a","b","c","d","e"}
+	>>> x.discard("a")
+	>>> x
+	set(['c', 'b', 'e', 'd'])
+	>>> x.discard("z")
+	>>> x
+	set(['c', 'b', 'e', 'd'])
+
+
+``remove()``
+............
+
+A diferencia de ``discard()``, ``remove()`` elimina un elemento dado, y si éste no existe ocurre un ``KeyError``.
+
+.. code-block:: bash
+
+	>>> x = {"a","b","c","d","e"}
+	>>> x.remove("a")
+	>>> x
+	set(['c', 'b', 'e', 'd'])
+	>>> x.remove("z")
+	Traceback (most recent call last):
+	  File "<stdin>", line 1, in <module>
+	KeyError: 'z'
+
+	
+``intersection()``
+..................
+
+.. code-block:: bash
+
+	>>> x = {"a","b","c","d","e"}
+	>>> y = {"c","d","e","f","g"}
+	>>> x.intersection(y)
+	set(['c', 'e', 'd'])
+
+
+``isdisjoint()``
+................
+
+Retorna ``True`` si la intersección entre dos conjuntos es nula.
+
+.. code-block:: bash
+
+	>>> set1 = {"a", "b", "c"}
+	>>> set2 = {"c", "d", "e"}
+	>>> set3 = {"d", "e", "f"}
+	>>> set1.isdisjoint(set2)
+	False
+	>>> set1.isdisjoint(set3)
+	True
+
+	
+``issubset()`` / ``issuperset()``
+.................................
+
+.. code-block:: bash
+
+	>>> x = {"a", "b", "c", "d", "e"}
+	>>> y = {"c", "d"}
+	>>> x.issubset(y)
+	False
+	>>> y.issubset(x)
+	True
+	>>> x.issuperset(y)
+	True
+	
+También es posible utilizar los operadores de comparación aritmética para evaluar subconjuntos:
+
+.. code-block:: bash
+
+	>>> set1 = {1, 2, 3}
+	>>> set2 = {2}
+	>>> set3 = set2.copy()
+	>>> set2 < set1
+	True
+	set2 == set3
+	True
+	set1 <= set2
+	False
+
+``pop()``
+.........
+
+El método``pop()`` retorna un elemento (el primero que encuentra) y lo elimina del conjunto. Se produce un ``KeyError``
+cuando el conjunto se encuentra vacío.
+
+.. code-block:: bash
+
+	>>> x = {"a","b","c","d","e"}
+	>>> x.pop()
+	'a'
+	>>> x.pop()
+	'c'
 
 Usando un archivo fuente
 ------------------------
-.. + Comentarios: simples y multilínea
-.. + Funciones
-.. 	- indentación
-.. 	- docstring
-.. 		· help()
-.. + Estructuras de control de flujo
 
-Manejo de archivos
-------------------
-.. open()
-.. read??
-.. write()
-.. close()
+El intérprete interactivo es bastante útil para hacer pruebas y entender el lenguaje, pero para el desarrollo de 
+software es necesario ejecutar *scripts*. Para esto necesitamos escribir nuestro código en un archivo fuente, el cual
+llamaremos *script.py*. La extensión ``.py`` no es necesaria, pero es parte de una convención.
+
+Para editar un archivo de texto podemos utilizar cualquier aplicación. En Linux, por ejemplo, podemos utilizar *vim*.
+
+.. code-block:: bash
+
+	$ vim script.py
+	
+Esto abre la interfaz del editor de texto. Para comenzar a insertar texto, presionamos la tecla "i". Para más información
+sobre los comandos de vim, revisar la documentación_ oficial.
+
+Comenzaremos escribiendo un programa de prueba en el editor:
+
+.. code-block:: python
+	
+	# -*- coding: utf-8 -*-
+	import math
+	
+	""" De esta manera definimos los 
+	comentarios multilínea"""
+	print "el valor de pi es %s" % math.pi
+
+El caracter numeral (``#``) para insertar comentarios de una línea. En el caso de utilizar caracteres especiales 
+dentro del archivo (como la palabra "multilínea" que está acentuada), se coloca un comentario en la primera línea
+que le indica al intérprete la codificación a utilizar (utf-8).
+
+Para salir del modo de inserción, guardar el archivo y salir del editor, presionamos secuencialmente: 
+*Esc*, *:*, ``wq`` y *Enter*.
+
+Para ejecutar el script, llamamos al intérprete pasándole el nombre del archivo a ejecutar.
+
+.. code-block:: bash
+
+	$ python script.py
+	el valor de pi es 3.14159265359
+
+.. _documentación: http://vimdoc.sourceforge.net/htmldoc/usr_toc.html 
+
+Funciones
+~~~~~~~~~
+
+Las funciones en python se definen con la palabra reservada ``def``, de la siguiente manera:
+
+.. code-block:: python
+
+	def factorial(n):
+	    if n <= 1:
+	        return 1
+	    else:
+	        return n * factorial(n - 1)
+
+
+Indentación
+...........
+
+En Python la indentación de bloques de código es obligatoria, ya que no se utilizan las llaves (``{}``) ni ningún
+otro delimitador para determinar el comienzo y fin de los bloques. Esta es una de las características que garantizan
+la legibilidad del código. La convención recomienda que en lugar del caracter de tabulación, se configure el editor
+para que inserte 4 espacios por indentación.
+
+Como podemos ver, tampoco se terminan las instrucciones con punto y coma ni ningún otro caracter especial. 
+
+
+Docstring
+.........
+
+Para documentar una función, colocamos un comentario multilínea al comienzo del cuerpo de una función. Abriremos nuevamente
+el archivo ``script.py`` y definimos la función ``factorial`` con su respectiva documentación.
+
+.. code-block:: python
+
+	# -*- coding: utf-8 -*-
+
+	def factorial(n):
+	    """
+	    Definición recursiva de factorial
+	    =================================
+		
+	    Retorna el factorial de un entero n
+	    si n == 1 retorna 1
+	    sino retorna n * fact(n-1)
+	    """
+	    if n <= 1:
+	        return 1
+	    else:
+	        return n * factorial(n-1)
+
+Si guardamos los cambios y abrimos el intérprete interactivo (llamada a ``python`` sin argumentos), podemos importar
+nuestro módulo (script.py):
+
+.. code-block:: bash
+
+	>>> import script
+	
+Ahora con la función ``help()`` podemos revisar la documentación de la función factorial.
+
+.. code-block:: bash
+
+	>>> help(script.factorial)
+	
+Si queremos poder invocar ``factorial()`` sin el prefijo del módulo, debemos
+importar la función explícitamente.
+
+.. code-block:: bash
+
+	>>> from script import factorial
+	>>> factorial(7)
+	5040
+	
+Estructuras de control de flujo
+-------------------------------
+
+Python cuenta con las estructuras de control de flujo usuales: if, while, for.
+
+``if``
+~~~~~~
+
+El condicional ``if`` se utiliza como en la mayoría de los lenguajes imperativos. También se utiliza ``elif`` para 
+encadenar condicionales.
+
+.. code-block:: python
+
+	def taxes(income):
+	    """Calculation of taxes to be paid for a taxable income x"""
+	    if income <= 8004:
+	        tax = 0
+	    elif income <= 13469:
+	        y = (income -8004.0)/10000.0
+	        tax = (912.17 * y + 1400)*y
+	    elif income <= 52881:
+	        z = (income -13469.0)/10000.0
+	        tax = (228.74 * z +2397.0)*z +1038.0
+	    elif income <= 250730:
+	        tax = income * 0.42 - 8172.0
+	    else:
+	        tax = income * 0.44 - 15694
+	    return tax 
+		
+``while``
+~~~~~~~~~
+
+El siguiente código lee un caracter por teclado y se sale del ciclo (usando ``break``) cuando el caracter leído es
+un salto de línea.
+
+.. code-block:: python
+
+	import sys 
+
+	text = ""
+	while True:
+	    c = sys.stdin.read(1)
+	    text = text + c
+	    if c == '\n':
+	        break
+
+	print "Input: %s" % text
+
+Esta lectura de caracteres, sin embargo, puede efectuarse utilizando la función nativa ``raw_input()``.
+
+Una particularidad de los ciclos en python, es que pueden incluir un bloque ``else``, el cual se ejecuta si el programa
+sale limpiamente (sin usar break).
+
+.. code-block:: python
+
+	while condition:
+	    if error_occurred():
+	        # manejar error
+	        break    # salir del ciclo
+	    handle_true()
+	else:
+	    # la condición ya es falsa, se ejecuta el siguiente bloque
+	    handle_false()
+
+``for``
+~~~~~~~
+
+El ciclo ``for`` en python, a diferencia de lenguajes como C o Java, es más bien una iteración entre los elementos
+de una secuencia (conocido en otros lenguajes como *foreach*). También acepta opcionalmente un bloque ``else`` que
+se ejecuta cuando no ocurrió un ``break`` dentro del ciclo:
+
+.. code-block:: python
+
+	def contiene_par(lista):
+	    for n in lista:
+	        if n % 2 == 0:
+	            # se encontró un número par
+	            return True
+		else:
+		    # no se encontró un número par
+		    return False
+			
+Para implementar un ``for`` con un contador entero como es usual en los lenguajes imperativos, se utiliza ``range(n)``.
+
+.. code-block:: python
+
+	for n in range(10):
+	    print n
+
+Es posible recorrer cualquier objeto secuencial en un ciclo ``for``, incluyendo diccionarios, de la siguiente manera:
+
+.. code-block:: python
+
+	for key,val in dict:
+	    print "dict[%s] => %s" % (key, val)
+
+
+Excepciones y manejo de archivos
+--------------------------------
+
+Excepciones
+~~~~~~~~~~~
+
+Las excepciones son un elemento fundamental del lenguaje Python, y su uso es fuertemente aconsejado en 
+*El Zen de Python*: "Los errores nunca deberían pasar silenciosamente."
+
+Otra de las filosofías de Python es que "es mejor pedir disculpas que pedir permiso". Es decir, es recomendable asumir
+que un bloque de código puede generar excepciones y atajarlas, en lugar de hacer verificaciones antes de ejecutar el bloque.
+
+Algunos ejemplos de excepciones comunes son:
+
+* Acceder a una clave inexistente en un diccionario genera un ``KeyError``.
+* Buscar el índice de un elemento inexistente en una lista genera un ``ValueError``
+* Invocar un método inexistente genera un ``AttributeError``.
+* Hacer referencia a una variable inexistente genera un ``NameError``.
+* Tratar de operar sobre tipos de datos mezclados sin conversión explícita genera un ``TypeError``.
+
+Para prever y manejar excepciones, se coloca el código dentro de un bloque ``try-except`` de la siguiente manera:
+
+.. code-block:: python
+
+	while True:
+	    try:
+	        n = raw_input("Introduzca un entero: ")
+	        n = int(n)
+	        break
+	    except ValueError:
+	        print("El valor introducido es inválido, por favor intente de nuevo")
+
+
+Archivos
+~~~~~~~~
+
+Para esta sección, podemos intentar abrir el mismo archivo ``script.py`` sobre el cual estábamos trabajando,
+e intentemos imprimir cada una de sus líneas en el intérprete interactivo:
+
+.. code-block:: bash
+
+	>>> fobj = open("script.py", "r")
+	>>> for line in fobj:
+	... 	print line.rstrip()
+
+El segundo argumento ``"r"`` indica que el archivo se está abriendo en modo lectura.
+Una vez terminamos de utilizar un archivo, es necesario cerrarlo:
+
+.. code-block:: bash
+
+	>>> fobj.close()
+
+Para escribir sobre un archivo utilizamos el método ``write()``. El siguiente código toma el archivo ``script.py`` y 
+copia cada una de las líneas escribiéndolas sobre otro archivo precedido del número de línea:
+
+.. code-block:: python
+
+	try:
+	    fobj_in = open("script.py", "r")
+	    fobj_out = open("lineas.txt","w")
+	    i = 1
+	    for line in fobj_in:
+	        print line.rstrip()
+	        fobj_out.write(str(i) + ": " + line)
+	        i = i + 1
+	    fobj_in.close()
+	    fobj_out.close()
+	except IOError:
+	    print "Error en manejo de archivo: %s" % IOError
+
 
 .. Ejercicio práctico??
