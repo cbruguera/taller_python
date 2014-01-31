@@ -50,6 +50,8 @@
 <li><a class="reference internal" href="#introducci-n" id="id2">Introducci?n</a></li>
 <li><a class="reference internal" href="#el-int-rprete-de-python" id="id3">El int?rprete de Python</a></li>
 <li><a class="reference internal" href="#tipos-de-datos" id="id4">Tipos de datos</a></li>
+<li><a class="reference internal" href="#usando-un-archivo-fuente" id="id5">Usando un archivo fuente</a></li>
+<li><a class="reference internal" href="#manejo-de-archivos" id="id6">Manejo de archivos</a></li>
 </ul>
 </li>
 </ul>
@@ -57,8 +59,9 @@
 <div class="section" id="introducci-n">
 <h2><a class="toc-backref" href="#id2">Introducci?n</a><a class="headerlink" href="#introducci-n" title="Permalink to this headline">¶</a></h2>
 <p>Python es un lenguaje de programaci?n de prop?sito general muy f?cil de aprender, con una sintaxis caracter?stica que
-hace que los programas escritos en ?l sean muy legibles, ampliamente utilizado por empresas como Google o la NASA y,
-adem?s, libre.</p>
+hace que los programas escritos en ?l sean muy legibles, ampliamente utilizado por grandes empresas y programadores
+independientes; y adem?s, libre.</p>
+<p>Python fue creado a finales de la d?cada de los 80 por Guido van Rossum, un programador holand?s.</p>
 <div class="section" id="por-qu-python">
 <h3>?Por qu? Python?<a class="headerlink" href="#por-qu-python" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
@@ -66,34 +69,57 @@ adem?s, libre.</p>
 <li>Altamente expresivo</li>
 <li>Sint?xis legible</li>
 <li>Software libre</li>
-<li>F?cil instalaci?n de bibliotecas</li>
+<li>Gran cantidad de bibliotecas para diversos prop?sitos</li>
 </ul>
+<p>Python es un lenguaje que est? dise?ado para que sea elegante y sencillo de escribir, y a la vez provee herramientas
+de muy alto nivel para la manipulaci?n de estructuras de datos. Existe, adem?s, una gama muy amplia de bibliotecas
+gratuitas para pr?cticamente cualquier prop?sito. Todo esto hace de Python un lenguaje muy vers?til y pr?ctico.</p>
 </div>
 <div class="section" id="caracter-sticas-del-lenguaje">
 <h3>Caracter?sticas del lenguaje<a class="headerlink" href="#caracter-sticas-del-lenguaje" title="Permalink to this headline">¶</a></h3>
 <ul>
-<li><p class="first">Interpretado</p>
+<li><p class="first"><strong>Multiparadigma:</strong> Adem?s de ser un lenguaje imperativo como muchos otros, Python provee la capacidad para programar seg?n distintos paradigmas, como por ejemplo la <em>Programaci?n Orientada a Objetos</em> (POO) o incluso el paradigma funcional.</p>
 </li>
 <li><dl class="first docutils">
-<dt>Multiparadigma</dt>
+<dt><strong>Sistema de tipos:</strong></dt>
 <dd><ul class="first last simple">
-<li>Programaci?n imperativa</li>
-<li>Programaci?n Orientada a Objetos</li>
-<li>Programaci?n funcional</li>
+<li>Tipado din?mico (dynamic typing): El tipo de las variables y las expresiones es evaluado en tiempo de ejecuci?n. No es necesario declarar las variables antes de usarlas.</li>
+<li>Tipado fuerte (strong typing): El int?rprete no permite operaciones entre tipos de datos distintos sin convertirlos expl?citamente.</li>
 </ul>
 </dd>
 </dl>
 </li>
-<li><dl class="first docutils">
-<dt>Sistema de tipos</dt>
-<dd><ul class="first last simple">
-<li>Tipado din?mico (dynamic typing)</li>
-<li>Tipado fuerte (strong typing)</li>
-</ul>
-</dd>
-</dl>
+<li><p class="first"><strong>Facilidad de extensi?n:</strong> Se pueden escribir nuevos m?dulos f?cilmente en C o C++. Y a su vez, es posible invocar al int?rprete de Python desde C o C++.</p>
 </li>
 </ul>
+</div>
+<div class="section" id="el-zen-de-python">
+<h3>El Zen de Python<a class="headerlink" href="#el-zen-de-python" title="Permalink to this headline">¶</a></h3>
+<p>Los usuarios de Python se refieren a menudo a la Filosof?a Python que es bastante an?loga a la filosof?a de Unix.
+El c?digo que sigue los principios de Python de legibilidad y transparencia se dice que es &#8220;pit?nico&#8221; (<em>pythonic</em> en ingl?s)&#8221;.
+Contrariamente, el c?digo opaco u ofuscado es bautizado como &#8220;no pit?nico&#8221; (<em>unpythonic</em>).
+Estos principios fueron famosamente descritos por el desarrollador de Python Tim Peters en <em>El Zen de Python</em>.</p>
+<div class="highlight-python"><div class="highlight"><pre>Bello es mejor que feo.
+Expl?cito es mejor que impl?cito.
+Simple es mejor que complejo.
+Complejo es mejor que complicado.
+Plano es mejor que anidado.
+Disperso es mejor que denso.
+La legibilidad cuenta.
+Los casos especiales no son tan especiales como para quebrantar las reglas.
+Aunque lo pr?ctico gana a la pureza.
+Los errores nunca deber?an pasar silenciosamente.
+A menos que hayan sido silenciados expl?citamente.
+Frente a la ambig?edad, rechaza la tentaci?n de adivinar.
+Deber?a haber una (y preferiblemente s?lo una) manera obvia de hacerlo.
+Aunque esa manera puede no ser obvia al principio, a menos que seas holand?s.
+Ahora es mejor que nunca.
+Aunque nunca es a menudo mejor que *ya mismo*.
+Si la implementaci?n es dif?cil de explicar, es una mala idea.
+Si la implementaci?n es f?cil de explicar, puede que sea una buena idea.
+Los espacios de nombres (namespaces) son una gran idea ?Hagamos m?s de eso!
+</pre></div>
+</div>
 </div>
 </div>
 <div class="section" id="el-int-rprete-de-python">
@@ -103,50 +129,234 @@ las expresiones pueden ser introducidas una a una, pudiendo verse el resultado d
 lo que da la posibilidad de probar porciones de c?digo en el modo interactivo antes de integrarlo como parte de un
 programa. Esto resulta ?til tanto para las personas que se est?n familiarizando con el lenguaje como para los
 programadores m?s avanzados.</p>
-<div class="highlight-bash"><div class="highlight"><pre>&gt;&gt;&gt; 1 + 1
-2
-&gt;&gt;&gt; <span class="nv">a</span> <span class="o">=</span> range<span class="o">(</span>10<span class="o">)</span>
-&gt;&gt;&gt; print a
-<span class="o">[</span>0, 1, 2, 3, 4, 5, 6, 7, 8, 9<span class="o">]</span>
+<p>Para abrir la consola interactiva de Python, basta con ejecutar:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>python
 </pre></div>
 </div>
 <p>La c?nsola interactiva de python puede evaluar expresiones del lenguaje python, incluyendo operaciones aritm?ticas.
 Es tambi?n posible asignar valores a variables, y los valores permanecer?n en memoria mientras el int?rprete est?
 ejecut?ndose.</p>
+<div class="highlight-bash"><div class="highlight"><pre>Python 2.5.2 <span class="o">(</span>r252:60911, Oct  5 2008, 19:29:17<span class="o">)</span>
+<span class="o">[</span>GCC 4.3.2<span class="o">]</span> on linux2
+Type <span class="s2">&quot;help&quot;</span>, <span class="s2">&quot;copyright&quot;</span>, <span class="s2">&quot;credits&quot;</span> or <span class="s2">&quot;license&quot;</span> <span class="k">for </span>more information.
+&gt;&gt;&gt; 1 + 1
+2
+&gt;&gt;&gt; <span class="nv">a</span> <span class="o">=</span> range<span class="o">(</span>10<span class="o">)</span>
+&gt;&gt;&gt; print a
+<span class="o">[</span>0, 1, 2, 3, 4, 5, 6, 7, 8, 9<span class="o">]</span>
+&gt;&gt;&gt; <span class="nb">type</span><span class="o">(</span>a<span class="o">)</span>
+&lt;<span class="nb">type</span> <span class="s1">&#39;list&#39;</span>&gt;
+Traceback <span class="o">(</span>most recent call last<span class="o">)</span>:
+  File <span class="s2">&quot;&lt;stdin&gt;&quot;</span>, line 1, in &lt;module&gt;
+NameError: name <span class="s1">&#39;a&#39;</span> is not defined
+</pre></div>
+</div>
+<p>Tambi?n es posible importar otros m?dulos desde el int?rprete interactivo:</p>
+<div class="highlight-bash"><div class="highlight"><pre>&gt;&gt;&gt; import math
+</pre></div>
+</div>
+<p>Para explorar los atributos (incluyendo m?todos) utilizamos la funci?n <tt class="docutils literal"><span class="pre">dir()</span></tt></p>
+<div class="highlight-bash"><div class="highlight"><pre>&gt;&gt;&gt; dir<span class="o">(</span>math<span class="o">)</span>
+<span class="o">[</span><span class="s1">&#39;__doc__&#39;</span>, <span class="s1">&#39;__name__&#39;</span>, <span class="s1">&#39;__package__&#39;</span>, <span class="s1">&#39;acos&#39;</span>, <span class="s1">&#39;acosh&#39;</span>, <span class="s1">&#39;asin&#39;</span>, <span class="s1">&#39;asinh&#39;</span>, <span class="s1">&#39;atan&#39;</span>, <span class="s1">&#39;atan2&#39;</span>, <span class="s1">&#39;atanh&#39;</span>, <span class="s1">&#39;ceil&#39;</span>,
+<span class="s1">&#39;copysign&#39;</span>, <span class="s1">&#39;cos&#39;</span>, <span class="s1">&#39;cosh&#39;</span>, <span class="s1">&#39;degrees&#39;</span>, <span class="s1">&#39;e&#39;</span>, <span class="s1">&#39;erf&#39;</span>, <span class="s1">&#39;erfc&#39;</span>, <span class="s1">&#39;exp&#39;</span>, <span class="s1">&#39;expm1&#39;</span>, <span class="s1">&#39;fabs&#39;</span>, <span class="s1">&#39;factorial&#39;</span>, <span class="s1">&#39;floor&#39;</span>,
+<span class="s1">&#39;fmod&#39;</span>, <span class="s1">&#39;frexp&#39;</span>, <span class="s1">&#39;fsum&#39;</span>, <span class="s1">&#39;gamma&#39;</span>, <span class="s1">&#39;hypot&#39;</span>, <span class="s1">&#39;isinf&#39;</span>, <span class="s1">&#39;isnan&#39;</span>, <span class="s1">&#39;ldexp&#39;</span>, <span class="s1">&#39;lgamma&#39;</span>, <span class="s1">&#39;log&#39;</span>, <span class="s1">&#39;log10&#39;</span>, <span class="s1">&#39;log1p&#39;</span>,
+<span class="s1">&#39;modf&#39;</span>, <span class="s1">&#39;pi&#39;</span>, <span class="s1">&#39;pow&#39;</span>, <span class="s1">&#39;radians&#39;</span>, <span class="s1">&#39;sin&#39;</span>, <span class="s1">&#39;sinh&#39;</span>, <span class="s1">&#39;sqrt&#39;</span>, <span class="s1">&#39;tan&#39;</span>, <span class="s1">&#39;tanh&#39;</span>, <span class="s1">&#39;trunc&#39;</span><span class="o">]</span>
+&gt;&gt;&gt; math.pi
+3.141592653589793
+</pre></div>
+</div>
 </div>
 <div class="section" id="tipos-de-datos">
 <h2><a class="toc-backref" href="#id4">Tipos de datos</a><a class="headerlink" href="#tipos-de-datos" title="Permalink to this headline">¶</a></h2>
+<p>Python implementa los tipos de datos habituales en otros lenguajes, como los tipos num?ricos <tt class="docutils literal"><span class="pre">int</span></tt> y <tt class="docutils literal"><span class="pre">float</span></tt>,
+as? como el tipo l?gico o <tt class="docutils literal"><span class="pre">bool</span></tt>. Merecen especial atenci?n el tipo <em>string</em> y los tipos estructurados o
+&#8220;colecciones&#8221;, dentro de los cuales existen <em>diccionarios</em>, <em>tuplas</em>, <em>listas</em> y conjuntos.</p>
+<div class="section" id="cadenas-de-texto-str">
+<h3>Cadenas de texto (<tt class="docutils literal"><span class="pre">str</span></tt>)<a class="headerlink" href="#cadenas-de-texto-str" title="Permalink to this headline">¶</a></h3>
+<p>Los strings son cadenas de texto que pueden definirse de varias formas:</p>
+<ul class="simple">
+<li>Entre comillas simples: <tt class="docutils literal"><span class="pre">'hola</span> <span class="pre">mundo!'</span></tt></li>
+<li>Entre comillas dobles: <tt class="docutils literal"><span class="pre">&quot;hola</span> <span class="pre">mundo!&quot;</span></tt></li>
+<li>Entre comillas triples (cadenas multi-l?nea):</li>
+</ul>
+<div class="highlight-python"><div class="highlight"><pre><span class="sd">&#39;&#39;&#39;hola</span>
+<span class="sd">mundo&#39;&#39;&#39;</span>
+
+<span class="sd">&quot;&quot;&quot;todo</span>
+<span class="sd">bien?&quot;&quot;&quot;</span>
+</pre></div>
+</div>
+<div class="section" id="concatenaci-n">
+<h4>Concatenaci?n<a class="headerlink" href="#concatenaci-n" title="Permalink to this headline">¶</a></h4>
+<p>Es posible concatenar dos o m?s cadenas usando el operador <tt class="docutils literal"><span class="pre">+</span></tt>, o usando el m?todo <tt class="docutils literal"><span class="pre">''.join()</span></tt>.
+Para determinar la longitud de una cadena, se utiliza la funci?n <tt class="docutils literal"><span class="pre">len()</span></tt>.</p>
+<div class="highlight-bash"><div class="highlight"><pre>&gt;&gt;&gt; <span class="nv">a</span> <span class="o">=</span> <span class="s2">&quot;hola&quot;</span>
+&gt;&gt;&gt; a +<span class="o">=</span> <span class="s2">&quot; mundo!&quot;</span>
+&gt;&gt;&gt; a
+<span class="s1">&#39;hola mundo!&#39;</span>
+&gt;&gt;&gt; len<span class="o">(</span>a<span class="o">)</span>
+10
+&gt;&gt;&gt; <span class="nv">b</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>.join<span class="o">([</span><span class="s2">&quot;x&quot;</span>, <span class="s2">&quot;y&quot;</span>, <span class="s2">&quot;z&quot;</span>, a<span class="o">])</span>
+&gt;&gt;&gt; b
+<span class="s1">&#39;xyzhola mundo&#39;</span>
+&gt;&gt;&gt; <span class="s1">&#39;_&#39;</span>.join<span class="o">([</span><span class="s2">&quot;cadena&quot;</span>, <span class="s2">&quot;compuesta&quot;</span>, <span class="s2">&quot;con&quot;</span>, <span class="s2">&quot;delimitador&quot;</span><span class="o">])</span>
+<span class="s1">&#39;cadena_compuesta_con_delimitador&#39;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="formateo">
+<h4>Formateo<a class="headerlink" href="#formateo" title="Permalink to this headline">¶</a></h4>
+<p>Tambi?n es posible &#8220;formatear&#8221; cadenas usando el operador <tt class="docutils literal"><span class="pre">%</span></tt>:</p>
+<div class="highlight-bash"><div class="highlight"><pre>&gt;&gt;&gt; <span class="s2">&quot;La respuesta es %s.&quot;</span> % 42
+<span class="s1">&#39;La respuesta es 42.&#39;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="repetici-n">
+<h4>Repetici?n<a class="headerlink" href="#repetici-n" title="Permalink to this headline">¶</a></h4>
+<p>Una cadena puede repetirse utilizando el mismo operador de multiplicaci?n (<tt class="docutils literal"><span class="pre">*</span></tt>)</p>
+<div class="highlight-bash"><div class="highlight"><pre>&gt;&gt;&gt; <span class="nv">h</span> <span class="o">=</span> <span class="s2">&quot;hola&quot;</span>
+&gt;&gt;&gt; h * 3
+<span class="s1">&#39;holaholahola&#39;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="indexaci-n">
+<h4>Indexaci?n<a class="headerlink" href="#indexaci-n" title="Permalink to this headline">¶</a></h4>
+<p>Para acceder a cualquiera de los caracteres de la cadena, se indexa de la misma manera que un &#8220;arreglo&#8221; en la mayor?a
+de los lenguajes. El primer caracter corresponde al ?ndice <tt class="docutils literal"><span class="pre">0</span></tt>.</p>
+<div class="highlight-bash"><div class="highlight"><pre>&gt;&gt;&gt; <span class="s2">&quot;Venezuela&quot;</span><span class="o">[</span>5<span class="o">]</span>
+<span class="s1">&#39;u&#39;</span>
+</pre></div>
+</div>
+<p>Tambi?n pueden utilizarse ?ndices negativos, los cuales comienzan a recorrer la cadena desde el ?ltimo caracter.</p>
+<div class="highlight-bash"><div class="highlight"><pre>&gt;&gt;&gt; <span class="s2">&quot;Venezuela&quot;</span><span class="o">[</span>-1<span class="o">]</span>
+<span class="s1">&#39;a&#39;</span>
+&gt;&gt;&gt; <span class="s2">&quot;Venezuela&quot;</span><span class="o">[</span>-2<span class="o">]</span>
+<span class="s1">&#39;l&#39;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="slicing">
+<h4>&#8220;Slicing&#8221;<a class="headerlink" href="#slicing" title="Permalink to this headline">¶</a></h4>
+<p>Es posible obtener una sub-cadena de un string especificando un rango en el ?ndice, a esto se le conoce como
+&#8220;rebanado&#8221; o <em>slicing</em>.</p>
+<div class="highlight-bash"><div class="highlight"><pre>&gt;&gt;&gt; <span class="nv">a</span> <span class="o">=</span> <span class="s2">&quot;Venezuela&quot;</span>
+&gt;&gt;&gt; a<span class="o">[</span>2:4<span class="o">]</span>
+<span class="s1">&#39;ne&#39;</span>
+&gt;&gt;&gt; a<span class="o">[</span>:4<span class="o">]</span>
+<span class="s1">&#39;Vene&#39;</span>
+&gt;&gt;&gt; a<span class="o">[</span>4:<span class="o">]</span>
+<span class="s1">&#39;zuela&#39;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="pertenencia-in">
+<h4>Pertenencia (<tt class="docutils literal"><span class="pre">in</span></tt>)<a class="headerlink" href="#pertenencia-in" title="Permalink to this headline">¶</a></h4>
+<p>Para determinar si un caracter o subcadena est? contenido dentro de otra cadena, se utiliza el operador l?gico <cite>in</cite>:</p>
+<div class="highlight-bash"><div class="highlight"><pre>&gt;&gt;&gt; <span class="s2">&quot;zuel&quot;</span> in <span class="s2">&quot;Venezuela&quot;</span>
+True
+&gt;&gt;&gt; <span class="s2">&quot;b&quot;</span> in <span class="s2">&quot;Venezuela&quot;</span>
+False
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="booleanos">
+<h3>Booleanos<a class="headerlink" href="#booleanos" title="Permalink to this headline">¶</a></h3>
+<p>Los datos de tipo <em>booleano</em> pueden tomar los valores <tt class="docutils literal"><span class="pre">True</span></tt> o <tt class="docutils literal"><span class="pre">False</span></tt> (as?, con la primera letra en may?scula). Y las expresiones
+l?gicas pueden evaluarse utilizando los operadores <cite>and</cite>, <cite>or</cite>, y <cite>not</cite> y los operadores usuales de comparaci?n
+(<tt class="docutils literal"><span class="pre">&lt;</span></tt>, <tt class="docutils literal"><span class="pre">&gt;</span></tt>, <tt class="docutils literal"><span class="pre">&lt;=</span></tt>, <tt class="docutils literal"><span class="pre">&gt;=</span></tt>, <tt class="docutils literal"><span class="pre">==</span></tt>, <tt class="docutils literal"><span class="pre">!=</span></tt>).</p>
+<div class="highlight-bash"><div class="highlight"><pre>&gt;&gt;&gt; <span class="nv">a</span> <span class="o">=</span> <span class="s2">&quot;hola mundo&quot;</span>
+&gt;&gt;&gt; a<span class="o">[</span>:4<span class="o">]</span> <span class="o">==</span> <span class="s2">&quot;hola&quot;</span> and a<span class="o">[</span>5:<span class="o">]</span> <span class="o">==</span> <span class="s2">&quot;mundo&quot;</span>
+True
+</pre></div>
+</div>
+</div>
+<div class="section" id="listas">
+<h3>Listas<a class="headerlink" href="#listas" title="Permalink to this headline">¶</a></h3>
+<p>Las listas son uno de los tipos de datos fundamentales en Python. A diferencia de los arreglos en otros lenguajes,
+las listas de Python son din?micas y permiten una serie de operaciones bastante ?tiles.</p>
+<p>Para definir una lista, se colocan los elementos entre corchetes. Una lista puede contener cualquier tipo de datos, incluyendo otras listas.</p>
+<div class="highlight-bash"><div class="highlight"><pre>&gt;&gt;&gt; <span class="nv">a</span> <span class="o">=</span> <span class="o">[</span>1, 2, 3, <span class="s2">&quot;hola&quot;</span>, <span class="o">[</span><span class="s1">&#39;x&#39;</span>, <span class="s1">&#39;y&#39;</span><span class="o">]]</span>
+</pre></div>
+</div>
+<p>Una funci?n del lenguaje bastante ?til es <tt class="docutils literal"><span class="pre">range(n)</span></tt>, la cual genera una lista de enteros dentro del intervalo <tt class="docutils literal"><span class="pre">[0,</span> <span class="pre">n)</span></tt>:</p>
+<div class="highlight-bash"><div class="highlight"><pre>&gt;&gt;&gt; range<span class="o">(</span>10<span class="o">)</span>
+<span class="o">[</span>0, 1, 2, 3, 4, 5, 6, 7, 8, 9<span class="o">]</span>
+</pre></div>
+</div>
+<p>Todas las operaciones previamente definidas para el tipo <tt class="docutils literal"><span class="pre">str</span></tt> aplican para las listas:</p>
+<div class="highlight-bash"><div class="highlight"><pre>&gt;&gt;&gt; <span class="nv">a</span> <span class="o">=</span> <span class="o">[</span>1, 2, 3, <span class="s2">&quot;hola&quot;</span>, <span class="o">[</span><span class="s1">&#39;x&#39;</span>, <span class="s1">&#39;y&#39;</span><span class="o">]]</span>
+&gt;&gt;&gt; len<span class="o">(</span>a<span class="o">)</span>
+5
+&gt;&gt;&gt; <span class="o">[</span><span class="s1">&#39;x&#39;</span>, <span class="s1">&#39;y&#39;</span><span class="o">]</span> in a
+True
+&gt;&gt;&gt; a<span class="o">[</span>1<span class="o">]</span>
+2
+&gt;&gt;&gt; a<span class="o">[</span>2:4<span class="o">]</span>
+<span class="o">[</span>3, <span class="s1">&#39;hola&#39;</span><span class="o">]</span>
+&gt;&gt;&gt; a * 2
+<span class="o">[</span>1, 2, 3, <span class="s1">&#39;hola&#39;</span>, <span class="o">[</span><span class="s1">&#39;x&#39;</span>, <span class="s1">&#39;y&#39;</span><span class="o">]</span>, 1, 2, 3, <span class="s1">&#39;hola&#39;</span>, <span class="o">[</span><span class="s1">&#39;x&#39;</span>, <span class="s1">&#39;y&#39;</span><span class="o">]]</span>
+&gt;&gt;&gt; <span class="o">[</span>1, 2, 3<span class="o">]</span> + <span class="o">[</span>4, 5<span class="o">]</span> + <span class="o">[</span><span class="s2">&quot;string&quot;</span><span class="o">]</span>
+<span class="o">[</span>1, 2, 3, 4, 5, <span class="s1">&#39;string&#39;</span><span class="o">]</span>
+</pre></div>
+</div>
+<p>Adicionalmente, se definen los siguientes m?todos espec?ficos para las listas:</p>
+<div class="section" id="append">
+<h4><tt class="docutils literal"><span class="pre">append()</span></tt><a class="headerlink" href="#append" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-bash"><div class="highlight"><pre>&gt;&gt;&gt; <span class="nv">li</span> <span class="o">=</span> <span class="o">[</span><span class="s2">&quot;a&quot;</span>, <span class="s2">&quot;b&quot;</span>, <span class="s2">&quot;c&quot;</span><span class="o">]</span>
+&gt;&gt;&gt; li.append<span class="o">(</span><span class="s2">&quot;d&quot;</span><span class="o">)</span>
+&gt;&gt;&gt; li
+<span class="o">[</span><span class="s1">&#39;a&#39;</span>, <span class="s1">&#39;b&#39;</span>, <span class="s1">&#39;c&#39;</span>, <span class="s1">&#39;d&#39;</span><span class="o">]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="extend">
+<h4><tt class="docutils literal"><span class="pre">extend()</span></tt><a class="headerlink" href="#extend" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-bash"><div class="highlight"><pre>&gt;&gt;&gt; <span class="nv">st</span> <span class="o">=</span> <span class="o">[</span><span class="s2">&quot;e&quot;</span>, <span class="s2">&quot;f&quot;</span><span class="o">]</span>
+&gt;&gt;&gt; li.extend<span class="o">(</span>st<span class="o">)</span>
+&gt;&gt;&gt; li
+<span class="o">[</span><span class="s1">&#39;a&#39;</span>, <span class="s1">&#39;b&#39;</span>, <span class="s1">&#39;c&#39;</span>, <span class="s1">&#39;d&#39;</span>, <span class="s1">&#39;e&#39;</span>, <span class="s1">&#39;f&#39;</span><span class="o">]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="index">
+<h4><tt class="docutils literal"><span class="pre">index()</span></tt><a class="headerlink" href="#index" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-bash"><div class="highlight"><pre>&gt;&gt;&gt; li.index<span class="o">(</span><span class="s1">&#39;c&#39;</span><span class="o">)</span>
+2
+</pre></div>
+</div>
+</div>
+<div class="section" id="remove">
+<h4><tt class="docutils literal"><span class="pre">remove()</span></tt><a class="headerlink" href="#remove" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-bash"><div class="highlight"><pre>&gt;&gt;&gt; li.remove<span class="o">(</span><span class="s1">&#39;c&#39;</span><span class="o">)</span>
+&gt;&gt;&gt; li
+<span class="o">[</span><span class="s1">&#39;a&#39;</span>, <span class="s1">&#39;b&#39;</span>, <span class="s1">&#39;d&#39;</span>, <span class="s1">&#39;e&#39;</span>, <span class="s1">&#39;f&#39;</span><span class="o">]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="listas-por-comprensi-n">
+<h4>Listas por comprensi?n<a class="headerlink" href="#listas-por-comprensi-n" title="Permalink to this headline">¶</a></h4>
+<p>Una de las caracter?sticas m?s poderosas de Python es la posibilidad de definir <em>listas por comprensi?n</em>. ?sta es una
+caracter?stica muy propia de lenguajes funcionales como Haskell y Scheme.</p>
+</div>
+</div>
+<div class="section" id="tuplas">
+<h3>Tuplas<a class="headerlink" href="#tuplas" title="Permalink to this headline">¶</a></h3>
+</div>
 <div class="section" id="diccionarios">
 <h3>Diccionarios<a class="headerlink" href="#diccionarios" title="Permalink to this headline">¶</a></h3>
-<blockquote>
-<div><ul>
-<li><dl class="first docutils">
-<dt>Tipos b?sicos</dt>
-<dd><ul class="first last simple">
-<li>n?meros</li>
-<li>cadenas</li>
-<li>booleanos</li>
-</ul>
-</dd>
-</dl>
-</li>
-<li><dl class="first docutils">
-<dt>colecciones</dt>
-<dd><ul class="first last simple">
-<li>listas</li>
-<li>tuplas</li>
-<li>diccionarios</li>
-</ul>
-</dd>
-</dl>
-</li>
-</ul>
-</div></blockquote>
-<ul class="simple">
-<li>Estructuras de control de flujo</li>
-<li>Funciones</li>
-</ul>
 </div>
+<div class="section" id="conjuntos">
+<h3>Conjuntos<a class="headerlink" href="#conjuntos" title="Permalink to this headline">¶</a></h3>
+</div>
+</div>
+<div class="section" id="usando-un-archivo-fuente">
+<h2><a class="toc-backref" href="#id5">Usando un archivo fuente</a><a class="headerlink" href="#usando-un-archivo-fuente" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="manejo-de-archivos">
+<h2><a class="toc-backref" href="#id6">Manejo de archivos</a><a class="headerlink" href="#manejo-de-archivos" title="Permalink to this headline">¶</a></h2>
 </div>
 </div>
 
@@ -162,13 +372,36 @@ ejecut?ndose.</p>
 <li><a class="reference internal" href="#introducci-n">Introducci?n</a><ul>
 <li><a class="reference internal" href="#por-qu-python">?Por qu? Python?</a></li>
 <li><a class="reference internal" href="#caracter-sticas-del-lenguaje">Caracter?sticas del lenguaje</a></li>
+<li><a class="reference internal" href="#el-zen-de-python">El Zen de Python</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#el-int-rprete-de-python">El int?rprete de Python</a></li>
 <li><a class="reference internal" href="#tipos-de-datos">Tipos de datos</a><ul>
-<li><a class="reference internal" href="#diccionarios">Diccionarios</a></li>
+<li><a class="reference internal" href="#cadenas-de-texto-str">Cadenas de texto (<tt class="docutils literal"><span class="pre">str</span></tt>)</a><ul>
+<li><a class="reference internal" href="#concatenaci-n">Concatenaci?n</a></li>
+<li><a class="reference internal" href="#formateo">Formateo</a></li>
+<li><a class="reference internal" href="#repetici-n">Repetici?n</a></li>
+<li><a class="reference internal" href="#indexaci-n">Indexaci?n</a></li>
+<li><a class="reference internal" href="#slicing">&#8220;Slicing&#8221;</a></li>
+<li><a class="reference internal" href="#pertenencia-in">Pertenencia (<tt class="docutils literal"><span class="pre">in</span></tt>)</a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#booleanos">Booleanos</a></li>
+<li><a class="reference internal" href="#listas">Listas</a><ul>
+<li><a class="reference internal" href="#append"><tt class="docutils literal"><span class="pre">append()</span></tt></a></li>
+<li><a class="reference internal" href="#extend"><tt class="docutils literal"><span class="pre">extend()</span></tt></a></li>
+<li><a class="reference internal" href="#index"><tt class="docutils literal"><span class="pre">index()</span></tt></a></li>
+<li><a class="reference internal" href="#remove"><tt class="docutils literal"><span class="pre">remove()</span></tt></a></li>
+<li><a class="reference internal" href="#listas-por-comprensi-n">Listas por comprensi?n</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#tuplas">Tuplas</a></li>
+<li><a class="reference internal" href="#diccionarios">Diccionarios</a></li>
+<li><a class="reference internal" href="#conjuntos">Conjuntos</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#usando-un-archivo-fuente">Usando un archivo fuente</a></li>
+<li><a class="reference internal" href="#manejo-de-archivos">Manejo de archivos</a></li>
 </ul>
 </li>
 </ul>
