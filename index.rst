@@ -952,4 +952,8 @@ copia cada una de las líneas escribiéndolas sobre otro archivo precedido del núm
 	    print "Error en manejo de archivo: %s" % IOError
 
 
-.. Ejercicio práctico??
+Ejercicio práctico
+------------------
+
+Implementar un script que lea un archivo en donde en cada línea habrá una cadena de bits, y escriba en un 
+archivo de salida su correspondiente entero decimal en cada línea.
