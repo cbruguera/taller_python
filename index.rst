@@ -294,14 +294,14 @@ También puede invocarse especificando ambos límites:
 
 .. code-block:: bash
 
-	>>> range(5,10)
+	>>> range(5, 10)
 	[5, 6, 7, 8, 9]
 	
 E incluso el tamaño del incremento:
 
 .. code-block:: bash
 
-	>>> range(10,20,3)
+	>>> range(10, 20, 3)
 	[10, 13, 16, 19]
 
 Todas las operaciones previamente definidas para el tipo ``str`` aplican para las listas:
