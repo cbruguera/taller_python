@@ -134,6 +134,17 @@ Tipos de datos
 Python implementa los tipos de datos habituales en otros lenguajes, como los tipos numéricos ``int`` y ``float``, 
 así como el tipo lógico o ``bool``. Para los valores nulos, se utiliza el valor ``None``.
 
+Es posible convertir de un tipo a otro invocando explícitamente el tipo deseado.
+
+.. code-block:: bash
+
+	>>> str(1)
+	'1'
+	>>> int('2')
+	2
+	>>> bool(1)
+	True
+	
 Merecen especial atención el tipo *string* y los tipos estructurados o "colecciones", 
 dentro de los cuales existen *diccionarios*, *tuplas*, *listas* y conjuntos.
 
