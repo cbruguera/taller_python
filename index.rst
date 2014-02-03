@@ -134,7 +134,7 @@ Tipos de datos
 Python implementa los tipos de datos habituales en otros lenguajes, como los tipos numéricos ``int`` y ``float``, 
 así como el tipo lógico o ``bool``. Para los valores nulos, se utiliza el valor ``None``.
 
-Es posible convertir de un tipo a otro invocando explícitamente el tipo deseado.
+Es posible convertir de un tipo a otro invocando explícitamente el tipo deseado, siempre que la conversión sea válida.
 
 .. code-block:: bash
 
