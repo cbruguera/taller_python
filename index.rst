@@ -128,8 +128,8 @@ Para explorar los atributos (incluyendo métodos) utilizamos la función ``dir()``
 	>>> math.pi
 	3.141592653589793
 
-Tipos de datos
---------------
+Tipos básicos
+-------------
 
 Python implementa los tipos de datos habituales en otros lenguajes, como los tipos numéricos ``int`` y ``float``, 
 así como el tipo lógico o ``bool``. Para los valores nulos, se utiliza el valor ``None``.
@@ -267,6 +267,9 @@ lógicas pueden evaluarse utilizando los operadores `and`, `or`, y `not` y los op
 	>>> a = "hola mundo"
 	>>> a[:4] == "hola" and a[5:] == "mundo"
 	True
+
+Colecciones
+-----------
 
 Listas
 ~~~~~~
