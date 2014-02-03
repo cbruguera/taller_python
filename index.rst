@@ -107,9 +107,7 @@ ejecutándose.
 	[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
 	>>> type(a)
 	<type 'list'>
-	Traceback (most recent call last):
-	  File "<stdin>", line 1, in <module>
-	NameError: name 'a' is not defined
+
 
 También es posible importar otros módulos desde el intérprete interactivo:
 
