@@ -246,7 +246,7 @@ Es posible obtener una sub-cadena de un string especificando un rango en el índi
 Pertenencia (``in``)
 ....................
 
-Para determinar si un caracter o subcadena está contenido dentro de otra cadena, se utiliza el operador lógico `in`:
+Para determinar si un caracter o subcadena está contenido dentro de otra cadena, se utiliza el operador `in`:
 
 .. code-block:: bash
 
