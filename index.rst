@@ -357,8 +357,13 @@ Adicionalmente, se definen los siguientes métodos específicos para las listas:
 
 .. code-block:: bash
 
+	>>> li = ["a", "b", "c"]
 	>>> li.index('c')
 	2
+	>>> li.index("f")
+	Traceback (most recent call last)_
+		File "<stdin>", line 1, in <module>
+	ValueError: 'f' is not in list
 
 	
 ``remove()``
