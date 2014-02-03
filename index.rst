@@ -289,6 +289,20 @@ Una función del lenguaje bastante útil es ``range(n)``, la cual genera una lista
 
 	>>> range(10)
 	[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+	
+También puede invocarse especificando ambos límites:
+
+.. code-block:: bash
+
+	>>> range(5,10)
+	[5, 6, 7, 8, 9]
+	
+E incluso el tamaño del incremento:
+
+.. code-block:: bash
+
+	>>> range(10,20,3)
+	[10, 13, 16, 19]
 
 Todas las operaciones previamente definidas para el tipo ``str`` aplican para las listas:
 
