@@ -394,6 +394,14 @@ acorde a definiciones matemáticas. Por ejemplo, para generar una lista con todos
 	93, 95, 97, 99]
 
 	
+Las listas por comprensión pueden contener expresiones complejas y funciones anidadas:
+
+.. code-block:: bash
+
+	>>> from math import pi
+	>>> [str(round(pi, i)) for i in range(1, 6)]
+	['3.1', '3.14', '3.142', '3.1416', '3.14159']
+	
 Tuplas
 ~~~~~~
 
