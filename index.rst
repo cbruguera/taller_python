@@ -283,6 +283,9 @@ Para definir una lista, se colocan los elementos entre corchetes. Una lista pued
 
 	>>> a = [1, 2, 3, "hola", ['x', 'y']]
 
+range()
+.......
+
 Una función del lenguaje bastante útil es ``range(n)``, la cual genera una lista de enteros dentro del intervalo ``[0, n)``:
 
 .. code-block:: bash
@@ -303,6 +306,9 @@ E incluso el tamaño del incremento:
 
 	>>> range(10, 20, 3)
 	[10, 13, 16, 19]
+
+Operaciones sobre listas
+........................
 
 Todas las operaciones previamente definidas para el tipo ``str`` aplican para las listas:
 
