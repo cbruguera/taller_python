@@ -657,6 +657,16 @@ A diferencia de ``discard()``, ``remove()`` elimina un elemento dado, y si éste 
 	set(['c', 'e', 'd'])
 
 
+``union()``
+...........
+
+.. code-block:: bash
+
+	>>> c1 = {"Carlos", "Jorge", "Luis"}
+	>>> c2 = {"Oscar", "Antonio"}
+	>>> c1.union(c2)
+	set(['Luis', 'Antonio', 'Jorge', 'Carlos', 'Oscar'])
+
 ``isdisjoint()``
 ................
 
@@ -687,7 +697,7 @@ Retorna ``True`` si la intersección entre dos conjuntos es nula.
 	>>> x.issuperset(y)
 	True
 	
-También es posible utilizar los operadores de comparación aritmética para evaluar subconjuntos:
+También es posible utilizar los operadores de comparación para evaluar subconjuntos:
 
 .. code-block:: bash
 
