@@ -928,7 +928,7 @@ Para implementar un ``for`` con un contador entero como es usual en los lenguaje
 	for n in range(10):
 	    print n
 
-Es posible recorrer cualquier objeto secuencial en un ciclo ``for``, incluyendo diccionarios, de la siguiente manera:
+Es posible recorrer cualquier colección en un ciclo ``for``, incluyendo diccionarios, de la siguiente manera:
 
 .. code-block:: python
 
@@ -967,7 +967,36 @@ Para prever y manejar excepciones, se coloca el código dentro de un bloque ``try
 	        break
 	    except ValueError:
 	        print("El valor introducido es inválido, por favor intente de nuevo")
+			
+Es posible manejar por separado diversos tipos de excepciones, encadenando los bloques ``except`` de la siguiente manera:
 
+.. code-block:: python
+
+	import sys
+
+	try:
+	    f = open('myfile.txt')
+	    s = f.readline()
+	    i = int(s.strip())
+	except IOError as e:
+	    print "I/O error({0}): {1}".format(e.errno, e.strerror)
+	except ValueError:
+	    print "Could not convert data to an integer."
+	except:
+	    print "Unexpected error:", sys.exc_info()[0]
+	    raise
+
+El manejo de excepciones también permite una cláusula ``else``, para definir código que debe ejecutarse en caso de no ocurrir
+ninguna excepción. Esto funciona de la misma forma que ``finally`` en Java.
+
+.. code-block:: python
+
+	try:
+		alguna_operacion()
+	except:
+		print "Error al intentar la operacion"
+	else:
+		print "Operacion efectuada exitosamente"
 
 Archivos
 ~~~~~~~~
@@ -1003,8 +1032,8 @@ copia cada una de las líneas escribiéndolas sobre otro archivo precedido del núm
 	        i = i + 1
 	    fobj_in.close()
 	    fobj_out.close()
-	except IOError:
-	    print "Error en manejo de archivo: %s" % IOError
+	except IOError as err:
+	    print "Error en manejo de archivo: %s" % er
 
 
 Ejercicio práctico
