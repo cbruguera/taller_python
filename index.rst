@@ -502,7 +502,7 @@ Para limpiar el contenido completo de un diccionario, se utiliza el método ``cle
 	>>> dict
 	{}
 
-Un par de funciones nativas de considerable utilidad son ``zip()`` y dict(). La función ``zip(L1, L2)`` retorna
+Un par de funciones nativas de considerable utilidad son ``zip()`` y ``dict()``. La función ``zip(L1, L2)`` retorna
 una lista de tuplas correspondiendo los valores de L1 y L2 respectivamente, y la función dict(L) recibe una lista
 de tuplas y retorna un diccionario que corresponde a dichas tuplas. Por ejemplo:
 
