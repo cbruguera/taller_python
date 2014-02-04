@@ -3,13 +3,15 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
+.. image:: logo_posma.png
+   :align: center
+   
 ==================
 Aprendiendo Python
 ==================
 
 .. contents:: Contenido
    :depth: 2
-
    
 Introducción
 ------------
@@ -242,6 +244,8 @@ Es posible obtener una sub-cadena de un string especificando un rango en el índi
 	'Vene'
 	>>> a[4:]
 	'zuela'
+	>>> a[:]
+	'Venezuela'
 
 Pertenencia (``in``)
 ....................
@@ -992,11 +996,12 @@ ninguna excepción. Esto funciona de la misma forma que ``finally`` en Java.
 .. code-block:: python
 
 	try:
-		alguna_operacion()
-	except:
-		print "Error al intentar la operacion"
+	    alguna_operacion()
+	except Exception as e:
+	    print "Error al intentar la operación: %s" % e 
 	else:
-		print "Operacion efectuada exitosamente"
+	    print "Operación exitosa"
+
 
 Archivos
 ~~~~~~~~
