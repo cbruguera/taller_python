@@ -714,7 +714,7 @@ También es posible utilizar los operadores de comparación para evaluar subconjun
 ``pop()``
 .........
 
-El método``pop()`` retorna un elemento (el primero que encuentra) y lo elimina del conjunto. Se produce un ``KeyError``
+El método ``pop()`` retorna un elemento (el primero que encuentra) y lo elimina del conjunto. Se produce un ``KeyError``
 cuando el conjunto se encuentra vacío.
 
 .. code-block:: bash
@@ -917,9 +917,9 @@ se ejecuta cuando no ocurrió un ``break`` dentro del ciclo:
 	        if n % 2 == 0:
 	            # se encontró un número par
 	            return True
-		else:
-		    # no se encontró un número par
-		    return False
+	else:
+		# no se encontró un número par
+		return False
 			
 Para implementar un ``for`` con un contador entero como es usual en los lenguajes imperativos, se utiliza ``range(n)``.
 
