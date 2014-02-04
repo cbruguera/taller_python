@@ -920,7 +920,7 @@ se ejecuta cuando no ocurrió un ``break`` dentro del ciclo:
 	else:
 		# no se encontró un número par
 		return False
-			
+
 Para implementar un ``for`` con un contador entero como es usual en los lenguajes imperativos, se utiliza ``range(n)``.
 
 .. code-block:: python
