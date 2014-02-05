@@ -880,7 +880,7 @@ encadenar condicionales.
 	    if ingreso <= 8004:
 	        impuesto = 0
 	    elif ingreso <= 13469:
-	        y = (ingreso -8004.0)/10000.0
+	        y = (ingreso - 8004.0)/10000.0
 	        impuesto = (912.17 * y + 1400) * y
 	    elif ingreso <= 52881:
 	        z = (ingreso - 13469.0) / 10000.0
