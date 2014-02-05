@@ -3,6 +3,7 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
+	
 .. image:: _static/logo_posma.png
    :align: center
    
@@ -30,6 +31,7 @@ Python fue creado a finales de la década de los 80 por Guido van Rossum, un prog
 * Altamente expresivo
 * Sintáxis legible
 * Software libre
+* Baterías incluidas
 * Gran cantidad de bibliotecas para diversos propósitos
 
 Python es un lenguaje que está diseñado para que sea elegante y sencillo de escribir, y a la vez provee herramientas 
@@ -197,6 +199,11 @@ También es posible "formatear" cadenas usando el operador ``%``:
 
 	>>> "La respuesta es %s." % 42
 	'La respuesta es 42.'
+	>>> "El monto (bs %f) no es suficiente" % 64.85
+	'El monto (bs 64.85) no es suficiente"
+	>>> "El precio del producto seleccionado es de bs %.2f" % 50.4625
+	'El precio del producto seleccionado es de bs 50.46'
+	
 
 Repetición
 ..........
@@ -310,6 +317,7 @@ E incluso el tamaño del incremento:
 
 	>>> range(10, 20, 3)
 	[10, 13, 16, 19]
+	
 
 Operaciones sobre listas
 ........................
@@ -441,7 +449,7 @@ conjunto de variables.
 
 .. code-block:: bash
 
-	>>> (x, y, z) = (7, 8, 9)
+	>>> x, y, z = (7, 8, 9)
 	>>> x
 	7
 	>>> y
@@ -464,19 +472,22 @@ es posible convertir de uno a otro tipo de dato con las funciones nativas ``list
 Diccionarios
 ~~~~~~~~~~~~
 
-Un diccionario define una relación 1 a 1 entre claves y valores, algo muy parecido a los objetos de la clase Hashtable
-en Java. Se define utilizando llaves, de manera similar a javascript.
+Un diccionario define una relación 1 a 1 entre claves y valores. Se define como un conjunto de pares "<clave>: <valor>" entre llaves.
 
 .. code-block:: bash
 
-	>>> d = {"server":"mpilgrim", "database":"master"}
+	>>> d = {"servidor": "posma", "database": "master"}
 	>>> d
-	{'server': 'mpilgrim', 'database': 'master'}
-	>>> d["server"]
-	'mpilgrim'
+	{'servidor': 'posma', 'database': 'master'}
+	>>> d["servidor"]
+	'posma'
 	>>> d["database"]
 	'master'
-	>>> d["mpilgrim"]
+	>>> d["posma"]
+	>>> d = {"servidor": "posma", "database": "master"}
+	Traceback (most recent call last):
+	  File "<stdin>", line 1, in <module>
+	KeyError: 'posma'
 	
 Los valores de los diccionarios pueden ser de cualquier tipo, incluso otros diccionarios. De igual forma, un diccionario
 puede contener simultáneamente valores de distintos tipos. Las claves deben ser de algún tipo *inmutable*, como números, 
@@ -486,24 +497,24 @@ Es importante acotar que los diccionarios en Python no siguen ningún tipo de ord
 
 .. code-block:: bash
 
-	>>> dict = {1: "uno", 2: "dos", 2.5: "dos punto cinco"}
-	>>> dict[2.5]
+	>>> d = {1: "uno", 2: "dos", 2.5: "dos punto cinco"}
+	>>> d[2.5]
 	'dos punto cinco'
 	
 Para eliminar un registro en el diccionario se utiliza la función ``del(k)``:
 
 .. code-block:: bash
 	
-	>>> del(dict[2.5])
-	>>> dict
+	>>> del(d[2.5])
+	>>> d
 	{1: "uno", 2: "dos"}
 	
 Para limpiar el contenido completo de un diccionario, se utiliza el método ``clear()``.
 
 .. code-block:: bash
 
-	>>> dict.clear()
-	>>> dict
+	>>> d.clear()
+	>>> d
 	{}
 
 Un par de funciones nativas de considerable utilidad son ``zip()`` y ``dict()``. La función ``zip(L1, L2)`` retorna
@@ -775,15 +786,16 @@ Para ejecutar el script, llamamos al intérprete pasándole el nombre del archivo 
 Funciones
 ~~~~~~~~~
 
-Las funciones en python se definen con la palabra reservada ``def``, de la siguiente manera:
+Como la mayoría de los lenguajes, Python provee el uso de funciones, las cuales se declaran mediante la palabra reservada ``def``, 
+seguido del nombre de la función, una lista opcional de parámetros entre paréntesis y dos puntos (:):
 
 .. code-block:: python
 
-	def factorial(n):
-	    if n <= 1:
-	        return 1
-	    else:
-	        return n * factorial(n - 1)
+	def mi_funcion(param1, param2, param3=False):
+		pass	# mi_funcion no hace nada
+
+* Para una función, es posible definir parámetros opcionales, especificándoles un valor por defecto.
+* No se especifica ningún tipo de valor de retorno, ya que en Python los tipos se determinan dinámicamente.
 
 
 Indentación
@@ -796,7 +808,14 @@ para que inserte 4 espacios por indentación.
 
 Como podemos ver, tampoco se terminan las instrucciones con punto y coma ni ningún otro caracter especial. 
 
+.. code-block:: python
 
+	def factorial(n):
+	    if n <= 1:
+	        return 1
+	    else:
+	        return n * factorial(n - 1)
+			
 Docstring
 .........
 
@@ -856,21 +875,20 @@ encadenar condicionales.
 
 .. code-block:: python
 
-	def taxes(income):
-	    """Calculation of taxes to be paid for a taxable income x"""
-	    if income <= 8004:
-	        tax = 0
-	    elif income <= 13469:
-	        y = (income -8004.0)/10000.0
-	        tax = (912.17 * y + 1400)*y
-	    elif income <= 52881:
-	        z = (income -13469.0)/10000.0
-	        tax = (228.74 * z +2397.0)*z +1038.0
-	    elif income <= 250730:
-	        tax = income * 0.42 - 8172.0
+	def calcular_impuestos(ingreso):
+	
+	    if ingreso <= 8004:
+	        impuesto = 0
+	    elif ingreso <= 13469:
+	        y = (ingreso -8004.0)/10000.0
+	        impuesto = (912.17 * y + 1400) * y
+	    elif ingreso <= 52881:
+	        z = (ingreso - 13469.0) / 10000.0
+	        impuesto = (228.74 * z + 2397.0) * z + 1038.0
 	    else:
-	        tax = income * 0.44 - 15694
-	    return tax 
+	        impuesto = ingreso * 0.44 - 15694
+	    
+		return impuesto
 		
 ``while``
 ~~~~~~~~~
@@ -936,8 +954,8 @@ Es posible recorrer cualquier colección en un ciclo ``for``, incluyendo dicciona
 
 .. code-block:: python
 
-	for key,val in dict:
-	    print "dict[%s] => %s" % (key, val)
+	for key,val in d:
+	    print "d[%s] => %s" % (key, val)
 
 
 Excepciones y manejo de archivos
