@@ -193,7 +193,7 @@ Para determinar la longitud de una cadena, se utiliza la función ``len()``.
 Formateo
 ........
 
-También es posible "formatear" cadenas usando el operador ``%``:
+Es posible "formatear" cadenas usando el operador ``%``:
 
 .. code-block:: bash
 
@@ -203,6 +203,19 @@ También es posible "formatear" cadenas usando el operador ``%``:
 	'El monto (bs 64.85) no es suficiente"
 	>>> "El precio del producto seleccionado es de bs %.2f" % 50.4625
 	'El precio del producto seleccionado es de bs 50.46'
+	
+También es posible formatear cadenas con el método ``format()`` del tipo ``str``, con la siguiente sintaxis:
+
+.. code-block:: bash
+
+	>>> '{0}, {1}, {2}'.format('a', 'b', 'c')
+	'a, b, c'
+	>>> '{}, {}, {}'.format('a', 'b', 'c')  # a partir de python 2.7
+	'a, b, c'
+	>>> '{2}, {1}, {0}'.format('a', 'b', 'c')
+	'c, b, a'
+	>>> '{0}{1}{0}'.format('abra', 'cad')   # los indices pueden repetirse
+	'abracadabra'
 	
 
 Repetición
@@ -916,14 +929,13 @@ sale limpiamente (sin usar break).
 
 .. code-block:: python
 
-	while condition:
-	    if error_occurred():
-	        # manejar error
-	        break    # salir del ciclo
-	    handle_true()
+	while condicion:
+	if error():
+	    # manejar error
+	    break    # salir del ciclo
 	else:
-	    # la condición ya es falsa, se ejecuta el siguiente bloque
-	    handle_false()
+	    # no hubo error
+	    hacer_algo()
 
 ``for``
 ~~~~~~~
