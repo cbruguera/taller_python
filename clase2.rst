@@ -455,7 +455,7 @@ tipo ``object``:
 	>>> type(ns)
 	<class '__main__.NewStyle'
 
-A partir de Python 3, todas las clases ya están implementadas de esta manera por defecto.
+.. A partir de Python 3, todas las clases ya están implementadas de esta manera por defecto.
 
 
 Constructor
@@ -615,12 +615,53 @@ considerado completamente normal el acceso a los atributos directamente, en bene
 Módulos nativos
 ---------------
 
-os, sys...
-~~~~~~~~~~
+Una de las filosofías de Python, es que es un lenguaje "con baterías incluidas", esto quiere decir que sin necesidad
+de instalar paquetes externos, ya el lenguaje provee una gama de funcionalidades de alta utilidad en diversas áreas.
 
+A continuación exploraremos algunos de los módulos nativos principales. La lista de módulos provistos por la 
+biblioteca estándar de Python es extensa, para ver la lista y la documentación completa de los módulos se recomienda
+revisar este enlace_.
+
+.. _enlace: http://docs.python.org/2/library/
+ 
+
+datetime / time
+~~~~~~~~~~~~~~~
+
+El módulo ``datetime`` provee clases para manipular fechas y horas de diferentes maneras, incluyendo soporte para
+aritmética de fechas y horas, entre otras cosas.
+
+.. code-block:: python
+
+	>>> import time
+	>>> from datetime import date
+	>>> hoy = date.today()
+	>>> hoy
+	datetime.date(2007, 12, 5)
+	>>> mi_cumple = date(hoy.year, 6, 24)
+	>>> if mi_cumple < hoy:
+	...     mi_cumple = mi_cumple.replace(year=hoy.year + 1)
+	>>> mi_cumple
+	datetime.date(2008, 6, 24)
+	>>> tiempo_hasta_cumple = abs(mi_cumple - hoy)
+	>>> print "Quedan %s días para mi cumpleaños" % tiempo_hasta_cumple.days
+	'Quedan 202 días para mi cumpleaños'
+
+
+os
+~~
+
+
+
+os.path
+~~~~~~~
+
+sys
+~~~
 
 json
 ~~~~
+
 
 Decoradores
 -----------
@@ -630,6 +671,3 @@ Iteradores y generadores
 
 Instalación de paquetes con pip / virtualenv
 --------------------------------------------
-
-Pruebas unitarias
------------------
