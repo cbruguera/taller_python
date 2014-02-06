@@ -691,12 +691,12 @@ siguiente manera:
 .. code-block:: python
 
 	def decorador(func)
-		# manipular func
-		return func
+	    # manipular func
+	    return func
 
 	@decorador
 	def funcion():
-		# Hacer algo
+	    # Hacer algo
 	# funcion() ha sido decorada
 
 Este mecanismo es útil para separar comportamientos que son ajenos a la lógica de la función como tal, 
@@ -709,10 +709,10 @@ Una función puede ser objeto de más de un decorador:
 	@decorador2
 	@decorador1
 	def function():
-		# Hacer algo
-		pass
+	    # Hacer algo
+	    pass
 
-En este caso, el orden de aplicación es desde abajo hacia arriba, comenzando por @decorador1.
+En este caso, el orden de aplicación es desde abajo hacia arriba, comenzando por ``@decorador1``.
 
 Un decorador puede implementarse como una función, o como una clase siempre y cuando ésta implemente el método 
 ``__call__``.
@@ -736,11 +736,11 @@ guardados en memoria.
 	            self.cache[args] = value
 	            return value
   
-@cached
-def fibonacci(n):
-   if n in (0, 1):
-      return n
-   return fibonacci(n-1) + fibonacci(n-2)
+	@cached
+	def fibonacci(n):
+	    if n in (0, 1):
+	        return n
+	    return fibonacci(n-1) + fibonacci(n-2)
 
    
 Iteradores y generadores
