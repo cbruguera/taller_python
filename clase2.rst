@@ -604,10 +604,10 @@ prácticas concientes del programador.
 .. code-block:: python
 
 	class Encapsulamiento(object):
-		def __init__(self, a, b, c):
-			self.publico = a
-			self._protegido = b
-			self.__privado = c
+	    def __init__(self, a, b, c):
+	        self.publico = a
+	        self._protegido = b
+	        self.__privado = c
 
 De igual manera, no es una costumbre frecuente definir "getters" y "setters" por cada atributo de una clase. Es 
 considerado completamente normal el acceso a los atributos directamente, en beneficio de la legibilidad.
@@ -651,17 +651,34 @@ aritmética de fechas y horas, entre otras cosas.
 os
 ~~
 
+El módulo ``os`` provee funcionalidades referentes al sistema operativo, como exploración y manipulación de rutas en
+el sistema de archivos, y manejo de procesos.
 
+.. code-block:: python
 
-os.path
-~~~~~~~
+	import os
+	for root, dirs, files in os.walk(top, topdown=False):
+	    for name in files:
+	        os.remove(os.path.join(root, name))
+	    for name in dirs:
+	        os.rmdir(os.path.join(root, name))
+			
+El código anterior, elimina todos los archivos y subdirectorios desde el ámbito de ``topdown``. Esto es sumamente 
+peligroso!
 
-sys
-~~~
 
 json
 ~~~~
 
+Este módulo permite la codificación de estructuras de Python en formato JSON (*Javascript Object Notation*)
+
+.. code-block:: python
+
+	>>> import json
+	>>> L = ['foo', {'bar': ('baz', None, 1.0, 2)}]
+	>>> json.dumps(L)
+	'["foo", {"bar": ["baz", null, 1.0, 2]}]'
+	
 
 Decoradores
 -----------
