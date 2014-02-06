@@ -302,8 +302,8 @@ en beneficio de la legibilidad del código.
 De esta forma evitamos escribir toda la cadena estructural al momento de acceder a dicho módulo.
 
 
-Dependencia circular
-....................
+Evitar la dependencia circular
+..............................
 
 Si tenemos en nuestro módulo ``muebles.py`` una clase `Mesa` y ``Silla`` que importan la clase ``Carpintero`` para 
 responder una pregunta como ``mesa.hecha_por()``, y simultáneamente la clase ``Carpintero`` necesita importar ``Mesa`` 
@@ -317,8 +317,8 @@ abstracción, que utilice al módulo de bajo nivel pero no viceversa. Las dependen
 un único sentido, esto no sólo evita las dependencias circulares, sino que hace el código mucho más mantenible (bajo 
 "acoplamiento").
 
-Código "Espagueti"
-..................
+Evitar el código "Espagueti"
+............................
 
 Se conoce como "código espagueti" a la práctica de programar con exceso de cláusulas anidadas y código redundante, así 
 como llamadas de una función a otra sin un orden coherente o intuitivo. El problema de la dependencia circular también 
