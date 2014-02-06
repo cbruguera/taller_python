@@ -683,6 +683,66 @@ Este módulo permite la codificación de estructuras de Python en formato JSON (*J
 Decoradores
 -----------
 
+El lenguaje Python provee un sintaxis simple pero bastante poderosa llamada "decoradores". Un decorador es una función
+o una clase que envuelve (o decora) otra función o método. La función decorada reemplaza la función original. Esto 
+es posible debido a que en Python las funciones son objetos de primer orden. La sintaxis de los decoradores es de la
+siguiente manera:
+
+.. code-block:: python
+
+	def decorador(func)
+		# manipular func
+		return func
+
+	@decorador
+	def funcion():
+		# Hacer algo
+	# funcion() ha sido decorada
+
+Este mecanismo es útil para separar comportamientos que son ajenos a la lógica de la función como tal, 
+
+Una función puede ser objeto de más de un decorador:
+
+.. code-block:: python
+
+	@decorador3
+	@decorador2
+	@decorador1
+	def function():
+		# Hacer algo
+		pass
+
+En este caso, el orden de aplicación es desde abajo hacia arriba, comenzando por @decorador1.
+
+Un decorador puede implementarse como una función, o como una clase siempre y cuando ésta implemente el método 
+``__call__``.
+
+Un ejemplo práctico puede ser implementar un decorador que funcione como *cache* de los resultados de una función.
+De esta manera, si una función se invoca más de una vez con los mismo argumentos, los resultados ya se encuentran 
+guardados en memoria.
+
+.. code-block:: python
+
+	class cached(object):
+	    def __init__(self, func):
+	        self.func = func
+	        self.cache = {}
+			
+	    def __call__(self, *args):
+	        if args in self.cache:
+	            return self.cache[args]
+	        else:
+	            value = self.func(*args)
+	            self.cache[args] = value
+	            return value
+  
+@cached
+def fibonacci(n):
+   if n in (0, 1):
+      return n
+   return fibonacci(n-1) + fibonacci(n-2)
+
+   
 Iteradores y generadores
 ------------------------
 
