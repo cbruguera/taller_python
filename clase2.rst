@@ -207,6 +207,7 @@ Sin embargo, podemos realizar la siguiente prueba:
 La tupla ``tup`` no ha mutado en sí, ya que sigue constando de los mismos objetos (L, L). Aún así, podemos afectarla 
 indirectamente modificando L, que por ser una lista, es un objeto mutable.
 
+.. getattr	??????????????????????????????????????????????????????
 
 Estructura de un proyecto
 -------------------------
@@ -426,9 +427,39 @@ issubclass()
 	>>> issubclass(ContadorEspecial, Contador)
 	True
 
+Clases de nuevo estilo
+......................
+
+A raiz de Python 2.2, el lenguaje soporta un nuevo "estilo" de clases, cuya ventaja primordial es unificar el sistema
+de clases y tipos. 
+
+Si intentamos averiguar el tipo de una instancia en particular, el intérprete nos dirá simplemente que el objeto es
+de tipo ``instance``, esto no es muy útil.
+
+.. code-block:: python
+
+	>>> class Dummy():
+	...     pass
+	...
+	>>> d = Dummy()
+	>>> type(d)
+	<type 'instance'>
+
+Es recomendable entonces utilizar el nuevo estilo de clases, sencillamente especificando las clases como herederas del
+tipo ``object``:
+
+	>>> class NewStyle(object)
+	...     pass
+	...
+	>>> ns = NewStyle()
+	>>> type(ns)
+	<class '__main__.NewStyle'
+
+A partir de Python 3, todas las clases ya están implementadas de esta manera por defecto.
+
 
 Constructor
-...........
+~~~~~~~~~~~
 
 En las clases de Python, llamamos "atributos" a todos los nombres definidos en el espacio de nombres de una clase, 
 bien sea que éstos representen variables o métodos. Un atributo particular en las clases es el método ``__init__``, 
@@ -479,7 +510,7 @@ Podemos comprobar que los objetos son dinámicos asignando a una instancia nuevos
 	
 
 Destructor
-..........
+~~~~~~~~~~
 
 Lo mismo aplica para la destrucción de instancias en Python, no existe realmente un "destructor", pero contamos con
 un método similar a un destructor: ``__del__()``.
@@ -509,11 +540,11 @@ Intentemos instanciar y destruir un objeto de la clase ``Saludo``:
 	>>> del s
 	'Adios!...'
 
+.. super() ???????????????????????????????????????????????????????????????????
 
-.. super()
 
 Atributos de clase
-..................
+~~~~~~~~~~~~~~~~~~
 
 Las variables declaradas explícitamente en una clase sin estar ligadas a ``self`` son consideradas atributos propios 
 de la clase, aunque también son accesibles desde las instancias.
@@ -563,6 +594,23 @@ de la instancia actual. Las clases *también* son objetos.
 
 Encapsulamiento
 ~~~~~~~~~~~~~~~
+
+En Python no existe un mecanismo como tal para el encapsulamiento de atributos. Esto es posible mediante convenciones
+de nombramiento. Por lo general, cualquier nombre precedido por un guión bajo o *underscore* (_) se considera un
+atributo no público (o lo que en muchos lenguajes se conoce como atributos "protegidos"), y todo atributo precedido por
+doble guión bajo (__) es considerado privado. El correcto uso del encapsulamiento en Python, queda de parte de las 
+prácticas concientes del programador.
+
+.. code-block:: python
+
+	class Encapsulamiento(object):
+		def __init__(self, a, b, c):
+			self.publico = a
+			self._protegido = b
+			self.__privado = c
+
+De igual manera, no es una costumbre frecuente definir "getters" y "setters" por cada atributo de una clase. Es 
+considerado completamente normal el acceso a los atributos directamente, en beneficio de la legibilidad.
 
 Módulos nativos
 ---------------
