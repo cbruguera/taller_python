@@ -361,7 +361,7 @@ las cuales ésta pueda heredar.
 .. code-block:: python
 
 	class MiClase:
-		pass
+	    pass
 
 En este caso hemos definido una clase que no define ningún miembro. Lo único que requiere una clase es un nombre. 
 Sin embargo, en la práctica, una clase probablemente heredará de otras clases, y definirá una serie de atributos.
@@ -376,7 +376,7 @@ clase padre se encuentre definida en un módulo distinto, se utiliza la ruta comp
 .. code-block:: python
 
 	class ClaseHija(paquete.modulo.ClasePadre):
-		pass
+	    pass
 		
 
 La herencia de clases, como en la mayoría de los lenguajes *OO*, hace que las instancias de las subclases tengan 
@@ -388,11 +388,44 @@ referencia se pierda; desde la subclase es posible invocar explícitamente método
 Herencia múltiple
 .................
 
+En Python es posible heredar de más de una clase. Para esto, sencillamente se escriben los nombres de las clases base
+como argumentos de la clase actual, separados por coma.
+
+.. code-block:: python
+
+	class MiClase(ClaseBase1, ClaseBase2, ClaseBase2):
+		pass
+		
+Al momento de resolver la ubicación de un nombre, el intérprete primero busca en el ámbito local (MiClase), luego
+busca la definición en ClaseBase1, luego ClaseBase2 y así sucesivamente.
+
+
 isinstance()
 ............
 
+Para revisar que un objeto pertenezca a una clase dada, podemos utilizar la funciones ``isinstance()``:
+
+.. code-block:: python
+
+	>>> isinstance(c, Contador)
+	True
+	>>> isinstance(7, int)
+	True
+
+	
 issubclass()
 ............
+
+``issubclass()`` se utiliza para saber si una clase hereda de otra:
+
+.. code-block:: python
+
+	>>> class ContadorEspecial(Contador):
+	...     pass
+	...
+	>>> issubclass(ContadorEspecial, Contador)
+	True
+
 
 Constructor
 ...........
@@ -404,27 +437,6 @@ que funciona como una especie de "constructor" al momento de instanciar dicha cl
 Técnicamente, ``__init__`` no es un constructor, ya que la instancia ya se encuentra construida cuando este método se 
 ejecuta. Además, no es obligatorio que una clase defina un método ``__init__``. En caso de definirse, éste se utiliza
 para inicializar todos los atributos necesarios de una instancia.
-
-Destructor
-..........
-
-Lo mismo aplica para la destrucción de instancias en Python, no existe realmente un "destructor", pero contamos con
-un método similar a un destructor: ``__del__()``.
-
-``__del__()`` es un método que se ejecuta cuando un objeto está apunto de eliminarse mediante la función nativa del().
-
-..code-block:: python
-
-	class Saludo:
-		def __init__(self, nombre):
-			self.nombre = nombre
-		def __del__(self):
-			print "Adios!"
-		def SayHello(self):
-			print "Hola %s!" % self.name
-
-
-.. super()
 
 .. code-block:: python
 
@@ -439,11 +451,12 @@ Para crear un objeto instancia de la clase ``Usuario``, invocamos a la clase dir
 
 	>>> u = Usuario("Carlos", 28)
 
-Esto crea una instancia de Usuario, y automáticamente ejecuta el cuerpo de ``__init__()``, con los argumentos dados.
+Esto crea una instancia de ``Usuario``, y automáticamente ejecuta el cuerpo de ``__init__()``, con los argumentos 
+dados.
 
-El método ``__init__``, y cualquier otro método a ser usado por las instancias de una clase, debe recibir al menos el parámetro ``self``,
-el cual es una referencia a la instancia en cuestión. Adicionalmente, es posible que un método requiera de otros 
-parámetros.
+El método ``__init__``, y cualquier otro método a ser usado por las instancias de una clase, debe recibir al menos el 
+parámetro ``self``, el cual es una referencia a la instancia en cuestión. Adicionalmente, es posible que un método 
+requiera de otros parámetros.
 
 Las variables de instancia (o propiamente "atributos" como se les llama en otros lenguajes) no necesitan ser 
 declarados, ya que una instancia de una clase se comporta dinámicamente. Es suficiente con inicializarlos desde el 
@@ -463,6 +476,44 @@ Podemos comprobar que los objetos son dinámicos asignando a una instancia nuevos
 	>>> u.direccion = "Chacao"
 	>>> u.direccion
 	'Chacao'
+	
+
+Destructor
+..........
+
+Lo mismo aplica para la destrucción de instancias en Python, no existe realmente un "destructor", pero contamos con
+un método similar a un destructor: ``__del__()``.
+
+``__del__()`` es un método que se ejecuta cuando un objeto está apunto de eliminarse mediante la función nativa del().
+
+.. code-block:: python
+
+	class Saludo:
+	    def __init__(self, nombre):
+	        self.nombre = nombre
+	    
+		def __del__(self):
+	        print "Adios!..."
+	    
+		def decir_hola(self):
+	        print "Hola %s!" % self.nombre
+
+
+Intentemos instanciar y destruir un objeto de la clase ``Saludo``:
+
+..code-block:: python
+
+	>>> s = Saludo("Bob")
+	>>> s.decir_hola()
+	'Hola Bob!'
+	>>> del s
+	'Adios!...'
+
+
+.. super()
+
+Atributos de clase
+..................
 
 Las variables declaradas explícitamente en una clase sin estar ligadas a ``self`` son consideradas atributos propios 
 de la clase, aunque también son accesibles desde las instancias.
@@ -486,6 +537,28 @@ de la clase, aunque también son accesibles desde las instancias.
 	5000
 		
 
+Es posible para una instancia modificar el valor de un atributo de la clase:
+
+.. code-block:: python
+
+	>>> class Contador():
+	...     cont = 0
+	...     def __init__(self):
+	...         self.__class__.cont += 1
+	...
+	>>> Contador.cont
+	0
+	>>> c = Contador()
+	>>> Contador.cont
+	1
+	>>> d = Contador()
+	>>> Contador.cont
+	2
+	>>> c.cont
+	2
+
+Podemos notar que en el código anterior se utiliza el atributo ``__class__``, el cual es una referencia a la clase
+de la instancia actual. Las clases *también* son objetos.
 
 
 Encapsulamiento
