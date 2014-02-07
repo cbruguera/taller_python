@@ -1,0 +1,1502 @@
+\documentclass{beamer}
+
+\mode<presentation>
+{
+
+  \usetheme{CambridgeUS} %CambridgeUS
+	\setbeamertemplate{blocks}[rounded]
+	\usecolortheme{wolverine}	%wolverine
+}
+
+
+\usepackage[spanish]{babel}
+\usepackage[latin1]{inputenc} 
+\usepackage{moreverb}
+\usepackage{minted}
+\usemintedstyle{github}
+
+\titlegraphic{\includegraphics[scale=0.36]{_static/logo_posma.png}}
+
+\title{Taller de Python}
+\author[Posma Group]{Posma Group}
+\date{$8$ de febrero de $2014$} 
+%\institute[] % (optional, but mostly needed)
+
+
+\begin{document}
+
+
+\begin{frame}
+\titlepage
+\end{frame} 
+
+
+\begin{frame}
+\frametitle{Contenido}
+\tableofcontents
+\end{frame} 
+
+
+\section{Aprendiendo Python...}
+
+
+\begin{frame}
+\frametitle{¿Por qué Python?}
+\begin{block}{}
+\begin{itemize}
+	\item Fácil de aprender
+	\pause
+	\item Altamente expresivo
+	\pause
+	\item Sintáxis legible
+	\pause
+	\item Software libre
+	\pause
+	\item Baterías incluidas
+	\pause
+	\item Amplia gama de bibliotecas para diversos propósitos
+\end{itemize}
+\end{block}
+\end{frame}  
+
+
+\section{Características del lenguaje}
+
+
+\begin{frame}
+\frametitle{Características}
+\begin{block}{}
+\begin{itemize}
+	\item Multiparadigma
+	\pause
+	\begin{itemize}
+		\item Programación imperativa
+		\item Programación funcional
+		\item Programación Orientada a Objetos
+	\end{itemize}
+	\pause
+	\item Facilidad de extensión
+	\pause
+	\item Sistema de tipos:
+	\begin{itemize}
+		\item Tipado dinámico
+		\item Tipado fuerte
+	\end{itemize}
+\end{itemize}
+\end{block}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Sistema de tipos}
+\begin{block}{Tipado dinámico}
+El tipo de las variables y las expresiones es evaluado en tiempo de ejecución. No es necesario declarar las variables antes de usarlas.
+\end{block}
+\pause
+\begin{block}{Tipado fuerte}
+El intérprete no permite operaciones entre tipos de datos distintos sin convertirlos explícitamente.
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{El intérprete interactivo}
+\begin{block}{}
+\begin{itemize}
+	\item Python incluye un intérprete interactivo en el cual se escriben las instrucciones en una especie de línea de comandos.
+	\item Las expresiones pueden ser introducidas una a una, pudiendo verse el resultado de su evaluación inmediatamente.
+\end{itemize}
+\end{block}
+\pause
+\begin{block}{Para iniciar el intérprete...}
+\scriptsize
+\begin{tabbing}
+	\texttt{\$ python}
+\end{tabbing}
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{El intérprete interactivo}
+\begin{block}{}
+\scriptsize
+\begin{minted}{python}
+	Python 2.5.2 (r252:60911, Oct  5 2008, 19:29:17) 
+	[GCC 4.3.2] on linux2
+	Type "help", "copyright", "credits" or "license" for more...
+	>>> 1 + 1
+	2
+\end{minted}
+\pause
+\begin{minted}{python}
+	>>> a = range(10)
+	>>> print a
+	[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+\end{minted}
+\pause
+\begin{minted}{python}
+	>>> type(a)
+	<type 'list'>
+\end{minted}
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Filosofía Python}
+\begin{block}{El Zen de Python}
+Los usuarios de Python se refieren a menudo a la Filosofía Python que es bastante análoga a la filosofía de Unix. El código que sigue los principios de Python de legibilidad y transparencia se dice que es ``pitónico'' (pythonic en inglés). 
+\end{block}
+\begin{block}{}
+Estos principios están descritos en \textit{El Zen de Python}, al cual podemos echar un vistazo ejecutando la siguiente línea en el intérprete:
+\scriptsize
+\begin{minted}{python}
+>>> import this
+\end{minted}
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{El intérprete interactivo}
+\begin{block}{}
+También es posible importar otros módulos desde el intérprete interactivo:
+\scriptsize
+\begin{minted}{python}
+>>> import math
+\end{minted}
+\end{block}
+\pause
+\begin{block}{}
+Para explorar los atributos (incluyendo métodos) utilizamos la función \texttt{dir()}:
+\scriptsize
+\begin{minted}{python}
+>>> dir(math)
+...
+\end{minted}
+\pause
+\begin{minted}{python}
+>>> math.pi
+3.141592653589793
+\end{minted}
+\end{block}
+\end{frame}
+
+
+\section{Tipos Básicos}
+
+
+\begin{frame}[fragile]
+\frametitle{Tipos básicos}
+\begin{block}{}
+Python implementa los tipos de datos habituales en otros lenguajes, como los tipos numéricos \texttt{int} y \texttt{float}, así como el tipo lógico o \texttt{bool}. Para los valores nulos, se utiliza el valor \texttt{None}.
+\end{block}
+\pause
+\begin{block}{}
+Es posible convertir de un tipo a otro invocando explícitamente el tipo deseado.
+\scriptsize
+\begin{minted}{python}
+>>> str(1)
+'1'
+>>> int('2')
+2
+>>> bool(1)
+True
+\end{minted}
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Cadenas de Texto}
+\begin{block}{Definición}
+Los strings son cadenas de texto que pueden definirse de varias formas:
+\begin{itemize}
+	\item Entre comillas simples: \mint{python}|'hola mundo!'|
+	\item Entre comillas dobles: \mint{python}|"hola mundo!"|
+	\item Entre comillas triples (cadenas multi-línea): 
+	\scriptsize
+	\begin{minted}{python}
+		'''hola
+		mundo'''
+	
+		"""todo 
+		bien?"""	
+	\end{minted}
+\end{itemize}
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Cadenas de Texto}
+\begin{block}{Concatenación de cadenas}
+Es posible concatenar dos o más cadenas usando el operador \texttt{+}, o usando el método \texttt{''.join()}
+\scriptsize
+\begin{minted}{python}
+>>> a = "hola"
+>>> a += " mundo!"
+>>> a
+'hola mundo!'
+\end{minted}
+\pause
+\begin{minted}{python}
+>>> b = ''.join(["x", "y", "z", a])
+>>> b
+'xyzhola mundo'
+>>> '_'.join(["cadena", "compuesta", "con", "delimitador"])
+'cadena_compuesta_con_delimitador'
+\end{minted}
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Cadenas de Texto}
+\begin{block}{Longitud de una cadena}
+La longitud de una cadena puede obtenerse mediante la función nativa \texttt{len()}:
+\scriptsize
+\begin{minted}{python}
+>>> len("Caracas")
+7
+\end{minted}
+\end{block}
+\pause
+\begin{block}{Formateo de cadenas}
+Es posible ``formatear'' cadenas usando el operador \texttt{\%}:
+\scriptsize
+\begin{minted}{python}
+>>> "La respuesta es %s." % 42
+'La respuesta es 42.
+>>> "El monto (bs %f) no es suficiente" % 64.85
+'El monto (bs 64.85) no es suficiente'
+>>> "El precio del producto seleccionado es de bs %.2f" % 50.4625
+'El precio del producto seleccionado es de bs 50.46'
+\end{minted}
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Cadenas de Texto}
+\begin{block}{Formateo de cadenas}
+También es posible formatear cadenas con el método \texttt{format()} del tipo \texttt{str}, con la siguiente sintaxis:
+\scriptsize
+\begin{minted}{python}
+>>> '{0}, {1}, {2}'.format('a', 'b', 'c')
+'a, b, c'
+>>> '{}, {}, {}'.format('a', 'b', 'c')  # a partir de python 2.7
+'a, b, c'
+>>> '{2}, {1}, {0}'.format('a', 'b', 'c')
+'c, b, a'
+>>> '{0}{1}{0}'.format('abra', 'cad')   # los indices pueden repetirse
+'abracadabra'
+\end{minted}
+\end{block}
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Cadenas de Texto}
+\begin{block}{Repetición}
+Una cadena puede repetirse utilizando el mismo operador de multiplicación (\texttt{*})
+\scriptsize
+\begin{minted}{python}
+>>> h = "hola"
+>>> h * 3
+'holaholahola'
+\end{minted}
+\end{block}
+\pause
+\begin{block}{Indexación}
+Para acceder a cualquiera de los caracteres de la cadena, se indexa de la misma manera que un ``arreglo'' en la mayoría de los lenguajes
+\scriptsize
+\begin{minted}{python}
+>>> "Venezuela"[5]
+'u'
+\end{minted}
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Cadenas de Texto}
+\begin{block}{Indexación negativa}
+También pueden utilizarse índices negativos, los cuales comienzan a recorrer la cadena desde el último caracter.
+\scriptsize
+\begin{minted}{python}
+>>> "Venezuela"[-1]
+'a'
+>>> "Venezuela"[-2]
+'l'
+\end{minted}
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Cadenas de Texto}
+\begin{block}{\textit{Slicing}}
+Es posible obtener una sub-cadena de un string especificando un rango en el índice, a esto se le conoce como ``rebanado'' o \textit{slicing}.
+\scriptsize
+\begin{minted}{python}
+>>> a = "Venezuela"
+>>> a[2:4]
+'ne'
+>>> a[:4]
+'Vene'
+>>> a[4:]
+'zuela'
+>>> a[:]
+'Venezuela'
+\end{minted}
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Cadenas de Texto}
+\begin{block}{Pertenencia}
+Para determinar si un caracter o subcadena está contenido dentro de otra cadena, se utiliza el operador \texttt{in}:
+\scriptsize
+\begin{minted}{python}
+>>> "zuel" in "Venezuela"
+True
+>>> "b" in "Venezuela"
+False
+\end{minted}
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Booleanos}
+\begin{block}{Definición}
+\begin{itemize}
+	\item Los datos de tipo \texttt{bool} pueden tomar los valores \texttt{True} o \texttt{False}. 
+	\item Las expresiones lógicas pueden evaluarse utilizando los operadores \texttt{and}, \texttt{or}, y \texttt{not} y los operadores usuales de comparación $(<, >, <=, >=, ==, !=)$.
+\end{itemize}
+\scriptsize
+\begin{minted}{python}
+>>> a = "hola mundo"
+>>> a[:4] == "hola" and a[5:] == "mundo"
+True
+\end{minted}
+\end{block}
+\pause
+\begin{block}{}
+Además, son considerados como ``falsos'' los siguientes valores:
+\begin{itemize}
+	\item \texttt{None}
+	\item El número cero en cualquier tipo
+	\item Cadenas o colecciones vacías: \texttt{'', (), [], \{\}}
+\end{itemize}
+\end{block}
+\end{frame}
+
+
+\section{Colecciones}
+
+
+\begin{frame}[fragile]
+\frametitle{Listas}
+\begin{block}{Definición}
+\begin{itemize}
+	\item La lista es uno de los tipos de dato fundamentales en Python. 
+	\item Una lista puede contener cualquier tipo de datos, incluyendo otras listas.
+\end{itemize}
+\scriptsize
+\begin{minted}{python}
+>>> a = [1, 2, 3, "hola", ['x', 'y']]
+\end{minted}
+\end{block}
+\pause
+\begin{block}{}
+Podemos convertir una cadena en una lista con la función \texttt{list()}:
+\scriptsize
+\begin{minted}{python}
+>>> list('hola')
+['h', 'o', 'l', 'a']
+\end{minted}
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Listas}
+\begin{block}{range()}
+\texttt{range(n)} es una función nativa que genera una lista de enteros dentro del intervalo $[0, n)$:
+\scriptsize
+\begin{minted}{python}
+>>> range(10)
+[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+\end{minted}
+\end{block}
+\pause
+\begin{block}{}
+También puede invocarse especificando ambos límites:
+\scriptsize
+\begin{minted}{python}
+>>> range(5, 10)
+[5, 6, 7, 8, 9]
+\end{minted}
+\end{block}
+\pause
+\begin{block}{}
+E incluso el tamaño del incremento:
+\scriptsize
+\begin{minted}{python}
+>>> range(10, 20, 3)
+[10, 13, 16, 19]
+\end{minted}
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Listas}
+\begin{block}{}
+Todas las operaciones previamente definidas para el tipo \texttt{str} aplican para las listas:
+\scriptsize
+\begin{minted}{python}
+>>> a = [1, 2, 3, "hola", ['x', 'y']]
+>>> len(a)
+5
+\end{minted}
+\pause
+\begin{minted}{python}
+>>> ['x', 'y'] in a
+True
+\end{minted}
+\pause
+\begin{minted}{python}
+>>> a[1]
+2
+>>> a[2:4]
+[3, 'hola']
+\end{minted}
+\pause
+\begin{minted}{python}
+>>> a * 2
+[1, 2, 3, 'hola', ['x', 'y'], 1, 2, 3, 'hola', ['x', 'y']]
+>>> [1, 2, 3] + [4, 5] + ["string"]
+[1, 2, 3, 4, 5, 'string']
+\end{minted}
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Métodos de listas}
+\begin{block}{}
+Además de las operaciones básicas, las listas implementan varios métodos propios.
+\end{block}
+\pause
+\begin{block}{append()}
+\scriptsize
+\begin{minted}{python}
+>>> li = ["a", "b", "c"]
+>>> li.append("d")
+>>> li
+['a', 'b', 'c', 'd']
+\end{minted}
+\end{block}
+\pause
+\begin{block}{extend()}
+\scriptsize
+\begin{minted}{python}
+>>> st = ["e", "f"]
+>>> li.extend(st)
+>>> li
+['a', 'b', 'c', 'd', 'e', 'f']
+\end{minted}
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Métodos de listas}
+\begin{block}{index()}
+\scriptsize
+\begin{minted}{python}
+>>> li = ["a", "b", "c"]
+>>> li.index('c')
+2
+>>> li.index("f")
+Traceback (most recent call last)_
+	File "<stdin>", line 1, in <module>
+ValueError: 'f' is not in list
+\end{minted}
+\end{block}
+\pause
+\begin{block}{remove()}
+\scriptsize
+\begin{minted}{python}
+>>> li = ['a', 'b', 'c']
+>>> li.remove('b')
+>>> li
+['a', 'c']
+\end{minted}
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Listas por comprensión}
+\begin{block}{}
+\begin{itemize}
+	\item Una de las características más poderosas de Python es la posibilidad de definir listas por comprensión. 
+	\item Es posible definir una colección de elementos de una manera acorde a una definición matemática. 
+\end{itemize}
+\end{block}
+\pause
+\begin{block}{}
+Ejemplo: generar una lista con todos los enteros impares hasta 99:
+\scriptsize
+\begin{minted}{python}
+>>> L = [x for x in range(100) if x % 2 != 0]
+>>> L
+[1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23, 25, 27, 29, 31,
+33, 35, 37, 39, 41, 43, 45, 47, 49, 51, 53, 55, 57, 59, 61,
+63, 65, 67, 69, 71, 73, 75, 77, 79, 81, 83, 85, 87, 89, 91,
+93, 95, 97, 99]
+\end{minted}
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Listas por comprensión}
+\begin{block}{}
+Las listas por comprensión pueden contener expresiones complejas y funciones anidadas:
+\scriptsize
+\begin{minted}{python}
+>>> from math import pi
+>>> [str(round(pi, i)) for i in range(1, 6)]
+['3.1', '3.14', '3.142', '3.1416', '3.14159']
+\end{minted}
+\end{block}
+\pause
+\begin{block}{}
+Lista de números primos:
+\scriptsize
+\begin{minted}{python}
+>>> noprimes = [j for i in range(2, 8) for j in range(i*2, 50, i)]
+>>> primes = [x for x in range(2, 50) if x not in noprimes]
+>>> print primes
+[2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47]
+\end{minted}
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Tuplas}
+\begin{block}{Definición}
+Una tupla es una estructura parecida a una lista, con la diferencia de que ésta es inmutable, es decir, no pueden eliminarse o agregarse elementos, ni éstos pueden cambiar una vez creada la tupla.
+\end{block}
+\pause
+\begin{block}{}
+\scriptsize
+\begin{minted}{python}
+>>> t = ("las tuplas", "son", "immutables")
+>>> t[0]
+'las tuplas'
+>>> t[0] = "cadena"
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+TypeError: 'tuple' object does not support item assignment
+\end{minted}
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Tuplas}
+\begin{block}{Operaciones}
+Las operaciones de pertenencia, indexación y \textit{slicing} funcionan de igual forma que en las listas:
+\scriptsize
+\begin{minted}{python}
+>>> t = (10, 11, 12)
+>>> 10 in t
+True
+>>> t[-1]
+12
+>>> t[1:]
+(11, 12)
+\end{minted}
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Tuplas}
+\begin{block}{Asignación múltiple}
+\scriptsize
+\begin{minted}{python}
+>>> x, y, z = (7, 8, 9)
+>>> x
+7
+>>> y
+8
+>>> z
+9
+\end{minted}
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Tuplas}
+\begin{block}{Conversión entre listas y tuplas}
+Siempre es posible convertir de uno a otro tipo de dato con las funciones nativas \texttt{list()} y \texttt{tuple()}.
+\scriptsize
+\begin{minted}{python}
+>>> t = ("x", "y", "hola")
+>>> list(t)
+['x', 'y', 'hola']
+>>> tuple(range(10))
+(0, 1, 2, 3, 4, 5, 6, 7, 8, 9)
+\end{minted}
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Diccionarios}
+\begin{block}{Definición}
+Un diccionario define una relación 1 a 1 entre claves y valores, algo muy parecido a los objetos de la clase Hashtable en Java. 
+\end{block}
+\begin{block}{}
+\scriptsize
+\begin{minted}{python}
+>>> d = {"servidor": "posma", "database": "master"}
+>>> d
+{'servidor': 'posma', 'database': 'master'}
+>>> d["servidor"]
+'posma'
+>>> d["database"]
+'master'
+>>> d["posma"]
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+KeyError: 'posma'
+\end{minted}
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Diccionarios}
+\begin{block}{}
+\begin{itemize}
+	\item Los valores de los diccionarios pueden ser de cualquier tipo, incluso otros diccionarios.
+	\pause
+	\item Un diccionario puede contener simultáneamente valores de distintos tipos.
+	\pause
+	\item Las claves deben ser de algún tipo inmutable, como números, cadenas o incluso tuplas.
+\end{itemize}
+\end{block}
+\pause
+\begin{block}{}
+\scriptsize
+\begin{minted}{python}
+>>> d = {1: "uno", 2: "dos", 2.5: "dos punto cinco"}
+>>> d[2.5]
+'dos punto cinco'
+\end{minted}
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Diccionarios}
+\begin{block}{del()}
+Para eliminar un registro en el diccionario se utiliza la función \texttt{del(k)}:
+\scriptsize
+\begin{minted}{python}
+>>> del(d[2.5])
+>>> d
+{1: "uno", 2: "dos"}
+\end{minted}
+\end{block}
+\pause
+\begin{block}{clear()}
+Para limpiar el contenido completo de un diccionario, se utiliza el método \texttt{clear()}.
+\scriptsize
+\begin{minted}{python}
+>>> d.clear()
+>>> d
+{}
+\end{minted}
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Diccionarios}
+\begin{block}{zip() y dict()}
+\scriptsize
+\begin{minted}{python}
+>>> ciudades = ["Caracas", "Berlin", "Buenos Aires", "Lima"]
+>>> paises = ["Venezuela", "Alemania", "Argentina", "Peru"]
+>>> parejas = zip(paises, ciudades)
+>>> parejas
+[('Venezuela', 'Caracas'), ('Alemania', 'Berlin'), ('Argentina', 'Buenos Aires'),
+('Peru', 'Lima')]
+\end{minted}
+\pause
+\begin{minted}{python}
+>>> capitales = dict(parejas)
+>>> capitales
+{'Argentina': 'Buenos Aires', 'Venezuela': 'Caracas', 'Peru': 'Lima', 
+'Alemania': 'Berlin'}
+\end{minted}
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Conjuntos}
+\begin{block}{Definición}
+Python tiene la particularidad de implementar \texttt{set} como tipo de dato nativo, el cual corresponde al concepto matemático de conjunto, e implementa todas sus funciones básicas.
+\end{block}
+\pause
+\begin{block}{}
+Un conjunto se define como una secuencia de elementos entre llaves, o mediante la función \texttt{set(L)} a partir de una lista de elementos \texttt{L}.
+\scriptsize
+\begin{minted}{python}
+>>> pares = {2, 4, 6, 8, 10}
+>>> pares
+set([8, 10, 4, 2, 6])
+\end{minted}
+\pause
+\begin{minted}{python}
+type(pares)
+<type 'set'>
+\end{minted}
+\pause
+\begin{minted}{python}
+>>> impares = set([n for n in range(10) if n % 2 != 0])
+>>> impares
+set([1, 3, 9, 5, 7])
+\end{minted}
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Conjuntos}
+\begin{block}{}
+Correspondiendo con el principio matemático de los conjuntos, ningún elemento se repite.
+\scriptsize
+\begin{minted}{python}
+>>> set([1, 2, 3, 2, 1])
+set([1, 2, 3])
+\end{minted}
+\end{block}
+\pause
+\begin{block}{}
+Un conjunto puede definirse a partir de una cadena de texto.
+\scriptsize
+\begin{minted}{python}
+>>> zen = "If the implementation is hard to explain, it's a bad idea."
+>>> set(zen)
+set(['a', ' ', 'b', 'e', 'd', "'", 'f', 'I', 'h', 'm', 'l', 'p', 'n', 'i', 's',
+'r', 't', 'x', '.', ',', 'o'])
+\end{minted}
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Métodos de Conjuntos}
+\begin{block}{add()}
+\scriptsize
+\begin{minted}{python}
+>>> conj = {1, 2, 3}
+>>> conj.add(4)
+>>> conj
+set([1, 2, 3, 4])
+\end{minted}
+\end{block}
+\pause
+\begin{block}{clear()}
+\scriptsize
+\begin{minted}{python}
+>>> conj.clear()
+>>> conj
+set([])
+\end{minted}
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Métodos de Conjuntos}
+\begin{block}{copy()}
+\scriptsize
+\begin{minted}{python}
+>>> conj.add(1)
+>>> conj.add(42)
+>>> conj2 = conj.copy()
+>>> conj2
+set([1, 42])
+\end{minted}
+\end{block}
+\pause
+\begin{block}{}
+Copiar un conjunto no es lo mismo que asignárselo a otra variable, ya que en la asignación ambas variables se refieren a un mismo objeto, por lo que modificaciones a uno afectarían el valor del otro y viceversa.
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Métodos de Conjuntos}
+\begin{block}{difference()}
+\scriptsize
+\begin{minted}{python}
+>>> x = {"a", "b", "c", "d", "e"}
+>>> y = {"b", "c"}
+>>> z = {"c", "d"}
+>>> x.difference(y)
+set(['a', 'e', 'd'])
+>>> x.difference(y).difference(z)
+set(['a', 'e'])
+\end{minted}
+\end{block}
+\pause
+\begin{block}{}
+\scriptsize
+\begin{minted}{python}
+>>> x - y
+set(['a', 'e', 'd'])
+>>> x - y - z
+set(['a', 'e'])
+\end{minted}
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Métodos de Conjuntos}
+\begin{block}{discard()}
+\scriptsize
+\begin{minted}{python}
+>>> x = {"a", "b", "c", "d", "e"}
+>>> x.discard("a")
+>>> x
+set(['c', 'b', 'e', 'd'])
+>>> x.discard("z")
+>>> x
+set(['c', 'b', 'e', 'd'])
+\end{minted}
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Métodos de Conjuntos}
+\begin{block}{remove()}
+A diferencia de \texttt{discard}, \texttt{remove} elimina un elemento dado, y si éste no existe ocurre un \texttt{KeyError}.
+\scriptsize
+\begin{minted}{python}
+>>> x = {"a", "b", "c", "d", "e"}
+>>> x.remove("a")
+>>> x
+set(['c', 'b', 'e', 'd'])
+>>> x.remove("z")
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+KeyError: 'z'
+\end{minted}
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Métodos de Conjuntos}
+\begin{block}{intersection()}
+\scriptsize
+\begin{minted}{python}
+>>> x = {"a", "b", "c", "d", "e"}
+>>> y = {"c", "d", "e", "f", "g"}
+>>> x.intersection(y)
+set(['c', 'e', 'd'])
+\end{minted}
+\end{block}
+\pause
+\begin{block}{union()}
+\scriptsize
+\begin{minted}{python}
+	>>> c1 = {"Carlos", "Jorge", "Luis"}
+	>>> c2 = {"Oscar", "Antonio"}
+	>>> c1.union(c2)
+	set(['Luis', 'Antonio', 'Jorge', 'Carlos', 'Oscar'])
+\end{minted}
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Métodos de Conjuntos}
+\begin{block}{isdisjoint()}
+Retorna \texttt{True} si la intersección entre dos conjuntos es nula.
+\scriptsize
+\begin{minted}{python}
+>>> set1 = {"a", "b", "c"}
+>>> set2 = {"c", "d", "e"}
+>>> set3 = {"d", "e", "f"}
+>>> set1.isdisjoint(set2)
+False
+>>> set1.isdisjoint(set3)
+True
+\end{minted}
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Métodos de Conjuntos}
+\begin{block}{issubset()}
+\scriptsize
+\begin{minted}{python}
+>>> x = {"a", "b", "c", "d", "e"}
+>>> y = {"c", "d"}
+>>> x.issubset(y)
+False
+>>> y.issubset(x)
+True
+\end{minted}
+\end{block}
+\pause
+\begin{block}{issuperset()}
+\scriptsize
+\begin{minted}{python}
+>>> x.issuperset(y)
+True
+\end{minted}
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Métodos de Conjuntos}
+\begin{block}{}
+También es posible utilizar los operadores de comparación aritmética para evaluar subconjuntos:
+\scriptsize
+\begin{minted}{python}
+>>> set1 = {1, 2, 3}
+>>> set2 = {2}
+>>> set3 = set2.copy()
+>>> set2 < set1
+True
+set2 == set3
+True
+set1 <= set2
+False
+\end{minted}
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Métodos de Conjuntos}
+\begin{block}{pop()}
+El método \texttt{pop()} retorna un elemento (el primero que encuentra) y lo elimina del conjunto. Se produce un KeyError cuando el conjunto se encuentra vacío.
+\scriptsize
+\begin{minted}{python}
+>>> x = {"a", "b", "c", "d", "e"}
+>>> x.pop()
+'a'
+>>> x.pop()
+'c'
+\end{minted}
+\end{block}
+\end{frame}
+
+
+\section{Usando un archivo fuente}
+
+
+\begin{frame}[fragile]
+\frametitle{Creando un archivo fuente}
+\begin{block}{}
+\begin{itemize}
+	\item El intérprete interactivo es bastante útil para hacer pruebas y entender el lenguaje, pero para el desarrollo de software es necesario ejecutar scripts.
+\end{itemize}
+\end{block}
+\pause
+\begin{block}{}
+Crearemos un archivo usando \texttt{vim}:
+\scriptsize
+\begin{tabbing}
+	\texttt{\$ vim script.py}
+\end{tabbing}
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Creando un archivo fuente}
+\begin{block}{}
+Escribamos un código de prueba:
+\scriptsize
+\begin{minted}{python}
+# -*- coding: utf-8 -*-
+import math
+
+""" De esta manera definimos los
+comentarios multilinea"""
+print "el valor de pi es %s" % math.pi
+\end{minted}
+\end{block}
+\pause
+\begin{block}{}
+Para ejecutar el script, llamamos al intérprete pasándole el nombre del archivo a ejecutar.
+\scriptsize
+\begin{tabbing}
+	\texttt{\$ python script.py} \\
+	\pause
+	\texttt{el valor de pi es 3.14159265359}
+\end{tabbing}
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Funciones}
+\begin{block}{Definición}
+Como la mayoría de los lenguajes, Python provee el uso de funciones, las cuales se declaran mediante la palabra reservada
+\texttt{def}, seguido del nombre de la función, una lista opcional de parámetros entre paréntesis y dos puntos (:)
+\scriptsize
+\begin{minted}{python}
+def mi_funcion(param1, param2, param3=False):
+    pass	# mi_funcion no hace nada
+\end{minted}
+\end{block}
+\pause
+\begin{block}{}
+\begin{itemize}
+	\item Es posible definir parámetros opcionales, especificándoles un valor por defecto.
+	\pause
+	\item No se especifica ningún tipo de valor de retorno, ya que en Python los tipos se determinan dinámicamente.
+\end{itemize}
+\end{block}
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Funciones}
+\begin{block}{Indentación}
+En Python la indentación de bloques de código es obligatoria, ya que no se utilizan las llaves (\{\}) ni ningún otro delimitador para determinar el comienzo y fin de los bloques.
+\end{block}
+\pause
+\begin{block}{}
+\scriptsize
+\begin{minted}{python}
+def factorial(n):
+    if n <= 1:
+        return 1
+    else:
+        return n * factorial(n - 1)
+\end{minted}
+\end{block}
+\pause
+\begin{block}{}
+Como podemos ver, tampoco se terminan las instrucciones con punto y coma ni ningún otro caracter especial. 
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Funciones}
+\begin{block}{Docstring}
+Para documentar una función, colocamos un comentario multilínea al comienzo del cuerpo de una función.
+\scriptsize
+\begin{minted}{python}
+# -*- coding: utf-8 -*-
+
+def factorial(n):
+    """
+    Definicion recursiva de factorial
+    =================================
+
+    Retorna el factorial de un entero n
+    si n == 1 retorna 1
+    sino retorna n * fact(n-1)
+    """
+    if n <= 1:
+        return 1
+    else:
+        return n * factorial(n-1)
+\end{minted}
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Funciones}
+\begin{block}{}
+Desde el intérprete interactivo, podemos importar ahora nuestro módulo (script.py):
+\scriptsize
+\begin{minted}{python}
+>>> import script
+\end{minted}
+\end{block}
+\pause
+\begin{block}{help()}
+Ahora con la función \texttt{help()} podemos revisar la documentación de la función factorial.
+\scriptsize
+\begin{minted}{python}
+>>> help(script.factorial)
+\end{minted}
+\end{block}
+\pause
+\begin{block}{}
+Si queremos poder invocar \texttt{factorial()} sin el prefijo del módulo, debemos importar la función explícitamente.
+\scriptsize
+\begin{minted}{python}
+>>> from script import factorial
+>>> factorial(7)
+5040
+\end{minted}
+\end{block}
+\end{frame}
+
+
+\section{Estructuras de control de flujo}
+
+
+\begin{frame}[fragile]
+\frametitle{Condicional}
+\begin{block}{if-else}
+\scriptsize
+\begin{minted}{python}
+def calcular_impuestos(ingreso):
+
+    if ingreso <= 8004:
+        impuesto = 0
+    elif ingreso <= 13469:
+        y = (ingreso - 8004.0)/10000.0
+        impuesto = (912.17 * y + 1400) * y
+    elif ingreso <= 52881:
+        z = (ingreso - 13469.0) / 10000.0
+        impuesto = (228.74 * z + 2397.0) * z + 1038.0
+    else:
+        impuesto = ingreso * 0.44 - 15694
+    
+    return impuesto
+\end{minted}
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Ciclos}
+\begin{block}{while}
+\scriptsize
+\begin{minted}{python}
+import sys
+
+text = ""
+while True:
+    c = sys.stdin.read(1)
+    text = text + c
+    if c == '\n':
+        break
+
+print "Input: %s" % text
+\end{minted}
+\end{block}
+\pause
+\begin{block}{}
+Esta lectura de caracteres puede hacerse utilizando la función \texttt{raw\_input()}
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Ciclos}
+\begin{block}{while-else}
+Una particularidad de los ciclos en python, es que pueden incluir un bloque \texttt{else}, el cual se ejecuta si el ciclo termina sin usar \texttt{break}.
+\scriptsize
+\begin{minted}{python}
+while condicion:
+    if error():
+        # manejar error
+        break    # salir del ciclo
+else:
+    # no hubo error
+    hacer_algo()
+\end{minted}
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Ciclos}
+\begin{block}{for}
+El ciclo for en python, a diferencia de lenguajes como C o Java, es más bien una iteración entre los elementos de una secuencia. El ciclo \texttt{for} también acepta opcionalmente un bloque \texttt{else}:
+\scriptsize
+\begin{minted}{python}
+def contiene_par(lista):
+    for n in lista:
+        if n % 2 == 0:
+            # se encontro un numero par
+            return True
+    else:
+        # no se encontro un numero par
+        return False
+\end{minted}
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Ciclos}
+\begin{block}{for}
+Para implementar un \texttt{for} con un contador entero como es usual en los lenguajes imperativos, se utiliza \texttt{range(n)}:
+\scriptsize
+\begin{minted}{python}
+for n in range(10):
+    print n
+\end{minted}
+\end{block}
+\pause
+\begin{block}{Recorriendo un diccionario}
+Es posible recorrer cualquier objeto secuencial en un ciclo for, incluyendo diccionarios, de la siguiente manera:
+\scriptsize
+\begin{minted}{python}
+for key,val in d:
+    print "d[%s] => %s" % (key, val)
+\end{minted}
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Práctica}
+\begin{block}{Ejercicio práctico 1}
+Los factores primos de 13195 son 5, 7, 13 and 29.
+\end{block}
+\begin{block}{}
+Implementar una función que reciba un entero n y retorne su factor primo más grande.
+\end{block}
+\begin{block}{}
+Éxito!
+\end{block}
+\end{frame}
+
+
+\section{Excepciones y manejo de archivos}
+
+
+\begin{frame}[fragile]
+\frametitle{Excepciones}
+\begin{block}{}
+\textsl{``Los errores nunca deberían pasar silenciosamente.''} (\textit{El Zen de Python})
+\end{block}
+\pause
+\begin{block}{}
+Algunas excepciones comunes son:
+\begin{itemize}
+	\item Acceder a una clave inexistente en un diccionario genera un \texttt{KeyError}.
+	\pause
+	\item Buscar el índice de un elemento inexistente en una lista genera un \texttt{ValueError}
+	\pause
+	\item Invocar un método inexistente genera un \texttt{AttributeError}.
+	\pause
+	\item Hacer referencia a una variable inexistente genera un \texttt{NameError}.
+	\pause
+	\item Tratar de operar sobre tipos de datos mezclados sin conversión explícita genera un \texttt{TypeError}.
+\end{itemize}
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Excepciones}
+\begin{block}{Capturando excepciones}
+\scriptsize
+\begin{minted}{python}
+while True:
+    try:
+        n = raw_input("Introduzca un entero: ")
+        n = int(n)
+        break
+    except ValueError:
+        print("El valor introducido es invalido, por favor intente de nuevo")
+\end{minted}
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Excepciones}
+\begin{block}{}
+Es posible manejar por separado varios tipos de excepciones:
+\scriptsize
+\begin{minted}{python}
+import sys
+
+try:
+    f = open('myfile.txt')
+    s = f.readline()
+    i = int(s.strip())
+except IOError as e:
+    print "I/O error({0}): {1}".format(e.errno, e.strerror)
+except ValueError:
+    print "Could not convert data to an integer."
+except:
+    print "Unexpected error:", sys.exc_info()[0]
+    raise
+\end{minted}
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Excepciones}
+\begin{block}{try-except-else}
+El bloque de manejo de excepciones acepta opcionalmente un bloque else, el cual se ejecuta si el código no genera ninguna excepción.
+\scriptsize
+\begin{minted}{python}
+try:
+    alguna_operacion()
+except:
+    print "Error al intentar la operacion"
+else:
+    print "Operacion exitosa"
+\end{minted}
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Manejo de archivos}
+\begin{block}{Definición}
+Python implementa el manejo de archivos a través del tipo \texttt{file}. Para abrir un archivo se utiliza la función nativa \texttt{open()}:
+\end{block}
+\pause
+\begin{block}{}
+\scriptsize
+\begin{minted}{python}
+file = open("archivo.txt", "r")
+\end{minted}
+\end{block}
+\begin{block}{}
+El primer argumento de \texttt{open()} es el nombre del archivo que se desea abrir, y el segundo es el modo de acceso, que puede ser: 
+\begin{itemize}
+	\item ``r'': lectura
+	\item ``w'': escritura 
+	\item ``a'': agregación
+\end{itemize}
+\end{block}
+\pause
+\begin{block}{}
+La función también acepta el modo \texttt{r+} (lectura y escritura). Si no se especifica un modo, se asume que el archivo está en modo de lectura.
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Manejo de archivos}
+\begin{block}{Lectura de archivos}
+Para leer de un archivo, los objetos de tipo \texttt{file} cuentan con los siguientes métodos:
+\begin{itemize}
+	\item \texttt{read()}: Retorna una sola cadena con todo el archivo.
+	\pause
+	\item \texttt{readline()}: Va retornando línea por línea.
+	\pause
+	\item \texttt{readlines()}: Retorna una lista de líneas.
+\end{itemize}
+\end{block}
+\pause
+\begin{block}{}
+También es posible iterar sobre un archivo, lo cual es rápido, eficiente y simple:
+\scriptsize
+\begin{minted}{python}
+f = open()
+for line in f:
+    print line
+\end{minted}
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Manejo de archivos}
+\begin{block}{}
+Desde el intérprete interactivo, intentemos abrir el mismo archivo script.py.
+\scriptsize
+\begin{minted}{python}
+>>> fobj = open("script.py", "r")
+>>> for line in fobj:
+...     print line.rstrip()
+\end{minted}
+\end{block}
+\pause
+\begin{block}{}
+Una vez terminamos de utilizar un archivo, es necesario cerrarlo:
+\scriptsize
+\begin{minted}{python}
+>>> fobj.close()
+\end{minted}
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Manejo de archivos}
+\begin{block}{Escritura en un archivo}
+Para escribir sobre un archivo utilizamos el método \texttt{write()}:
+\scriptsize
+\begin{minted}{python}
+try:
+    fobj_in = open("script.py", "r")
+    fobj_out = open("lineas.txt","w")
+    i = 1
+    for line in fobj_in:
+        print line.rstrip()
+        fobj_out.write(str(i) + ": " + line)
+        i = i + 1
+    fobj_in.close()
+    fobj_out.close()
+except IOError as err:
+    print "Error en manejo de archivo: %s" % err
+\end{minted}
+\end{block}
+\pause
+\begin{block}{}
+También es posible escribir una lista de líneas de una vez utilizando la función \texttt{writelines()}
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Práctica}
+\begin{block}{Ejercicio práctico 2}
+Implementar un script que lea un archivo en donde en cada línea habrá una cadena de bits, y escriba en un 
+archivo de salida su correspondiente entero decimal en cada línea.
+\end{block}
+\begin{block}{}
+Éxito!
+\end{block}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{}
+\huge 
+\bigskip \bigskip 
+\begin{center}
+\textsl{Muchas gracias!}
+\end{center}
+\end{frame}
+
+
+\end{document}
