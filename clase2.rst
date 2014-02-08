@@ -22,8 +22,33 @@ sin embargo, aún no ahondamos en las áreas de mayor aplicación práctica del leng
 las características más avanzadas de Python. Luego de este curso el estudiante estará en plena capacidad para 
 implementar sus propios proyectos con amplitud de poder aplicativo en el mundo real.
 
+
+Funciones con número variable de argumentos
+-------------------------------------------
+
+Hasta ahora sólo hemos definido funciones con una cantidad fija de parámetros, sin embargo, en Python es posible definir
+funciones sin conocer de antemano el número de argumentos que ésta puede recibir. Para esto se usan los parámetros 
+``*args`` y ``**kwargs``
+
+.. code-block:: python
+
+	def prueba_args(param1, *args):
+	    print "param1 = %s" % param1
+	    for a in args:
+	        print "otro argumento = %s" % a
+
+En este caso, viene en ``args`` una lista de valores sin ningún nombre asociado. Para recibir un diccionario con un número 
+variable de argumentos con nombres, se utiliza ``**kwargs``:
+
+.. code-block:: python
+
+	def prueba_kwargs(**kwargs):
+	    for k in kwargs:
+	        print "%s = %s" % (k, kwargs[k])
+
+	
 Modelo de ejecución: Todo es un objeto
-----------------------------------------
+--------------------------------------
 
 Una de las particularidades de Python, es la idea de que *todo es un objeto*, y esto no significa que el usuario esté 
 obligado a adoptar el paradigma de la Programación Orientada a Objetos al momento de programar. 
@@ -159,7 +184,7 @@ que es posible pasar funciones como argumentos a otras funciones:
 	>>> map(incr, [1,2,3,4])
 	[2, 3, 4, 5]
 	
-La función ``map()`` ya viene implementada en el lenguaje Python, por ser una característica común de los lenguajes 
+La función ``map`` ya viene implementada en el lenguaje Python, por ser una característica común de los lenguajes 
 funcionales.
 
 Es incluso factible asociar el nombre de una función a una nueva función o a algún otro valor. Para el intérprete sólo 
@@ -367,6 +392,9 @@ las cuales ésta pueda heredar.
 En este caso hemos definido una clase que no define ningún miembro. Lo único que requiere una clase es un nombre. 
 Sin embargo, en la práctica, una clase probablemente heredará de otras clases, y definirá una serie de atributos.
 
+Si una clase no hereda de alguna otra clase conocida, es recomendable definirla al menos como una subclase de 
+``object``.
+
 Herencia
 ~~~~~~~~
 
@@ -427,36 +455,6 @@ issubclass()
 	>>> issubclass(ContadorEspecial, Contador)
 	True
 
-Clases de nuevo estilo
-......................
-
-A raiz de Python 2.2, el lenguaje soporta un nuevo "estilo" de clases, cuya ventaja primordial es unificar el sistema
-de clases y tipos. 
-
-Si intentamos averiguar el tipo de una instancia en particular, el intérprete nos dirá simplemente que el objeto es
-de tipo ``instance``, esto no es muy útil.
-
-.. code-block:: python
-
-	>>> class Dummy():
-	...     pass
-	...
-	>>> d = Dummy()
-	>>> type(d)
-	<type 'instance'>
-
-Es recomendable entonces utilizar el nuevo estilo de clases, sencillamente especificando las clases como herederas del
-tipo ``object``:
-
-	>>> class NewStyle(object)
-	...     pass
-	...
-	>>> ns = NewStyle()
-	>>> type(ns)
-	<class '__main__.NewStyle'
-
-.. A partir de Python 3, todas las clases ya están implementadas de esta manera por defecto.
-
 
 Constructor
 ~~~~~~~~~~~
@@ -482,7 +480,7 @@ Para crear un objeto instancia de la clase ``Usuario``, invocamos a la clase dir
 
 	>>> u = Usuario("Carlos", 28)
 
-Esto crea una instancia de ``Usuario``, y automáticamente ejecuta el cuerpo de ``__init__()``, con los argumentos 
+Esto crea una instancia de ``Usuario``, y automáticamente ejecuta el cuerpo de ``__init__``, con los argumentos 
 dados.
 
 El método ``__init__``, y cualquier otro método a ser usado por las instancias de una clase, debe recibir al menos el 
@@ -513,9 +511,9 @@ Destructor
 ~~~~~~~~~~
 
 Lo mismo aplica para la destrucción de instancias en Python, no existe realmente un "destructor", pero contamos con
-un método similar a un destructor: ``__del__()``.
+un método similar a un destructor: ``__del__``.
 
-``__del__()`` es un método que se ejecuta cuando un objeto está apunto de eliminarse mediante la función nativa del().
+``__del__`` es un método que se ejecuta cuando un objeto está apunto de eliminarse mediante una llamada a del().
 
 .. code-block:: python
 
@@ -680,21 +678,47 @@ Este módulo permite la codificación de estructuras de Python en formato JSON (*J
 	'["foo", {"bar": ["baz", null, 1.0, 2]}]'
 	
 
-Decoradores
------------
+random
+~~~~~~
 
-El lenguaje Python provee un sintaxis simple pero bastante poderosa llamada "decoradores". Un decorador es una función
-o una clase que envuelve (o decora) otra función o método. La función decorada reemplaza la función original. Esto 
-es posible debido a que en Python las funciones son objetos de primer orden. La sintaxis de los decoradores es de la
-siguiente manera:
+En el módulo ``random`` están implementadas varias funcionalidades concernientes a generación de aleatoriedad.
 
 .. code-block:: python
 
-	def decorador(func)
+	>>> import random
+	>>> random.randrange(100)
+	72
+	>>> random.randrange(100)
+	7
+	>>> random.randrange(100)
+	40
+	
+Podemos incluso aleatorizar el orden de una lista:
+
+.. code-block:: python
+
+	>>> L = range(10)
+	>>> L
+	[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+	>>> random.shuffle(L)
+	[1, 4, 3, 0, 7, 5, 6, 9, 2, 8]
+		
+	
+Decoradores
+-----------
+
+El lenguaje Python provee un sintaxis simple pero bastante poderosa llamada "decoradores". Un decorador no es más que 
+una función o una clase que envuelve (o decora) otra función o método. La función decorada reemplaza la función 
+original. Esto es posible debido a que en Python las funciones son objetos de primer orden. La sintaxis de los 
+decoradores la siguiente:
+
+.. code-block:: python
+
+	def mi_decorador(func)
 	    # manipular func
 	    return func
 
-	@decorador
+	@mi_decorador
 	def funcion():
 	    # Hacer algo
 	# funcion() ha sido decorada
@@ -743,8 +767,140 @@ guardados en memoria.
 	    return fibonacci(n-1) + fibonacci(n-2)
 
    
-Iteradores y generadores
-------------------------
+Iterables e iteradores
+----------------------
 
-Instalación de paquetes con pip / virtualenv
---------------------------------------------
+Hemos visto anteriormente que en los ciclos ``for`` somos capaces de recorrer cierto tipo de objetos, como las listas
+o las cadenas. Esto es posible porque se trata de objetos *iterables*.
+
+Para que un objeto sea iterable, éste debe implementar el método ``__iter__``, el cual retorna un tipo de objeto 
+llamado *iterador*. 
+
+Un *iterador* es un objeto que cumple con dos características:
+* Implementa el método ``__iter__``, en el cual se retorna a sí mismo.
+* Implementa el método ``next``, el cual se encarga de retornar el próximo elemento de la colección cada vez que es 
+invocado. En el caso de no haber más próximos elementos, éste levanta una excepción del tipo ``StopIteration``.
+
+
+Cuando utilizamos un objeto secuencial en un ``for``, en realidad el intérprete está obteniendo un iterador del objeto 
+que queremos recorrer.
+
+Consideremos una lista L, esta lista es un *iterable*, mas ella misma no es un iterador:
+
+.. code-block:: python
+
+	>>> a = [1, 2, 3, 4]
+	>>> a.__iter__
+	<method-wrapper '__iter__' of list object at 0x014E5D78>
+	>>> it = a.__iter__()
+	>>> it
+	<listiterator object at 0x011E3DF0>
+
+Si quisiéramos implementar una clase que sea iterable, debemos implementar el protocolo descrito anteriormente:
+
+.. code-block:: python
+
+	import random
+
+	class MiLista(list):
+	    def __iter__(self):
+	        return MiRandomIter(self)
+		
+	class MiRandomIter(object):
+	    def __init__(self, lst):
+	        self.lst = lst
+	        self.indexes = range(len(lst))
+	        random.shuffle(self.indexes)
+	        self.i = 0
+
+	    def __iter__(self):
+	        return self
+
+	    def next(self):
+	        if self.i < len(self.lst):
+	            self.i += 1         
+	            return self.lst[self.indexes[self.i - 1]]
+	        else:
+	            raise StopIteration
+
+
+Originalmente, son iterables las cadenas de texto y todas las colecciones nativas del lenguaje (listas, tuplas, 
+conjuntos y diccionarios). Un número entero, por ejemplo, no es iterable.
+
+.. code-block:: python
+
+	>>> n = 50
+	>>> for i in n:
+	...     print i
+	...
+	Traceback (most recent call last):
+	  File "<stdin>", line 1, in <module>
+	TypeError: 'int' object is not iterable
+
+
+**Ejercicio práctico:** implementar un tipo de entero que sea iterable, y que vaya retornando cada vez el siguiente entero
+más cercano a cero.
+
+Generadores
+~~~~~~~~~~~
+
+Un generador es un tipo de iterador especial, que se utiliza para generar ciertas secuencias. Para entender generadores
+es necesario entender primero la instrucción ``yield``. 
+
+``yield`` es una instrucción que puede utilizarse únicamente dentro de una función, y actúa de manera similar a 
+``return``, sólo que en este caso la función retorna un *generador*, y conserva el estado de ejecución de dicha función.
+
+Veamos el siguiente ejemplo:
+
+.. code-block:: python
+
+	>>> def uno_dos_tres():
+	...     yield 1
+	...     yield 2
+	...     yield 3
+	...
+	>>> uno_dos_tres()
+	<generator object uno_dos_tres at 0x014E5D78>
+
+Ahora intentemos recorrer ``uno_dos_tres()`` con un ciclo ``for``. ¿Qué sucede?...
+
+La instrucción ``yield`` permite retornar progresivamente valores sin necesidad de ejecutar el código completo de la 
+función que los genera. Esto es de bastante utilidad cuando queremos trabajar con secuencias muy grandes o incluso
+infinitas.
+
+Podemos implementar, por ejemplo, una función que sea capaz de generar la secuencia fibonacci:
+
+.. code-block:: python
+
+	>>> def fib():
+	...     a, b = 0, 1
+	...     while True:
+	...         yield a
+	...         a, b = b, a + b
+	...
+	>>> cont = 0
+	>>> for i in fib():
+	...     print i
+	...     if cont > 10:
+	...         break
+	...
+	
+También podemos utilizar el módulo ``itertools`` para operar sobre iteradores y generadores:
+
+.. code-block:: python
+	
+	>>> import itertools
+	>>> list(itertools.islice(fib(), 10))
+	[0, 1, 1, 2, 3, 5, 8, 13, 21, 34]
+	
+Existe también ``xrange``, que es una versión de ``range`` que funciona como un generador.
+
+.. code-block:: python
+
+	>>> for i in xrange(10):
+	...     print i
+		
+
+.. Instalación de bibliotecas con pip
+.. ----------------------------------
+
