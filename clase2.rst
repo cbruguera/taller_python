@@ -418,20 +418,6 @@ función ``super``, utilizando la siguiente sintaxis:
 	super(ClaseHija, self).metodoPadre(argumentos)
 
 
-Herencia múltiple
-.................
-
-En Python es posible heredar de más de una clase. Para esto, sencillamente se escriben los nombres de las clases base
-como argumentos de la clase actual, separados por coma.
-
-.. code-block:: python
-
-	class MiClase(ClaseBase1, ClaseBase2, ClaseBase2):
-		pass
-		
-Al momento de resolver la ubicación de un nombre, el intérprete primero busca en el ámbito local (MiClase), luego
-busca la definición en ClaseBase1, luego ClaseBase2 y así sucesivamente.
-
 
 isinstance()
 ............
@@ -458,6 +444,21 @@ issubclass()
 	...
 	>>> issubclass(ContadorEspecial, Contador)
 	True
+
+	
+Herencia múltiple
+.................
+
+En Python es posible heredar de más de una clase. Para esto, sencillamente se escriben los nombres de las clases base
+como argumentos de la clase actual, separados por coma.
+
+.. code-block:: python
+
+	class MiClase(ClaseBase1, ClaseBase2, ClaseBase2):
+		pass
+		
+Al momento de resolver la ubicación de un nombre, el intérprete primero busca en el ámbito local (MiClase), luego
+busca la definición en ClaseBase1, luego ClaseBase2 y así sucesivamente.
 
 
 Constructor
@@ -781,9 +782,9 @@ Para que un objeto sea iterable, éste debe implementar el método ``__iter__``, e
 llamado *iterador*. 
 
 Un *iterador* es un objeto que cumple con dos características:
+
 * Implementa el método ``__iter__``, en el cual se retorna a sí mismo.
-* Implementa el método ``next``, el cual se encarga de retornar el próximo elemento de la colección cada vez que es 
-invocado. En el caso de no haber más próximos elementos, éste levanta una excepción del tipo ``StopIteration``.
+* Implementa el método ``next``, el cual se encarga de retornar el próximo elemento de la colección cada vez que es invocado. En el caso de no haber más próximos elementos, éste levanta una excepción del tipo ``StopIteration``.
 
 
 Cuando utilizamos un objeto secuencial en un ``for``, en realidad el intérprete está obteniendo un iterador del objeto 
