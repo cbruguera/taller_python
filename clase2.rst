@@ -97,7 +97,7 @@ todos los nombres definidos en el ámbito actual.
 	>>> dir()
 	['__builtins__', '__doc__', '__name__', '__package__', 'n']
 
-En el módulo ``__builtins__`` se encuentran definidas todas las funciones nativas y variables globales del lenguaje 
+En ``__builtins__`` se encuentran definidas todas las funciones nativas y variables globales del lenguaje 
 (como ``dir``, ``help``, etc).
 
 Hagamos esta prueba:
@@ -309,8 +309,8 @@ definiciones de más alto nivel en ``modulo.py``.
 Es normal dejar en blanco el archivo ``__init__.py`` de un paquete, si no se necesitan definir nombres comunes.
 
 
-Buenas prácticas de estructuración
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Buenas prácticas
+~~~~~~~~~~~~~~~~
 
 Renombramiento dinámico
 .......................
@@ -410,8 +410,12 @@ clase padre se encuentre definida en un módulo distinto, se utiliza la ruta comp
 
 La herencia de clases, como en la mayoría de los lenguajes *OO*, hace que las instancias de las subclases tengan 
 acceso a los atributos de las superclases. En caso de que la clase hija "sobrescriba" un método, no implica que esta 
-referencia se pierda; desde la subclase es posible invocar explícitamente métodos de la clase padre mediante 
-``ClasePadre.nombre_metodo(self, argumentos)``.
+referencia se pierda; desde la subclase es posible invocar explícitamente métodos de la clase padre mediante la
+función ``super``, utilizando la siguiente sintaxis:
+
+.. code-block:: python
+
+	super(ClaseHija, self).metodoPadre(argumentos)
 
 
 Herencia múltiple
