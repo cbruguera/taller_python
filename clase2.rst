@@ -247,7 +247,7 @@ Módulos
 Los módulos son la abstracción organizativa más básica del lenguaje, y corresponden al código que se encuentra en un 
 archivo con la extensión ".py" (esto no es requerido por el intérprete, pero es una convención altamente recomendable 
 de seguir). El objetivo de un módulo es abarcar diversas funciones, clases y otros objetos conceptualmente 
-relacionados, siguiendo siempre el principio básico de "alto acoplamiento, baja cohesión".
+relacionados, siguiendo siempre el principio básico de "alta cohesión, bajo acoplamiento".
 
 Es recomendable que los nombres de los módulos sean simples, completamente en minúscula y sin caracteres especiales 
 de por medio.

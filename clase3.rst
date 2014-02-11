@@ -73,7 +73,7 @@ Luego entramos al subdirectorio ``bin``, y activamos el entorno.
 	$ . activate
 
 	
-Para salir del entorno, ejecutamos la instrucción ``deactivate``
+Para salir del entorno, ejecutamos la instrucción ``deactivate``.
 
 
 pip
@@ -82,8 +82,8 @@ pip
 Una vez que estamos "dentro" del entorno virtual deseado, podemos instalar paquetes externos de Python. Para esto 
 usaremos la herramienta *pip*. 
 
-*Pip* es un manejador de paquetes para Python, que hace posible la instalación y actualización fácil de bibliotecas
-desde la línea de comandos.
+*Pip* es un manejador de paquetes para Python, que hace posible la instalación y actualización de bibliotecas 
+fácilmente desde la línea de comandos.
 
 Para comenzar, instalaremos Django, que es el framework que vamos a utilizar.
 	
@@ -91,7 +91,8 @@ Para comenzar, instalaremos Django, que es el framework que vamos a utilizar.
 
 	$ pip install django
 
-Si queremos ver una lista de los paquetes instalados en el entorno actual, ejecutamos:
+Esto descarga e instala los paquetes necesarios para el funcionamiento del framework Django. Si queremos ver una lista 
+de las bibliotecas instaladas en el entorno actual, ejecutamos:
 
 .. code-block:: bash
 	
@@ -179,15 +180,15 @@ Entonces ejecutamos la siguiente instrucción:
 Esto debió crear una carpeta ``mi_sitio`` dentro de la carpeta actual, con una serie de archivos necesarios para el
 funcionamiento de Django.
 
-.. **Nota:** Es importante evitar el uso de nombres que puedan generar conflictos con Python o los componentes de Django.
-.. Por ejemplo, se recomienda no utilizar palabras como "django" o "test".
+**Nota:** Es importante evitar el uso de nombres que puedan generar conflictos con Python o los componentes de Django.
+Por ejemplo, se recomienda no utilizar palabras como "django" o "test".
 
 Servidor de desarrollo
 ~~~~~~~~~~~~~~~~~~~~~~
 
-En particular prestaremos atención al archivo ``manage.py``, el cual sirve como interfaz con diversas opciones para el
-manejo del proyecto. Por ejemplo, podemos ejecutar ``manage.py`` con la opción ``runserver`` para iniciar el servidor
-de prueba.
+Por los momentos, prestaremos particular atención al archivo ``manage.py``, el cual sirve como interfaz con diversas 
+opciones para el manejo del proyecto. Por ejemplo, podemos ejecutar ``manage.py`` con la opción ``runserver`` para 
+iniciar el servidor de prueba.
 
 .. code-block:: bash
 
@@ -198,7 +199,7 @@ de prueba.
 	February 10, 2014 - 16:54:57
 	Django version 1.6.2, using settings 'mi_sitio.settings'
 	Starting development server at http://127.0.0.1:8000/
-	Quit the server with CTRL-C.
+	Quit the server with CTRL-BREAK.
 	
 Esto ha iniciado un servidor de desarrollo que viene incluido dentro de Django para poder probar fácilmente, sin 
 necesidad de configurar un servidor de producción, como Apache.
@@ -209,11 +210,14 @@ de bienvenida de Django, indicando que la aplicación está ejecutándose exitosame
 **Nota:** Es importante aclarar que el comando ``python manage.py runserver`` inicia un servidor *de prueba*. Bajo
 ninguna circunstancia debe utilizarse para correr el proyecto en un ambiente de producción.
 
-Configuración de base de datos
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Configuración
+~~~~~~~~~~~~~
 
 En el archivo ``settings.py`` se encuentran definidos todos los parámetros de configuración del proyecto, como por
 ejemplo las opciones de conexión a la base de datos.
+
+Base de datos
+.............
 
 Los parámetros de configuración de la base de datos los define la varible global ``DATABASES``. La configuración por 
 defecto luce de esta manera:
@@ -227,13 +231,154 @@ defecto luce de esta manera:
 	    }
 	}
 
-Por defecto, la configuración usa *SQLite*, que es una base de datos ligera (la BD se almacena en un archivo). Para
-utilizar algún otro manejador de base de datos...
+Por defecto, Django utiliza *SQLite*, que es una base de datos ligera (la BD completa se almacena en un archivo). Para
+utilizar algún otro manejador de base de datos, hay que cambiar el parámetro ``ENGINE``. Las opciones inicialmente 
+soportadas por el framework son:
+
+* ``'django.db.backends.postgresql_psycopg2'``
+* ``'django.db.backends.mysql'``
+* ``'django.db.backends.sqlite3'``
+* ``'django.db.backends.oracle'``
+
+Sin embargo, es posible implementar o instalar otros motores de conexión a base de datos.
+
+En el parámetro ``NAME`` se especifica el nombre de la base de datos. En el caso de SQLite, esto corresponde al nombre
+del archivo en disco duro, con la ruta completa en el sistema de archivos.
+
+Si se está utilizando un motor de base de datos distinto de SQLite, es necesario definir los parámetros ``USER``, 
+``PASSWORD`` y ``HOST``. Además, es necesario crear la base de datos previamente a esta configuración.
+
+Zona horaria
+............
+
+Para especificar la zona horaria en la que habita nuestra aplicación, configuramos el parámetro ``TIME_ZONE``.
+En el caso de Venezuela, el valor correcto es ``'America/Caracas'``.
+
+Aplicaciones
+............
+
+Otra parte fundamental de la configuración es la variable ``INSTALLED_APPS``. En esta tupla están definidas todas las
+aplicaciones con las que podrá interactuar el framework. Por defecto vienen instaladas las aplicaciones básicas como 
+``django.contrib.admin`` y ``django.contrib.auth``, para el manejo de la interfaz administrativa y el sistema de 
+autenticación respectivamente. A medida que vayamos creando aplicaciones dentro de nuestro proyecto, o instalando
+bibliotecas de terceros, deben agregarse en esta sección como aplicaciones instaladas.
+
+Iniciando la base de datos
+..........................
+
+A continuación, ejecutaremos la siguiente instrucción:
+
+.. code-block:: bash
+
+	$ python manage.py syncdb
+	
+
+La instrucción ``syncdb`` recorre ``INSTALLED_APPS`` y crea la tablas necesarias en la base de datos, de acuerdo a los
+parámetros de configuración establecidos en el archivo ``settings.py``.
+
+La primera vez que se ejecuta, el sistema preguntará al usuario si desea crear un usuario con permisos 
+administrativos. Es recomendable hacerlo.
+
+Una vez realizados los pasos anteriores, el proyecto está creado y debidamente configurado para iniciar su desarrollo.
+
+Para explorar la base de datos SQLite, podemos utilizar `SQLite Manager`_.
+
+.. _SQLite Manager: https://addons.mozilla.org/es/firefox/addon/sqlite-manager/
+
+Aplicaciones
+~~~~~~~~~~~~
+
+Un proyecto en Django consta de un conjunto de aplicaciones, éstas no son más que paquetes de Python que siguen una
+convención determinada.
+
+Para crear una aplicación, ejecutamos la instrucción ``startapp``:
+
+.. code-block:: bash
+
+	$ python manage.py startapp encuestas
+	
+Esto creará un directorio "encuestas", con la siguiente estructura:
+
+.. code-block:: bash
+
+	encuestas/
+	    __init__.py
+	    admin.py
+	    models.py
+	    tests.py
+	    views.py
+
+
+Vistas
+~~~~~~
+
+Para comenzar, implementaremos una vista de prueba. Para esto editaremos el archivo ``views.py`` e insertaremos 
+el siguiente código:
+
+.. code-block:: python
+
+	from django.http import HttpResponse
+
+	def index(request):
+	    return HttpResponse("Hola mundo")
+
+Modelos
+~~~~~~~
+
+Lo primero que haremos con nuestra aplicación será definir los modelos. Para esto editaremos el archivo ``models.py``
+y copiaremos el siguiente código:
+
+.. code-block:: python
+
+	from django.db import models
+
+	class Encuesta(models.Model):
+	    pregunta = models.CharField(max_length=200)
+	    fecha_pub = models.DateTimeField('Fecha de publicacion')
+
+	class Opcion(models.Model):
+	    encuesta = models.ForeignKey(Encuesta)
+	    texto = models.CharField(max_length=200)
+	    votos = models.IntegerField(default=0)
+
+Cada modelo se define como una clase que hereda de ``django.db.models.Model``, definiendo a su vez una serie de 
+atributos de clase. Cada uno de estos atributos representa un campo en la base de datos.
+
+Cada campo es una instancia de la clase ``django.db.models.Field``, cuyas subclases implementan los distintos tipos
+de datos. En el ejemplo podemos ver el uso de ``CharField`` para cadenas de texto, ``IntegerField`` para números 
+enteros, ``DateTimeField`` para fechas con horas, y ``ForeignKey`` para relaciones directas con otros modelos.
+
+Un ``ForeignKey`` puede verse como una relación "muchos a uno", ya que distintos modelos pueden definir la misma 
+*llave foránea* con un modelo dado.
+
+El siguiente paso es agregar nuestra aplicación ``encuestas`` a la lista de aplicaciones intaladas en el 
+``settings.py``.
+
+.. code-block:: python
+
+	INSTALLED_APPS = (
+	    'django.contrib.admin',
+	    'django.contrib.auth',
+	    'django.contrib.contenttypes',
+	    'django.contrib.sessions',
+	    'django.contrib.messages',
+	    'django.contrib.staticfiles',
+	    'encuestas',
+	)
+
+Ahora necesitamos sincronizar la base de datos con la instrucción ``syncdb``, para que Django cree las tablas y los
+campos correspondientes a nuestro modelo.
+
+.. code-block:: bash
+
+	$ python manage.py syncdb
+
+Es necesario ejecutar esta instrucción cada vez que hacemos cambios en el modelo, ``syncdb`` sólo hará los cambios 
+necesarios. 
 
 
 
-Django ORM
-~~~~~~~~~~
+
 
 
 
