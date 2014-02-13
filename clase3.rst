@@ -856,6 +856,65 @@ Para preguntar si un valor es nulo, se utiliza el parámetro ``isnull``, de la si
     []
 
 
+Vistas
+------
+
+Hasta ahora hemos estudiado el comportamiento de los modelos de Django, junto con dos maneras de interactuar con 
+éstos: el intérprete interactivo y la interfaz administrativa. Sin embargo, para desarrollar cualquier proyecto 
+necesitaremos implementar nuestras propias vistas.
+
+Para comenzar a entender las vistas, implementaremos primero un "hola mundo". Para esto editaremos el archivo 
+``views.py`` que está dentro de la aplicación ``libros`` y copiaremos el siguiente código:
+
+.. code-block:: python
+
+    from django.http import HttpResponse
+
+    def index(request):
+        return HttpResponse("Hola mundo!")
+
+
+Ésta es la manera más básica de definir una vista en Django: una función que recibe un objeto de tipo ``HttpRequest`` 
+y retorna un ``HttpResponse``. Para fines prácticos sólo estaremos retornando un mensaje con la expresión "Hola 
+mundo!".
+
+Ahora necesitamos crear dentro del directorio de la aplicación (``libros``), un archivo ``urls.py`` para definir una 
+ correspondencia entre un URL y la vista que acabamos de definir. Copiaremos entonces el siguiente código:
+ 
+.. code-block:: python
+
+    from django.conf.urls import patterns, url
+    from libros import views
+
+    urlpatterns = patterns('',
+        url(r'^$', views.index, name='index')
+    )
+
+
+Ahora necesitamos editar el archivo ``urls.py`` que se encuentra en el directorio principal de proyecto 
+(``libronline/libronline/``), para dar acceso al módulo ``libros``. El código debería quedar así:
+
+.. code-block:: python
+
+    from django.conf.urls import patterns, include, url
+
+    from django.contrib import admin
+    admin.autodiscover()
+
+    urlpatterns = patterns('',
+        url(r'^libros/', include('libros.urls')),
+        url(r'^admin/', include(admin.site.urls)),
+    )
+
+De esta forma hemos configurado nuestro sitio para que todo URL que comience con ``libros/`` se redirija al módulo de 
+``libros``.
+
+Guardamos entonces el archivo y ahora podemos probar iniciando nuevamente el servidor con ``python manage.py 
+runserver`` e introduciendo ``http://127.0.0.1:8000/libros/`` en el navegador. Si hemos hecho todo correctamente, 
+deberíamos ver una página con el mensaje "Hola mundo!".
+
+
+
 .. Fuentes
 .. ~~~~~~~
 
