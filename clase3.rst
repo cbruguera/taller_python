@@ -878,8 +878,12 @@ Para comenzar a entender las vistas, implementaremos primero un "hola mundo". Pa
 y retorna un ``HttpResponse``. Para fines prácticos sólo estaremos retornando un mensaje con la expresión "Hola 
 mundo!".
 
-Ahora necesitamos crear dentro del directorio de la aplicación (``libros``), un archivo ``urls.py`` para definir una 
- correspondencia entre un URL y la vista que acabamos de definir. Copiaremos entonces el siguiente código:
+
+Mapeo de URLs
+~~~~~~~~~~~~~
+
+Ahora necesitamos crear dentro del directorio de la aplicación (``libros``), un archivo ``urls.py`` para definir una  
+correspondencia entre un URL y la vista que acabamos de definir. Copiaremos entonces el siguiente código:
  
 .. code-block:: python
 
@@ -890,6 +894,8 @@ Ahora necesitamos crear dentro del directorio de la aplicación (``libros``), un 
         url(r'^$', views.index, name='index')
     )
 
+``'^$'`` es una expresión regular que equivale a una cadena vacía, y corresponde con la raíz de la aplicación actual 
+(``libros``).
 
 Ahora necesitamos editar el archivo ``urls.py`` que se encuentra en el directorio principal de proyecto 
 (``libronline/libronline/``), para dar acceso al módulo ``libros``. El código debería quedar así:
@@ -906,14 +912,24 @@ Ahora necesitamos editar el archivo ``urls.py`` que se encuentra en el directori
         url(r'^admin/', include(admin.site.urls)),
     )
 
-De esta forma hemos configurado nuestro sitio para que todo URL que comience con ``libros/`` se redirija al módulo de 
-``libros``.
+
+De esta forma hemos configurado nuestro sitio para que todo URL que comience con ``libros/`` se redirija al módulo 
+correspondiente.
 
 Guardamos entonces el archivo y ahora podemos probar iniciando nuevamente el servidor con ``python manage.py 
 runserver`` e introduciendo ``http://127.0.0.1:8000/libros/`` en el navegador. Si hemos hecho todo correctamente, 
 deberíamos ver una página con el mensaje "Hola mundo!".
 
+En los archivos de ``urls.py`` se definen *expresiones regulares* que describen los patrones de URL que se asociarán 
+a determinadas vistas, o a los archivos de "mapeo" de URLs de aplicaciones específicas. De esta forma se pueden 
+mantener organizadas de manera modular todas las rutas de las vistas del proyecto.
 
+Para mayor información sobre la sintaxis de expresiones regulares, referirse a la documentación_ oficial del módulo 
+``re`` de Python.
+
+.. _documentación: http://docs.python.org/2/howto/regex.html
+
+Para entender un poco más acerca del mapeo de URLs, crearemos un par de vistas más de prueba...
 
 .. Fuentes
 .. ~~~~~~~
