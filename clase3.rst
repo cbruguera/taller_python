@@ -52,7 +52,7 @@ distintas de python, y con un espacio aislado para cada conjunto de bibliotecas 
 Instalación
 ...........
 
-Para saber si virtualenv está ya instalado en el sistema, ejecutamos la siguiente instrucción:
+Para saber si virtualenv está ya instalado en el sistema, podemos intentar consultar su versión:
 
 .. code-block:: bash
 
@@ -66,7 +66,8 @@ Si no está instalado, en Debian puede hacerse de la siguiente forma:
     $ sudo apt-get install python-virtualenv
 
 
-Una vez que está instalado, ya podemos crear un entorno virtual:
+Una vez que está instalado, ya podemos crear un entorno virtual. Estando dentro del directorio creado anteriormente 
+(``mi_proyecto``):
 
 .. code-block:: bash
 
@@ -77,13 +78,13 @@ La opción ``--no-site-packages`` significa que el nuevo entorno virtual no insta
 instalados globalmente. Esto nos permite iniciar el entorno de manera limpia, e ir instalando sólo lo que sea
 necesario.
 
-Luego entramos al subdirectorio ``bin``, y activamos el entorno.
+Luego nos movemos al subdirectorio ``bin``, y activamos el entorno.
 
 .. code-block:: bash
 
     $ cd env/bin
     $ source activate
-    (env) $
+    (env)$
 
 
 Notaremos que el nombre de nuestro entorno virtual (``env``) aparece entre paréntesis al comienzo de cada línea del 
@@ -188,10 +189,10 @@ siguiente manera:
 
 .. code-block:: bash
 
-    $ django-admin.py startproject mi_sitio
+    $ django-admin.py startproject libronline
 
 
-Esto debió crear una carpeta ``mi_sitio`` dentro de la carpeta actual, con una serie de archivos necesarios para el
+Esto debió crear una carpeta ``libronline`` dentro de la carpeta actual, con una serie de archivos necesarios para el
 funcionamiento de Django.
 
 **Nota:** Es importante evitar el uso de nombres que puedan generar conflictos con Python o los componentes de Django.
@@ -212,7 +213,7 @@ iniciar el servidor de prueba.
 
     0 errors found
     February 10, 2014 - 16:54:57
-    Django version 1.6.2, using settings 'mi_sitio.settings'
+    Django version 1.6.2, using settings 'libronline.settings'
     Starting development server at http://127.0.0.1:8000/
     Quit the server with CTRL-BREAK.
 
@@ -222,6 +223,8 @@ necesidad de configurar un servidor de producción, como Apache.
 
 Ahora podemos probar ingresar el URL ``http://127.0.0.1:8000/`` en algún navegador. Esto nos mostrará una página
 de bienvenida de Django, indicando que la aplicación está ejecutándose exitosamente.
+
+Ahora, por los momentos, interrumpiremos la ejecución del servidor presionando ``CTRL-C``.
 
 **Nota:** Es importante aclarar que el comando ``python manage.py runserver`` inicia un servidor *de prueba*. Bajo
 ninguna circunstancia debe utilizarse para correr el proyecto en un ambiente de producción.
@@ -268,21 +271,15 @@ Si se está utilizando un motor de base de datos distinto de SQLite, es necesario
 ``PASSWORD`` y ``HOST``. Además, es necesario crear la base de datos previamente a esta configuración.
 
 
-Zona horaria
-............
+Parámetros locales
+..................
 
 Para especificar la zona horaria en la que habita nuestra aplicación, configuramos el parámetro ``TIME_ZONE``.
 En el caso de Venezuela, el valor correcto es ``'America/Caracas'``.
 
+También podemos especificar el lenguaje a utilizar en la opción ``LANGUAGE_CODE``, al cual le daremos el valor de 
+``es-VE`` para el caso de Venezuela.
 
-Aplicaciones
-............
-
-Otra parte fundamental de la configuración es la variable ``INSTALLED_APPS``. En esta tupla están definidas todas las
-aplicaciones con las que podrá interactuar el framework. Por defecto vienen instaladas las aplicaciones básicas como 
-``django.contrib.admin`` y ``django.contrib.auth``, para el manejo de la interfaz administrativa y el sistema de 
-autenticación respectivamente. A medida que vayamos creando aplicaciones dentro de nuestro proyecto, o instalando
-bibliotecas de terceros, deben agregarse en esta sección como aplicaciones instaladas.
 
 
 Iniciando la base de datos
@@ -295,7 +292,7 @@ A continuación, ejecutaremos la siguiente instrucción:
     $ python manage.py syncdb
 
 
-La instrucción ``syncdb`` recorre ``INSTALLED_APPS`` y crea la tablas necesarias en la base de datos, de acuerdo a los
+La instrucción ``syncdb`` crea la tablas necesarias del proyeto en la base de datos, de acuerdo a los
 parámetros de configuración establecidos en el archivo ``settings.py``.
 
 La primera vez que se ejecuta, el sistema preguntará al usuario si desea crear un usuario con permisos 
@@ -303,7 +300,13 @@ administrativos. Es recomendable hacerlo.
 
 Una vez realizados los pasos anteriores, el proyecto está creado y debidamente configurado para iniciar su desarrollo.
 
-Para explorar la base de datos SQLite, podemos utilizar `SQLite Manager`_.
+Para explorar la base de datos SQLite, podemos utilizar el plugin de firefox `SQLite Manager`_, o instalar sqliteman 
+usando ``apt-get``.
+
+.. code-block:: bash
+
+    $ apt-get install sqliteman
+
 
 .. _SQLite Manager: https://addons.mozilla.org/es/firefox/addon/sqlite-manager/
 
@@ -314,18 +317,19 @@ Aplicaciones
 Un proyecto en Django consta de un conjunto de aplicaciones, éstas no son más que paquetes de Python que siguen una
 convención determinada.
 
-Para crear una aplicación, ejecutamos la instrucción ``startapp``:
+Para crear una aplicación, ejecutamos la instrucción ``startapp`` a través de ``manage.py``. Probaremos haciendo un 
+directorio sencillo de libros:
 
 .. code-block:: bash
 
-    $ python manage.py startapp encuestas
+    $ python manage.py startapp libros
 
 
-Esto creará un directorio "encuestas", con la siguiente estructura:
+Esto creará un directorio "libros", con la siguiente estructura:
 
 .. code-block:: bash
 
-    encuestas/
+    libros/
         __init__.py
         admin.py
         models.py
@@ -333,38 +337,47 @@ Esto creará un directorio "encuestas", con la siguiente estructura:
         views.py
 
 
-Vistas
-~~~~~~
+* ``__init__.py`` indica que nuestra aplicación es un paquete válido de Python.
+* En ``admin.py`` se colocará el código referente al administrador de Django para la aplicación actual.
+* En ``models.py`` se escribirá todo el código de los modelos.
+* ``tests.py`` funciona para pruebas unitarias.
+* Y en ``views.py`` se implementarán las vistas propias de la aplicación ``libros``
 
-Para comenzar, implementaremos una vista de prueba. Para esto editaremos el archivo ``views.py`` e insertaremos 
-el siguiente código:
-
-.. code-block:: python
-
-    from django.http import HttpResponse
-
-    def index(request):
-        return HttpResponse("Hola mundo")
-
-
+     
 Modelos
 ~~~~~~~
 
 Lo primero que haremos con nuestra aplicación será definir los modelos. Para esto editaremos el archivo ``models.py``
-y copiaremos el siguiente código:
+y crearemos dos clases: ``Autor`` y ``Libro``
 
 .. code-block:: python
 
+    # -*- coding: utf-8 -*-
     from django.db import models
 
-    class Encuesta(models.Model):
-        pregunta = models.CharField(max_length=200)
-        fecha_pub = models.DateTimeField('Fecha de publicacion')
 
-    class Opcion(models.Model):
-        encuesta = models.ForeignKey(Encuesta)
-        texto = models.CharField(max_length=200)
-        votos = models.IntegerField(default=0)
+    class Autor(models.Model):
+        nombre = models.CharField(max_length=200)
+
+        def __unicode__(self):
+            return self.nombre
+
+
+    class Libro(models.Model):  
+        GENERO_CHOICES = (
+            (1, 'Novela'),
+            (2, 'Ensayo'),
+            (3, 'Académico'),
+            (4, 'Infantil')
+        )
+        
+        titulo = models.CharField(max_length=200)
+        fecha_pub = models.DateField()
+        autor = models.ForeignKey(Autor)
+        genero = models.IntegerField(choices=GENERO_CHOICES, default=1)
+        
+        def __unicode__(self):
+            return "%s - %s" % (self.titulo, self.autor.nombre)
 
 
 Cada modelo se define como una clase que hereda de ``django.db.models.Model``, definiendo a su vez una serie de 
@@ -372,12 +385,16 @@ atributos de clase. Cada uno de estos atributos representa un campo en la base d
 
 Cada campo es una instancia de la clase ``django.db.models.Field``, cuyas subclases implementan los distintos tipos
 de datos. En el ejemplo podemos ver el uso de ``CharField`` para cadenas de texto, ``IntegerField`` para números 
-enteros, ``DateTimeField`` para fechas con horas, y ``ForeignKey`` para relaciones directas con otros modelos.
+enteros, ``DateField`` para fechas, y ``ForeignKey`` para relaciones directas con otros modelos.
 
-Un ``ForeignKey`` puede verse como una relación "muchos a uno", ya que distintos modelos pueden definir la misma 
-*llave foránea* con un modelo dado.
+Un ``ForeignKey`` puede verse como una relación "uno a muchos", ya que distintos modelos pueden definir la misma 
+*llave foránea* con un modelo dado. Un autor puede escribir muchos libros, pero un libro sólo pertenece a un autor.
 
-El siguiente paso es agregar nuestra aplicación ``encuestas`` a la lista de aplicaciones intaladas en el 
+Se han implementado además los métodos ``__unicode__`` de cada modelo, estos definen la representación textual de las 
+instancias particulares de cada clase. Si queremos hacer ``print`` de un objeto de la clase ``Libro``, veremos su 
+título y autor, en lugar de ``<Libro object at 0x328F10A1>``.
+
+El siguiente paso es agregar nuestra aplicación ``libros`` a la lista de aplicaciones intaladas en el 
 ``settings.py``.
 
 .. code-block:: python
@@ -389,7 +406,8 @@ El siguiente paso es agregar nuestra aplicación ``encuestas`` a la lista de apli
         'django.contrib.sessions',
         'django.contrib.messages',
         'django.contrib.staticfiles',
-        'encuestas',
+
+        'libros',
     )
 
 
@@ -401,8 +419,172 @@ campos correspondientes a nuestro modelo.
     $ python manage.py syncdb
 
 
-Es necesario ejecutar esta instrucción cada vez que hacemos cambios en el modelo, ``syncdb`` sólo hará los cambios 
+Es necesario ejecutar esta instrucción cada vez que hacemos cambios en el modelo, ``syncdb`` sólo hará los cambios
 necesarios en la base de datos, sin perder los datos ya almacenados. 
+
+
+Django desde el intérprete interactivo
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Es posible tener acceso a nuestro proyecto Django desde el intérprete interactivo de Python. Para esto ejecutamos la 
+siguiente instrucción en la raíz del proyecto:
+
+.. code-block:: bash
+
+    $ python manage.py shell
+
+
+Esto abre el intérprete interactivo habiendo cargado todos los parámetros de. ``settings.py``, por lo cual tendremos 
+acceso a los modelos que hemos creado. Usaremos el intérprete interactivo para jugar un poco con el API de Django.
+
+.. code-block:: python
+
+    >>> from libros.models import Autor, Libro
+    >>> Autor.objects.all()
+    []
+    >>> herman = Autor(nombre="Herman Hesse")
+    >>> herman.save()
+    >>> herman.id
+    1
+
+    
+Si revisamos la base de datos, observaremos que hay un nuevo registro en la tabla de encuestas. Esto nos muestra un 
+poco cómo funciona el ORM de Django. A nivel de código simplemente estamos tratando con objetos, el framework se 
+encarga de interactuar directamente con la base de datos.
+
+Podemos acceder a los campos de este registro simplemente mediante los atributos del objeto:
+
+.. code-block:: python
+
+    >>> herman.nombre
+    'Herman Hesse'
+    >>> herman.libro_set.all()
+    []
+
+A través del atributo ``libro_set`` el objeto tiene acceso a una lista con todos los objetos relacionados, a pesar de 
+que la llave foránea se encuentra definida en el modelo ``Libro``. 
+
+Intentemos ahora crear algunos libros:
+
+.. code-block:: python
+
+    >>> lib1 = Libro(titulo="Demian", fecha_pub="1919-01-01", autor=herman)
+    >>> lib1.titulo = "Demian"
+    >>> lib1.fecha_pub = "1919-01-01"
+    >>> lib1.autor = herman
+    >>> lib1.save()
+    >>> Libro.objects.all()
+    [<Libro: Demian - Herman Hesse>]
+    
+.. Estoy teniendo errores de integridad con este punto, dice que autor_id es NULL no sé por qué...
+        
+
+Además de obtener todos los objetos, es posible filtrar resultados mediante el método ``filter``:
+
+.. code-block:: python
+
+    >>> Libro.objects.filter(id=1)
+    [<Libro: Demian - Herman Hesse>]
+    >>> Libro.objects.filter(titulo__startswith='Demian')
+    [<Libro: Demian - Herman Hesse>]
+    
+
+Con el método ``get`` obtenemos un único resultado, esto es útil para buscar por id. Si buscamos un objeto con un id 
+que no existe, esto levantará una excepción:
+
+.. code-block:: python
+
+    >>> Libro.objects.get(id=3)
+    Traceback (most recent call last):
+        ...
+    DoesNotExist: Libro matching query does not exist. Lookup parameters were {'id': 3}   
+    >>> L = Libro.objects.get(id=1)
+    >>> L.titulo
+    'Demian'
+
+
+El administrador de Django
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Una de las características principales de Django es que viene con una interfaz administrativa que facilita mucho el 
+trabajo. A través de esta interfaz podemos manejar todas las entidades en el sistema. Una vez creados los modelos, ya 
+podemos consultar, insertar, editar y eliminar objetos; sin necesidad de implementar interfaces adicionales.
+
+Para habilitar un modelo en la interfaz administrativa, editamos el archivo ``libros/admin.py`` y colocamos el 
+siguiente código:
+
+.. code-block:: python
+
+    from django.contrib import admin
+    from libros.models import Libro, Autor
+
+    admin.site.register(Libro)
+    admin.site.register(Autor)
+
+
+A continuación, ejecutamos el servidor de prueba con ``python manage.py runserver`` y abrimos el navegador con el URL 
+``http://127.0.0.1:8000/admin/``. Para ingresar al sistema, usaremos el super-usuario que hemos creado al comienzo. 
+Entonces veremos una interfaz similar a ésta:
+
+.. image:: _static/snapshot1.png
+    :align: center
+
+Podemos consultar la lista de objetos de cada uno de los modelos haciendo click en su sección correspondiente. 
+Evidentemente no hay objetos creados aún, crearemos primero un autor haciendo click en su sección ``Autores`` y luego 
+en el botón de la esquina ``Añadir autor``.
+
+Seguidamente introducimos el nombre del autor y hacemos click en ``Grabar``. Ahora podemos ver el nuevo autor en el 
+listado:
+
+.. image:: _static/snapshot2.png
+    :align: center
+    
+Ahora añadiremos un libro...
+
+.. image:: _static/snapshot3.png
+    :align: center
+
+Como podemos ver, es bastante sencillo manipular los objetos del sistema a través del administrador de django, 
+habiendo definido únicamente los modelos.
+
+
+
+
+
+Hola mundo!
+~~~~~~~~~~~
+
+Para comenzar a usar el framework, haremos una pequeña vista de prueba que nos imprima "Hola mundo!" en el navegador. 
+Primero crearemos un archivo ``views.py`` dentro del directorio ``mi_sitio`` más interno (``mi_sitio/mi_sitio``) y 
+copiaremos el siguiente código:
+
+.. code-block:: python
+
+    from django.http import HttpResponse
+
+    def home(request):
+        return HttpResponse("Hola mundo!")
+
+
+La manera más básica de definir una vista en Django es una función que recibe un objeto de tipo ``HttpRequest`` 
+y retorna un ``HttpResponse``. Para fines prácticos sólo estaremos retornando un mensaje con la expresión "Hola 
+mundo!".
+
+Ahora necesitamos editar ``urls.py`` para definir un URL que corresponda a la vista que acabamos de hacer.
+
+En el archivo ``urls.py`` se define ``urlpatterns``, que no es más que una tupla de patrones de URL asociados a
+vistas respectivas de Django. Para dar acceso a la vista que acabamos de implementar, "descomentamos" la 
+siguiente línea:
+
+.. code-block:: python
+
+    url(r'^$', 'mi_sitio.views.home', name='home'),
+    
+``'^$'`` es una expresión regular que equivale a una cadena vacía, y corresponde con la raíz de nuestro 
+sitio. Guardamos el archivo y ahora podemos probar iniciando nuevamente el servidor con ``python manage.py 
+runserver`` 
+e introduciendo ``http://127.0.0.1:8000/`` en el navegador. Si hemos hecho todo correctamente, deberíamos ver una 
+página con "Hola mundo!" en lugar de la plantilla de bienvenida de Django.
 
 
 
