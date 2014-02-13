@@ -215,7 +215,7 @@ iniciar el servidor de prueba.
     February 10, 2014 - 16:54:57
     Django version 1.6.2, using settings 'libronline.settings'
     Starting development server at http://127.0.0.1:8000/
-    Quit the server with CTRL-BREAK.
+    Quit the server with CTRL-C.
 
 
 Esto ha iniciado un servidor de desarrollo que viene incluido dentro de Django para poder probar fácilmente, sin 
@@ -366,9 +366,10 @@ y crearemos dos clases: ``Autor`` y ``Libro``
     class Libro(models.Model):  
         GENERO_CHOICES = (
             (1, 'Novela'),
-            (2, 'Ensayo'),
-            (3, 'Académico'),
-            (4, 'Infantil')
+            (2, 'Crónica'),
+            (3, 'Ensayo'),
+            (4, 'Académico'),
+            (5, 'Biografía')
         )
         
         titulo = models.CharField(max_length=200)
@@ -420,87 +421,7 @@ campos correspondientes a nuestro modelo.
 
 
 Es necesario ejecutar esta instrucción cada vez que hacemos cambios en el modelo, ``syncdb`` sólo hará los cambios
-necesarios en la base de datos, sin perder los datos ya almacenados. 
-
-
-Django desde el intérprete interactivo
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Es posible tener acceso a nuestro proyecto Django desde el intérprete interactivo de Python. Para esto ejecutamos la 
-siguiente instrucción en la raíz del proyecto:
-
-.. code-block:: bash
-
-    $ python manage.py shell
-
-
-Esto abre el intérprete interactivo habiendo cargado todos los parámetros de. ``settings.py``, por lo cual tendremos 
-acceso a los modelos que hemos creado. Usaremos el intérprete interactivo para jugar un poco con el API de Django.
-
-.. code-block:: python
-
-    >>> from libros.models import Autor, Libro
-    >>> Autor.objects.all()
-    []
-    >>> herman = Autor(nombre="Herman Hesse")
-    >>> herman.save()
-    >>> herman.id
-    1
-
-    
-Si revisamos la base de datos, observaremos que hay un nuevo registro en la tabla de encuestas. Esto nos muestra un 
-poco cómo funciona el ORM de Django. A nivel de código simplemente estamos tratando con objetos, el framework se 
-encarga de interactuar directamente con la base de datos.
-
-Podemos acceder a los campos de este registro simplemente mediante los atributos del objeto:
-
-.. code-block:: python
-
-    >>> herman.nombre
-    'Herman Hesse'
-    >>> herman.libro_set.all()
-    []
-
-A través del atributo ``libro_set`` el objeto tiene acceso a una lista con todos los objetos relacionados, a pesar de 
-que la llave foránea se encuentra definida en el modelo ``Libro``. 
-
-Intentemos ahora crear algunos libros:
-
-.. code-block:: python
-
-    >>> lib1 = Libro(titulo="Demian", fecha_pub="1919-01-01", autor=herman)
-    >>> lib1.titulo = "Demian"
-    >>> lib1.fecha_pub = "1919-01-01"
-    >>> lib1.autor = herman
-    >>> lib1.save()
-    >>> Libro.objects.all()
-    [<Libro: Demian - Herman Hesse>]
-    
-.. Estoy teniendo errores de integridad con este punto, dice que autor_id es NULL no sé por qué...
-        
-
-Además de obtener todos los objetos, es posible filtrar resultados mediante el método ``filter``:
-
-.. code-block:: python
-
-    >>> Libro.objects.filter(id=1)
-    [<Libro: Demian - Herman Hesse>]
-    >>> Libro.objects.filter(titulo__startswith='Demian')
-    [<Libro: Demian - Herman Hesse>]
-    
-
-Con el método ``get`` obtenemos un único resultado, esto es útil para buscar por id. Si buscamos un objeto con un id 
-que no existe, esto levantará una excepción:
-
-.. code-block:: python
-
-    >>> Libro.objects.get(id=3)
-    Traceback (most recent call last):
-        ...
-    DoesNotExist: Libro matching query does not exist. Lookup parameters were {'id': 3}   
-    >>> L = Libro.objects.get(id=1)
-    >>> L.titulo
-    'Demian'
+necesarios en la base de datos.
 
 
 El administrador de Django
@@ -530,8 +451,8 @@ Entonces veremos una interfaz similar a ésta:
     :align: center
 
 Podemos consultar la lista de objetos de cada uno de los modelos haciendo click en su sección correspondiente. 
-Evidentemente no hay objetos creados aún, crearemos primero un autor haciendo click en su sección ``Autores`` y luego 
-en el botón de la esquina ``Añadir autor``.
+Evidentemente no hay objetos creados aún, añadiremos primero un autor haciendo click en su sección ``Autores`` y 
+luego en el botón de la esquina ``Añadir autor``.
 
 Seguidamente introducimos el nombre del autor y hacemos click en ``Grabar``. Ahora podemos ver el nuevo autor en el 
 listado:
@@ -547,47 +468,366 @@ Ahora añadiremos un libro...
 Como podemos ver, es bastante sencillo manipular los objetos del sistema a través del administrador de django, 
 habiendo definido únicamente los modelos.
 
-
-
-
-
-Hola mundo!
-~~~~~~~~~~~
-
-Para comenzar a usar el framework, haremos una pequeña vista de prueba que nos imprima "Hola mundo!" en el navegador. 
-Primero crearemos un archivo ``views.py`` dentro del directorio ``mi_sitio`` más interno (``mi_sitio/mi_sitio``) y 
-copiaremos el siguiente código:
+Podemos notar que Django ha intentado inferir automáticamente el plural de ``Autor``, y ha colocado ``Autors`` en su 
+lugar, lo cual no es correcto. Para especificar este tipo de detalles, se define en Django una clase interna llamada 
+``Meta`` dentro del modelo en cuestión:
 
 .. code-block:: python
 
-    from django.http import HttpResponse
+    class Autor(models.Model):
+        class Meta:
+            verbose_name_plural = "Autores"
+        # ...
 
-    def home(request):
-        return HttpResponse("Hola mundo!")
+
+Django desde el intérprete interactivo
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Es posible tener acceso a nuestro proyecto Django desde el intérprete interactivo de Python. Para esto ejecutamos la 
+siguiente instrucción en la raíz del proyecto:
+
+.. code-block:: bash
+
+    $ python manage.py shell
 
 
-La manera más básica de definir una vista en Django es una función que recibe un objeto de tipo ``HttpRequest`` 
-y retorna un ``HttpResponse``. Para fines prácticos sólo estaremos retornando un mensaje con la expresión "Hola 
-mundo!".
-
-Ahora necesitamos editar ``urls.py`` para definir un URL que corresponda a la vista que acabamos de hacer.
-
-En el archivo ``urls.py`` se define ``urlpatterns``, que no es más que una tupla de patrones de URL asociados a
-vistas respectivas de Django. Para dar acceso a la vista que acabamos de implementar, "descomentamos" la 
-siguiente línea:
+Esto abre el intérprete interactivo habiendo cargado todos los parámetros de. ``settings.py``, por lo cual tendremos 
+acceso a los modelos que hemos creado. Usaremos el intérprete interactivo para jugar un poco con el API de Django.
 
 .. code-block:: python
 
-    url(r'^$', 'mi_sitio.views.home', name='home'),
+    >>> from libros.models import Autor, Libro
+    >>> Autor.objects.all()
+    [<Autor: Herman Hesse>, <Autor: Paulo Coelho>]
+
+
+Esto nos muestra un poco cómo funciona el ORM de Django. A nivel de código simplemente estamos tratando con objetos, 
+el framework se encarga de interactuar directamente con la base de datos.
+
+Podemos acceder a los campos de los registros simplemente mediante los atributos de cada objeto:
+
+.. code-block:: python
+
+    >>> herman = Autor.objects.all()[0]
+    >>> herman.nombre
+    u'Herman Hesse'
+
+
+La ``u`` antes de la cadena indica que se está trabajando con una cadena "unicode". Esto permite que las cadenas 
+contengan caracteres especiales.
+
+Además de consultar, es posible utilizar el API completo de los modelos de Django. También podemos crear nuevos 
+objetos y guardarlos en la base de datos:
+
+.. code-block:: python
+
+    >>> serafin = Autor(nombre="Serafin Mazparrote")
+    >>> serafin.save()
+    >>> lb = Libro(titulo=u"Biología de 8º grado", fecha_pub="1990-01-01", autor=serafin)
+    >>> lb.save()
+    >>> lb2 = Libro(titulo="Siddhartha", fecha_pub="1922-01-01", autor=herman)
+    >>> lb2.save()
+
+        
+Hay distintas maneras de consultar objetos relacionados a través del API. Una de ellas es mediante el atributo 
+``libro_set`` el objeto de tipo ``Autor``, éste tiene acceso a una lista con todos los libros relacionados, a pesar 
+de que la llave foránea se encuentra definida en el modelo ``Libro``. 
+
+.. code-block:: python
+
+    >>> herman.libro_set.objects.all()
+    [<Libro: Demian - Herman Hesse>, <Libro: Siddhartha - Herman Hesse>]
+
+
+Además de obtener todos los objetos, es posible filtrar resultados mediante el método ``filter``:
+
+.. code-block:: python
+
+    >>> Libro.objects.filter(autor=herman)
+    [<Libro: Demian - Herman Hesse>, <Libro: Siddhartha - Herman Hesse>]
+
+.. incluir info de todos los filtros en django
     
-``'^$'`` es una expresión regular que equivale a una cadena vacía, y corresponde con la raíz de nuestro 
-sitio. Guardamos el archivo y ahora podemos probar iniciando nuevamente el servidor con ``python manage.py 
-runserver`` 
-e introduciendo ``http://127.0.0.1:8000/`` en el navegador. Si hemos hecho todo correctamente, deberíamos ver una 
-página con "Hola mundo!" en lugar de la plantilla de bienvenida de Django.
+Con el método ``get`` obtenemos un único resultado, esto es útil para buscar por id. Si buscamos un objeto con un id 
+que no existe, esto levantará una excepción. La llave primaria de un modelo no se llama necesariamente ``id``, así 
+que podemos utilizar el parámetro ``pk`` al momento de buscar:
+
+.. code-block:: python
+
+    >>> Libro.objects.get(id=50)
+    Traceback (most recent call last):
+        ...
+    DoesNotExist: Libro matching query does not exist. Lookup parameters were {'id': 50}   
+    >>> L = Libro.objects.get(pk=1)
+    >>> L.titulo
+    'Demian'
+
+Otra función útil de búsqueda es ``exclude``:
+
+.. code-block:: python
+
+    >>> Autor.objects.all()
+    [<Autor: Herman Hesse>, <Autor: Paulo Coelho>, <Autor: Serafin Mazparrote>]
+    >>> Autor.objects.exclude(nombre__contains="Paulo")
+    [<Autor: Herman Hesse>, <Autor: Serafin Mazparrote>]
+
+Podemos notar que en el ejemplo anterior se ha utilizado un parámetro de búsqueda que no hemos visto antes: 
+``nombre__contains``. Es posible hacer búsquedas de bastante complejidad utilizando el API de los modelos de Django. 
+Lo ideal es que el programador no tenga que recurrir a hacer *queries* directos a la base de datos. 
+
+A continuación describiremos de manera más detallada los métodos y parámetros de búsqueda de la clase ``QuerySet``.
+
+QuerySets
+~~~~~~~~~
+
+En los ejemplos anteriores hemos experimentado con resultados de búsquedas sobre modelos. Para entender de manera más 
+completa este mecanismo, es necesario explicar la clase ``QuerySet``.
+
+Cada vez que efectuamos una instrucción como ``Autor.objects.all()`` estamos lidiando con un *QuerySet*. Un QuerySet 
+representa una consulta a la base de datos, sin embargo, es importante destacar que estas expresiones no son 
+evaluadas hasta que el código las utilice, como por ejemplo, en el recorrido de un ciclo:
+
+.. code-block:: python
+
+    for a in Autor.objects.all():
+        print a
 
 
+Para saber cuántos resultados nos devuelve un QuerySet, por ejemplo, podríamos hacer:
 
+.. code-block:: python
+
+    len(Autor.objects.all())
+
+Sin embargo, esto ejecutará la consulta completa a la base de datos, la convertirá en una lista y entonces aplicará 
+la función ``len()``. En lugar de esto, la clase ``QuerySet`` nos provee el método ``count``:
+
+.. code-block:: python
+
+    >>> Autor.objects.all().count()
+    3
+
+
+El uso de ``count()`` se traduce internamente como una consulta en SQL que utiliza ``SELECT COUNT(*)``, lo cual es 
+mucho más eficiente.
+
+De igual manera podemos utilizar *slicing* en los objetos de búsqueda:
+
+.. code-block:: python
+
+    >>> AlgunModelo.objects.all()[:50]
+    
+Esto retornará otro ``QuerySet`` sin ejecutar, lo cual es más eficiente que ejecutar la consulta y luego obtener los 
+primeros 50 registros.
+
+También es posible encadenar los métodos descritos en esta sección:
+
+.. code-block:: python
+
+    >>> Libro.objects.filter(autor__nombre__contains="Herman").exclude(titulo="Demian").count()
+    1
+
+
+Métodos de QuerySet
+...................
+
+Además de ``all()``, ``get()``, ``filter()`` y ``exclude()``, la clase ``QuerySet`` soporta los siguientes métodos:
+
+**order_by**
+
+.. code-block:: python
+
+    >>> Libro.objects.all().order_by('autor')
+    [<Libro: Demian - Herman Hesse>, <Libro: Siddhartha - Herman Hesse>, <Libro: Biología de 8º grado - Serafin 
+    Mazparrote>]
+    >>> Libro.objects.all().order_by('-autor')  # indica el orden inverso
+    [<Libro: Biología de 8º grado - Serafin Mazparrote>, <Libro: Siddhartha - Herman Hesse>, <Libro: Demian - Herman 
+    Hesse>]
+
+
+**reverse**
+
+.. code-block:: python
+
+    >>> AlgunModelo.objects.all().reverse()     # retorna la lista inversa
+
+
+**distinct**
+
+Retorna un QuerySet que utiliza la cláusula ``SELECT DISTINCT`` en SQL. Esto elimina las filas duplicadas en el 
+resultado.
+
+.. code-block:: python
+
+    >>> mi_queryset.all()
+    >>> mi_queryset.distinct()
+
+
+**values**
+
+El uso de ``values()`` nos retorna, diccionario con los resultados en lugar de objetos:
+
+.. code-block:: python
+
+    >>> Libro.objects.values()
+    [{'titulo': u'Demian', 'genero': 1, u'id': 1, 'fecha_pub': datetime.date(1919, 2, 13), 'autor_id': 1}, {'titulo': 
+    u'Biolog\xeda de 8\xba grado', 'genero': 1, u'id': 2, 'fecha_pub': datetime.date(1990, 1, 1), 'autor_id': 3}, 
+    {'titulo': u'Siddhartha', 'genero': 1, u'id': 3, 'fecha_pub': datetime.date(1922, 1, 1), 'autor_id': 1}]
+   
+**first**
+
+Nos retorna el primer elemento en la consulta:
+
+.. code-block:: python
+
+    >>> Libro.objects.first()
+    <Libro: Demian - Herman Hesse>
+
+
+En el caso de no existir, ``first()`` nos retorna ``None``:
+
+.. code-block:: python
+
+    >>> a = Autor.objects.filter(nombre__contains="Hemmingway").first()
+    >>> a is None
+    True
+
+
+**last**
+
+De igual manera que ``first()``, pero esta vez nos retorna el último elemento de la consulta.
+
+.. code-block:: python
+
+    >>> Autor.objects.last()
+    <Autor: Serafin Mazparrote>
+    
+
+**exists**
+
+Retorna ``True`` si existe un registro que cumple con los parámetros de búsqueda dados:
+
+.. code-block:: python
+
+    >>> Autor.objects.filter(nombre__contains="Neruda").exists()
+    False
+
+**create**
+
+Éste es un método que nos permite crear objetos sin tener que instanciar e invocar a ``save()``.
+
+.. code-block:: python
+
+    >>> coelho = Autor.objects.get(nombre__contains="Coelho")
+    >>> coelho.libro_set.create(titulo="El Alquimista", fecha_pub="1990-01-01")
+    <Libro: El Alquimista - Paulo Coelho>
+    >>> coelho.libro_set.create(titulo="Once minutos", fecha_pub="1990-01-01")
+    <Libro: Once minutos - Paulo Coelho>
+
+
+**update**
+
+``update`` permite hacer actualizaciones directas en el QuerySet, sin tener que  obtener, modificar y luego invocar a 
+``save()``:
+
+.. code-block:: python
+
+    >>> Libro.objects.filter(titulo__contains="Alquimista").update(fecha_pub="1990-01-01")
+    1
+    
+La instrucción nos retorna ``1``, indicando que 1 registro fue actualizado exitosamente.
+
+**delete**
+
+El método ``delete()`` nos permite eliminar todos los registros existentes en un QuerySet:
+
+.. code-block::
+
+    >>> Libro.objects.filter(autor=coelho).delete()
+    >>> Libro.objects.filter(autor=coelho).exists()
+    False
+
+
+Parámetros de consulta
+......................
+
+Para el uso de ``get()``, ``filter()`` y ``exclude()``, además de la igualdad exacta, se definen varios parámetros de 
+búsqueda. Estos parámetros se concatenan con los atributos de búsqueda mediante doble *underscore* (``__``):
+
+**contains**
+
+.. code-block:: python
+
+    >>> Autor.objects.filter(nombre__contains="Serafin")
+    [<Autor: Serafin Mazparrote>]
+    
+**icontains**
+
+Funciona igual que ``contains``, pero no distingue mayúsculas o minúsculas:
+
+.. code-block:: python
+
+    >>> Autor.objects.filter(nombre_icontains="serafin")
+    [<Autor: Serafin Mazparrote>]
+
+
+**in**
+
+Se utiliza para preguntar si el valor de un atributo específico se encuentra dentro de alguna colección:
+
+.. code-block:: python
+
+    >>> Libro.objects.filter(id__in=[1,2])
+    [<Libro: Demian - Herman Hesse>, <Libro: Biología de 8º grado - Serafin Mazparrote>]
+
+**gt, gte, lt, lte**
+
+Para hacer comparaciones de desigualdad, se utilizan las palabras: 
+
+* ``gt`` (mayor que)
+* ``gte`` (mayor o igual)
+* ``lt`` (menor que)
+* ``lte`` (menor o igual)
+
+.. code-block:: python
+
+    >>> Libro.objects.filter(fecha_pub__lte="1980-01-01")
+    [<Libro: Demian - Herman Hesse>, <Libro: Siddhartha - Herman Hesse>]
+
+**range**
+
+Se utiliza ``range`` para especificar atributos cuyos valores se encuentren dentro de algún rango, es bastante útil 
+para las fechas:
+
+.. code-block:: python
+
+    >>> import datetime
+    >>> start_date = datetime.date(1920, 1, 1)
+    >>> end_date = datetime.date(2013, 3, 31)
+    >>> Libro.objects.filter(fecha_pub__range=(start_date, end_date))
+    [<Libro: Biología de 8º grado - Serafin Mazparrote>, <Libro: Siddhartha - Herman Hesse>]
+
+
+**year, month, day**
+
+Se utiliza para discriminar partes específicas de atributos de tipo fecha:
+
+.. code-block:: python
+
+    >>> Libro.objects.filter(fecha_pub__year="1990")
+    [<Libro: Biología de 8º grado - Serafin Mazparrote>]
+    
+De igual manera funciona para ``month`` en el caso de querer especificar un mes en particular, y ``day`` para un día 
+específico del mes.
+
+**isnull**
+
+Para preguntar si un valor es nulo, se utiliza el parámetro ``isnull``, de la siguiente manera:
+
+.. code-block:: python
+
+    >>> Libro.objects.filter(fecha_pub__isnull=True)
+    []
 
 
 .. Fuentes
