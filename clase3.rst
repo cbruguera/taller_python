@@ -182,7 +182,7 @@ Adicionalmente, Django provee las siguientes funcionalidades:
 
 
 Creando un nuevo proyecto
-~~~~~~~~~~~~~~~~~~~~~~~~~
+-------------------------
 
 Para crear un proyecto en django, ejecutamos el script ``django-admin.py`` con la opción ``startproject``, de la 
 siguiente manera:
@@ -200,7 +200,7 @@ Por ejemplo, se recomienda no utilizar palabras como "django" o "test".
 
 
 Servidor de desarrollo
-~~~~~~~~~~~~~~~~~~~~~~
+----------------------
 
 Por los momentos, prestaremos particular atención al archivo ``manage.py``, el cual sirve como interfaz con diversas 
 opciones para el manejo del proyecto. Por ejemplo, podemos ejecutar ``manage.py`` con la opción ``runserver`` para 
@@ -231,14 +231,14 @@ ninguna circunstancia debe utilizarse para correr el proyecto en un ambiente de 
 
 
 Configuración
-~~~~~~~~~~~~~
+-------------
 
 En el archivo ``settings.py`` se encuentran definidos todos los parámetros de configuración del proyecto, como por
 ejemplo las opciones de conexión a la base de datos.
 
 
 Base de datos
-.............
+~~~~~~~~~~~~~
 
 Los parámetros de configuración de la base de datos los define la varible global ``DATABASES``. La configuración por 
 defecto luce de esta manera:
@@ -272,7 +272,7 @@ Si se está utilizando un motor de base de datos distinto de SQLite, es necesario
 
 
 Parámetros locales
-..................
+~~~~~~~~~~~~~~~~~~
 
 Para especificar la zona horaria en la que habita nuestra aplicación, configuramos el parámetro ``TIME_ZONE``.
 En el caso de Venezuela, el valor correcto es ``'America/Caracas'``.
@@ -283,7 +283,7 @@ También podemos especificar el lenguaje a utilizar en la opción ``LANGUAGE_CODE`
 
 
 Iniciando la base de datos
-..........................
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 A continuación, ejecutaremos la siguiente instrucción:
 
@@ -312,7 +312,7 @@ usando ``apt-get``.
 
 
 Aplicaciones
-~~~~~~~~~~~~
+------------
 
 Un proyecto en Django consta de un conjunto de aplicaciones, éstas no son más que paquetes de Python que siguen una
 convención determinada.
@@ -345,7 +345,7 @@ Esto creará un directorio "libros", con la siguiente estructura:
 
      
 Modelos
-~~~~~~~
+-------
 
 Lo primero que haremos con nuestra aplicación será definir los modelos. Para esto editaremos el archivo ``models.py``
 y crearemos dos clases: ``Autor`` y ``Libro``
@@ -425,7 +425,7 @@ necesarios en la base de datos.
 
 
 El administrador de Django
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+--------------------------
 
 Una de las características principales de Django es que viene con una interfaz administrativa que facilita mucho el 
 trabajo. A través de esta interfaz podemos manejar todas las entidades en el sistema. Una vez creados los modelos, ya 
@@ -481,7 +481,7 @@ lugar, lo cual no es correcto. Para especificar este tipo de detalles, se define
 
 
 Django desde el intérprete interactivo
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--------------------------------------
 
 Es posible tener acceso a nuestro proyecto Django desde el intérprete interactivo de Python. Para esto ejecutamos la 
 siguiente instrucción en la raíz del proyecto:
@@ -578,7 +578,7 @@ Lo ideal es que el programador no tenga que recurrir a hacer *queries* directos 
 A continuación describiremos de manera más detallada los métodos y parámetros de búsqueda de la clase ``QuerySet``.
 
 QuerySets
-~~~~~~~~~
+---------
 
 En los ejemplos anteriores hemos experimentado con resultados de búsquedas sobre modelos. Para entender de manera más 
 completa este mecanismo, es necesario explicar la clase ``QuerySet``.
@@ -629,11 +629,12 @@ También es posible encadenar los métodos descritos en esta sección:
 
 
 Métodos de QuerySet
-...................
+~~~~~~~~~~~~~~~~~~~
 
 Además de ``all()``, ``get()``, ``filter()`` y ``exclude()``, la clase ``QuerySet`` soporta los siguientes métodos:
 
-**order_by**
+order_by
+........
 
 .. code-block:: python
 
@@ -645,14 +646,16 @@ Además de ``all()``, ``get()``, ``filter()`` y ``exclude()``, la clase ``QuerySe
     Hesse>]
 
 
-**reverse**
+reverse
+.......
 
 .. code-block:: python
 
     >>> AlgunModelo.objects.all().reverse()     # retorna la lista inversa
 
 
-**distinct**
+distinct
+........
 
 Retorna un QuerySet que utiliza la cláusula ``SELECT DISTINCT`` en SQL. Esto elimina las filas duplicadas en el 
 resultado.
@@ -663,7 +666,8 @@ resultado.
     >>> mi_queryset.distinct()
 
 
-**values**
+values
+......
 
 El uso de ``values()`` nos retorna, diccionario con los resultados en lugar de objetos:
 
@@ -673,8 +677,10 @@ El uso de ``values()`` nos retorna, diccionario con los resultados en lugar de o
     [{'titulo': u'Demian', 'genero': 1, u'id': 1, 'fecha_pub': datetime.date(1919, 2, 13), 'autor_id': 1}, {'titulo': 
     u'Biolog\xeda de 8\xba grado', 'genero': 1, u'id': 2, 'fecha_pub': datetime.date(1990, 1, 1), 'autor_id': 3}, 
     {'titulo': u'Siddhartha', 'genero': 1, u'id': 3, 'fecha_pub': datetime.date(1922, 1, 1), 'autor_id': 1}]
-   
-**first**
+
+
+first
+.....
 
 Nos retorna el primer elemento en la consulta:
 
@@ -693,7 +699,8 @@ En el caso de no existir, ``first()`` nos retorna ``None``:
     True
 
 
-**last**
+last
+....
 
 De igual manera que ``first()``, pero esta vez nos retorna el último elemento de la consulta.
 
@@ -703,7 +710,8 @@ De igual manera que ``first()``, pero esta vez nos retorna el último elemento de
     <Autor: Serafin Mazparrote>
     
 
-**exists**
+exists
+......
 
 Retorna ``True`` si existe un registro que cumple con los parámetros de búsqueda dados:
 
@@ -712,7 +720,8 @@ Retorna ``True`` si existe un registro que cumple con los parámetros de búsqueda
     >>> Autor.objects.filter(nombre__contains="Neruda").exists()
     False
 
-**create**
+create
+......
 
 Éste es un método que nos permite crear objetos sin tener que instanciar e invocar a ``save()``.
 
@@ -725,7 +734,8 @@ Retorna ``True`` si existe un registro que cumple con los parámetros de búsqueda
     <Libro: Once minutos - Paulo Coelho>
 
 
-**update**
+update
+......
 
 ``update`` permite hacer actualizaciones directas en el QuerySet, sin tener que  obtener, modificar y luego invocar a 
 ``save()``:
@@ -737,7 +747,9 @@ Retorna ``True`` si existe un registro que cumple con los parámetros de búsqueda
     
 La instrucción nos retorna ``1``, indicando que 1 registro fue actualizado exitosamente.
 
-**delete**
+
+delete
+......
 
 El método ``delete()`` nos permite eliminar todos los registros existentes en un QuerySet:
 
@@ -749,19 +761,23 @@ El método ``delete()`` nos permite eliminar todos los registros existentes en un
 
 
 Parámetros de consulta
-......................
+~~~~~~~~~~~~~~~~~~~~~~
 
 Para el uso de ``get()``, ``filter()`` y ``exclude()``, además de la igualdad exacta, se definen varios parámetros de 
 búsqueda. Estos parámetros se concatenan con los atributos de búsqueda mediante doble *underscore* (``__``):
 
-**contains**
+
+contains
+........
 
 .. code-block:: python
 
     >>> Autor.objects.filter(nombre__contains="Serafin")
     [<Autor: Serafin Mazparrote>]
-    
-**icontains**
+
+
+icontains
+.........
 
 Funciona igual que ``contains``, pero no distingue mayúsculas o minúsculas:
 
@@ -771,7 +787,8 @@ Funciona igual que ``contains``, pero no distingue mayúsculas o minúsculas:
     [<Autor: Serafin Mazparrote>]
 
 
-**in**
+in
+..
 
 Se utiliza para preguntar si el valor de un atributo específico se encuentra dentro de alguna colección:
 
@@ -780,7 +797,9 @@ Se utiliza para preguntar si el valor de un atributo específico se encuentra den
     >>> Libro.objects.filter(id__in=[1,2])
     [<Libro: Demian - Herman Hesse>, <Libro: Biología de 8º grado - Serafin Mazparrote>]
 
-**gt, gte, lt, lte**
+
+gt, gte, lt, lte
+................
 
 Para hacer comparaciones de desigualdad, se utilizan las palabras: 
 
@@ -794,7 +813,9 @@ Para hacer comparaciones de desigualdad, se utilizan las palabras:
     >>> Libro.objects.filter(fecha_pub__lte="1980-01-01")
     [<Libro: Demian - Herman Hesse>, <Libro: Siddhartha - Herman Hesse>]
 
-**range**
+
+range
+.....
 
 Se utiliza ``range`` para especificar atributos cuyos valores se encuentren dentro de algún rango, es bastante útil 
 para las fechas:
@@ -808,7 +829,8 @@ para las fechas:
     [<Libro: Biología de 8º grado - Serafin Mazparrote>, <Libro: Siddhartha - Herman Hesse>]
 
 
-**year, month, day**
+year, month, day
+................
 
 Se utiliza para discriminar partes específicas de atributos de tipo fecha:
 
@@ -820,7 +842,9 @@ Se utiliza para discriminar partes específicas de atributos de tipo fecha:
 De igual manera funciona para ``month`` en el caso de querer especificar un mes en particular, y ``day`` para un día 
 específico del mes.
 
-**isnull**
+
+isnull
+......
 
 Para preguntar si un valor es nulo, se utiliza el parámetro ``isnull``, de la siguiente manera:
 
