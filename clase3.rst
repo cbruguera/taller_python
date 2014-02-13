@@ -281,7 +281,6 @@ También podemos especificar el lenguaje a utilizar en la opción ``LANGUAGE_CODE`
 ``es-VE`` para el caso de Venezuela.
 
 
-
 Iniciando la base de datos
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -577,6 +576,7 @@ Lo ideal es que el programador no tenga que recurrir a hacer *queries* directos 
 
 A continuación describiremos de manera más detallada los métodos y parámetros de búsqueda de la clase ``QuerySet``.
 
+
 QuerySets
 ---------
 
@@ -632,6 +632,7 @@ Métodos de QuerySet
 ~~~~~~~~~~~~~~~~~~~
 
 Además de ``all()``, ``get()``, ``filter()`` y ``exclude()``, la clase ``QuerySet`` soporta los siguientes métodos:
+
 
 order_by
 ........
@@ -720,6 +721,7 @@ Retorna ``True`` si existe un registro que cumple con los parámetros de búsqueda
     >>> Autor.objects.filter(nombre__contains="Neruda").exists()
     False
 
+
 create
 ......
 
@@ -801,7 +803,7 @@ Se utiliza para preguntar si el valor de un atributo específico se encuentra den
 gt, gte, lt, lte
 ................
 
-Para hacer comparaciones de desigualdad, se utilizan las palabras: 
+Para hacer comparaciones de desigualdad, se utilizan las siguientes palabras: 
 
 * ``gt`` (mayor que)
 * ``gte`` (mayor o igual)
