@@ -929,11 +929,135 @@ Para mayor información sobre la sintaxis de expresiones regulares, referirse a l
 
 .. _documentación: http://docs.python.org/2/howto/regex.html
 
-Para entender un poco más acerca del mapeo de URLs, crearemos un par de vistas más de prueba...
+Ahora cambiaremos ``libros.views.index`` para convertirla en una vista que realmente haga algo: ésta ahora mostrará 
+una lista de "Autores destacados" (sólo aquellos que han escrito algún libro), y haremos otra que dé un poco más de 
+detalle sobre cada autor.
 
-.. Fuentes
-.. ~~~~~~~
+Copiemos el siguiente código en el archivo ``views.py``
 
-.. * http://www.djangoproject.com (sitio oficial)
-.. * http://effectivedjango.com/ (guía detallada)
+.. code-block:: python
+
+    from django.shortcuts import render
+
+    from libros.models import Autor, Libro
+
+
+    def index(request):
+        autores = Autor.objects.exclude(libro__isnull=True)
+        context = {'autores_list': autores}
+        return render(request, 'libros/index.html', context)
+
+
+    def autor_detail(request, autor_id):
+        try:
+            autor = Autor.objects.get(pk=autor_id)
+        except Autor.DoesNotExist:
+            raise Http404
+        return render(request, 'libros/autor_detail.html', {'autor': autor})
+
+
+Ahora debemos definir el mapeo de URLs para acceder a la vista de detalle de autor. Nuestro archivo 
+``libros/urls.py`` debería lucir de esta forma:
+
+.. code-block:: python
+
+    from django.conf.urls import patterns, url
+    from libros import views
+
+    urlpatterns = patterns('',
+        url(r'^$', views.index, name='index'),
+        url(r'^autor/(?P<autor_id>\d+)/$', views.autor_detail, name='autor_detail')
+    ) 
+
+
+La expresión ``(?P<autor_id>\d+)`` simplemente corresponde a una serie de dígitos numéricos, y asigna el valor 
+encontrado a un argumento con el nombre "autor_id", el cual será recibido por la vista. Esto permitirá URLs de esta 
+forma, por ejemplo: ``/libros/autor/5/``. Redirigiendo entonces a la vista ``autor_detail`` que hemos creado, y 
+pasando el id del autor como argumento.
+
+
+Plantillas
+----------
+
+Como podemos notar, esta vez nuestras vistas redirigen a unos *templates* (``index.html`` y ``autor_detail``) que aún 
+no existen. Vamos a crear estas plantillas, y a configurar todo lo necesario para que funcionen.
+
+Lo primero que haremos será crear una carpeta ``templates`` que se encuentre en la raíz del proyecto (en el mismo 
+directorio en donde se encuentra ``manage.py``). Dentro crearemos otra carpeta con el nombre de la aplicación 
+(``libros``):
+
+.. code-block:: bash
+
+    $ mkdir templates
+    $ cd templates
+    $ mkdir libros
+
+
+Ahora crearemos ``index.html``, con el siguiente código:
+
+.. code-block:: django
+
+    <h1>Autores destacados</h1>
+    {% if autores_list %}
+        <ul>
+        {% for autor in autores_list %}
+            <li><a href="/libros/autor/{{ autor.id }}/">{{ autor.nombre }}</a></li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>No hay autores definidos en el sistema.</p>
+    {% endif %}
+
+
+Como podemos observar, estas plantillas tienen una sintaxis particular. Se trata de html común, con una serie de 
+etiquetas propias de Django. Para fines prácticos y por el bien de la legibilidad, por los momentos no es necesario 
+definir toda la estructura del archivo html, el navegador es capaz de interpretarlo. Al momento de realizar proyectos 
+reales, sin embargo, se recomienda escribir código html completo.
+
+Ahora crearemos un archivo ``autor_detail.html`` en el mismo directorio, con el siguiente código:
+
+.. code-block:: django
+
+    <h1>{{ autor.nombre }}</h1>
+
+    Obras escritas:
+    <ul>
+    {% for libro in autor.libro_set.all %}
+        <li>{{ libro.titulo }} ({{ libro.fecha_pub|date:"Y" }})</li>
+    {% endfor %}
+    </ul>
+
+    <a href="/libros/">Volver al inicio</a>
+
+
+Configuración
+~~~~~~~~~~~~~
+
+Es necesario hacer algunos ajustes para que Django encuentre nuestras plantillas. Abramos el archivo ``settings.py`` 
+e insertemos al final los parámetros ``TEMPLATE_LOADERS`` y ``TEMPLATE_DIRS`` con los siguientes valores:
+
+.. code-block:: python
+
+    TEMPLATE_LOADERS =(
+    'django.template.loaders.filesystem.Loader',
+    'django.template.loaders.app_directories.Loader'
+    )
+
+    TEMPLATE_DIRS = (
+        os.path.join(BASE_DIR, 'templates'),
+    )
+
+Probando todo junto
+-------------------
+
+Si hemos hecho todo bien hasta ahora, deberíamos poder probar nuestro sitio a través de la URL 
+``http://127.0.0.1:8000/libros/``. Hagámoslo!
+
+
+Referencias útiles
+------------------
+
+* http://www.djangoproject.com (sitio oficial)
+* http://lightbird.net/dbe/index.html (tutorial con ejemplos)
+* http://effectivedjango.com/ (guía avanzada)
 
