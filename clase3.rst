@@ -278,7 +278,7 @@ Para especificar la zona horaria en la que habita nuestra aplicación, configuram
 En el caso de Venezuela, el valor correcto es ``'America/Caracas'``.
 
 También podemos especificar el lenguaje a utilizar en la opción ``LANGUAGE_CODE``, al cual le daremos el valor de 
-``es-VE`` para el caso de Venezuela.
+``'es-VE'`` para el caso de Venezuela.
 
 
 Iniciando la base de datos
@@ -670,7 +670,7 @@ resultado.
 values
 ......
 
-El uso de ``values()`` nos retorna, diccionario con los resultados en lugar de objetos:
+El uso de ``values()`` nos retorna un diccionario con los resultados en lugar de objetos:
 
 .. code-block:: python
 
@@ -1060,4 +1060,5 @@ Referencias útiles
 * http://www.djangoproject.com (sitio oficial)
 * http://lightbird.net/dbe/index.html (tutorial con ejemplos)
 * http://effectivedjango.com/ (guía avanzada)
+* http://docs.python.org/2/howto/regex.html (Expresiones regulares en Python)
 
