@@ -123,7 +123,7 @@ prueba:
 .. code-block:: python
 
     >>> import django
-    >>> print(django.get_version())
+    >>> print django.get_version()
     1.6
 
 
@@ -389,6 +389,37 @@ enteros, ``DateField`` para fechas, y ``ForeignKey`` para relaciones directas co
 
 Un ``ForeignKey`` puede verse como una relación "uno a muchos", ya que distintos modelos pueden definir la misma 
 *llave foránea* con un modelo dado. Un autor puede escribir muchos libros, pero un libro sólo pertenece a un autor.
+
+Django soporta los siguientes tipos de campo:
+
+* AutoField
+* BigIntegerField
+* BinaryField
+* BooleanField
+* CharField
+* CommaSeparatedIntegerField
+* DateField
+* DateTimeField
+* DecimalField
+* EmailField
+* FileField
+* FilePathField
+* FloatField
+* ImageField
+* IntegerField
+* IPAddressField
+* NullBooleanField
+* PositiveIntegerField
+* URLField
+
+Y los campos relacionales: 
+
+* ForeignKey
+* ManyToManyField
+* OneToOneField
+
+Puede verse más información de los tipos de campos en la 
+`documentación oficial <https://docs.djangoproject.com/en/1.6/ref/models/fields/>`_.
 
 Se han implementado además los métodos ``__unicode__`` de cada modelo, estos definen la representación textual de las 
 instancias particulares de cada clase. Si queremos hacer ``print`` de un objeto de la clase ``Libro``, veremos su 
