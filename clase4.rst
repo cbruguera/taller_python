@@ -57,10 +57,10 @@ En el caso de las vistas basadas en clases, se define un método ``get`` dentro d
     from django.http import HttpResponse
     from django.views.generic.base import View
 
-        class MiVista(View):
-            def get(self, request):
-                # lógica de la vista
-                return HttpResponse('result')
+    class MiVista(View):
+        def get(self, request):
+            # lógica de la vista
+            return HttpResponse('result')
 
 
 Una vista basada en clase actúa de la misma forma que una vista normal, con la particularidad de que permite una mejor
