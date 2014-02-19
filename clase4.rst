@@ -209,6 +209,8 @@ requiere de algún tipo de procesamiento, se necesita sobrescribir el método:
 
 .. hay un error con este ejemplo, no se está construyendo bien el URL
 
+El atributo ``query_string`` indica que el URL puede recibir argumentos vía GET.
+
 
 DetailView
 ..........
