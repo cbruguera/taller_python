@@ -926,10 +926,13 @@ correspondencia entre un URL y la vista que acabamos de definir. Copiaremos ento
     )
 
 ``'^$'`` es una expresión regular que equivale a una cadena vacía, y corresponde con la raíz de la aplicación actual 
-(``libros``).
+(``libros``). ``views.index`` indica la vista a la que queremos asociar el patrón, y ``name`` es un argumento que 
+nos permite acceder sin ambigüedades a este URL, esto último nos permite hacer cambios globales a los patrones de 
+URLs de un proyecto tocando un único archivo.
 
 Ahora necesitamos editar el archivo ``urls.py`` que se encuentra en el directorio principal de proyecto 
-(``libronline/libronline/``), para dar acceso al módulo ``libros``. El código debería quedar así:
+(``libronline/libronline/``). Éste es el primer módulo de mapeo de urls que el framework va a consultar, por lo cual 
+debemos darle acceso a los patrones de URL definidos en la aplicación ``libros``. El código debería quedar así:
 
 .. code-block:: python
 
