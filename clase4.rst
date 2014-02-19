@@ -152,17 +152,132 @@ contexto de la plantilla, debemos sobrescribir el método:
 RedirectView
 ............
 
+``RedirectView``, como su nombre lo indica, simplemente efectúa una redirección a un URL dado.
+
+Ejemplo:
+
+.. code-block:: python
+
+    from django.views.generic.base import RedirectView
+    
+    class GoogleRedirectView(RedirectView):
+        
+        url = "https://www.google.com/"
+
+
+Sin embargo, no es necesario implementar una subclase de ``RedirectView`` si no es necesario, también podemos 
+utilizar directamente la clase desde el archivo de URLs de la siguiente manera:
+
+.. code-block:: python
+
+    from django.conf.urls import patterns, url
+    from django.views.generic.base import RedirectView
+
+
+    urlpatterns = patterns('',
+
+        url(r'^django-doc/$', RedirectView.as_view(url='http://djangoproject.com')),
+    )
+
+
+El flujo de ejecución de ``RedirectView`` ocurre de la siguiente forma:
+
+1) ``dispatch()``
+2) ``http_method_not_allowed()``
+3) ``get_redirect_url()``
+
+El método ``get_redirect_url`` es el que construye el URL destino de la redirección. Si la construcción de este URL 
+requiere de algún tipo de procesamiento, se necesita sobrescribir el método:
+
+.. code-block:: python
+
+    from django.shortcuts import get_object_or_404
+    from django.views.generic.base import RedirectView
+
+    from libros.models import Libro
+
+    class GoogleBookInfoRedirectView(RedirectView):
+        
+        url = "https://www.google.com/search"
+        query_string = True
+        
+        def get_redirect_url(self, *args, **kwargs):
+            libro = get_object_or_404(Libro, pk=int(kwargs['pk']))
+            print "titulo = %s" % libro.titulo
+            return super(GoogleBookInfoRedirectView, self).get_redirect_url(url="%s?q=%s" % (url, libro.titulo), 
+                    *args, **kwargs)
+
+.. hay un error con este ejemplo, no se está construyendo bien el URL
+
+
 DetailView
 ..........
+
+Para obtener información de detalle sobre un objeto en particular, Django implementa ``DetailView``. Como atributo de 
+la clase basta con definir ``model`` para indicar a qué modelo pertenece el objeto que se requiere.
+
+Por ejemplo, podemos reescribir nuestra vista-función de la clase anterior, usando vistas genéricas esta vez:
+
+.. code-block:: python
+
+    class AutorDetailView(DetailView):
+        
+        model = Autor
+        template_name = "libros/autor_detail.html"
+        context_object_name = "autor"
+
+        
+Adicionalmente, necesitamos cambiar la línea de mapeo de URL en el archivo ``urls.py`` de la aplicación de libros. 
+Esta línea ahora quedaría de la siguiente forma:
+
+.. code-block:: python
+
+    url(r'^autor/(?P<pk>\d+)/$', AutorDetailView.as_view(), name='autor_detail'),
+
+El flujo de llamadas en un ``DetailView`` ocurre en el siguiente orden:
+
+1) ``dispatch()``
+2) ``http_method_not_allowed()``
+3) ``get_template_names()``
+4) ``get_slug_field()``
+5) ``get_queryset()``
+6) ``get_object()``
+7) ``get_context_object_name()``
+8) ``get_context_data()``
+9) ``get()``
+10) ``render_to_response()``
+
 
 ListView
 ........
 
+Para mostrar listados de objetos, Django implemente ``ListView``. Podemos sobrescribir la vista 
+``libros.views.index`` utilizando la vista genérica en su lugar:
+
+.. code-block:: python
+
+    class AutorListView(ListView):
+        
+        model = Autor
+        template_name = "libros/index.html"
+        context_object_name = "autores_list"
+        
+Si hacemos los cambios correspondientes al archivo de URLs, deberíamos preservar el funcionamiento del sitio, pero 
+esta vez con un código un poco más elegante.
+
+Como podemos ver, es una ventaja notable el uso de vistas genéricas basadas en clase. Ésta es la manera recomendada 
+de implementar vistas.
+
+Adicional a las expuestas hasta ahora, Django implementa las siguientes vistas genéricas:
+
 CreateView
+..........
 
 UpdateView
+..........
 
 DeleteView
+..........
 
 Managers
 --------
