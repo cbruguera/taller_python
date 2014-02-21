@@ -270,25 +270,262 @@ esta vez con un código un poco más elegante.
 Como podemos ver, es una ventaja notable el uso de vistas genéricas basadas en clase. Ésta es la manera recomendada 
 de implementar vistas.
 
-Adicional a las expuestas hasta ahora, Django implementa las siguientes vistas genéricas:
+Adicionalmente, Django implementa muchas otras vistas genéricas, entre ellas:
 
-CreateView
+* CreateView
+* UpdateView
+* DeleteView
+
+Éstas las estaremos estudiando más adelante.
+
+
+Formularios
+-----------
+
+A pesar de que es posible procesar formularios únicamente utilizando la clase ``HttpRequest``, Django cuenta con
+la biblioteca ``django.forms``, la cual implementa una serie de clases y funcionalidades para el manejo de formularios.
+
+A través de la biblioteca de manejo de formularios, es posible:
+
+* Desplegar un formulario HTML con *widgets* generados automáticamente.
+* Validar automáticamente los datos introducidos en un formulario.
+* Convertir los datos introducidos a sus respectivos tipos de datos esperados en Python.
+
+Clase *Form*
+~~~~~~~~~~~~
+
+Un objeto de tipo ``Form`` encapsula una secuencia de campos y un conjunto de reglas de validación que deben cumplirse
+para que el formulario sea aceptado. Todos los objetos de este tipo deben ser instancia de la clase 
+``django.forms.Form`` o de una subclase de ésta, y sus campos se definen de manera similar a los modelos. 
+
+Por ejemplo, podemos utilizar un ``Form`` para implementar una funcionalidad de "Contáctanos", de la siguiente 
+forma:
+
+.. code-block:: python
+
+    from django import forms
+
+    class ContactanosForm(forms.Form):
+        asunto = forms.CharField(max_length=100)
+        mensaje = forms.CharField()
+        remitente = forms.EmailField()
+        reenviar_remitente = forms.BooleanField(required=False)
+
+
+Formularios desde la vista
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Para procesar un formulario como el que definimos en el ejemplo anterior, podemos definir una vista de la siguiente manera:
+
+.. code-block:: python
+
+    from django.shortcuts import render
+    from django.http import HttpResponseRedirect
+
+    def contact(request):
+        if request.method == 'POST':
+            form = ContactanosForm(request.POST)
+            if form.is_valid():
+                # Procesar datos
+                return HttpResponseRedirect('/gracias/')
+        else:
+            form = ContactanosForm()
+
+        return render(request, 'contactanos.html', {
+            'form': form,
+        })
+        
+
+Utilizando vistas basadas en clase, lo haríamos de esta forma:
+
+.. code-block:: python
+
+    from django.http import HttpResponseRedirect
+    from django.shortcuts import render
+    from django.views.generic.base import View
+
+    from .forms import ContactanosForm
+
+    class ContactanosView(View):
+        form_class = ContactanosForm
+        initial = {'key': 'value'}
+        template_name = 'contactanos.html'
+
+        def get(self, request, *args, **kwargs):
+            form = self.form_class(initial=self.initial)
+            return render(request, self.template_name, {'form': form})
+
+        def post(self, request, *args, **kwargs):
+            form = self.form_class(request.POST)
+            if form.is_valid():
+                # procesar datos
+                return HttpResponseRedirect('/gracias/')
+
+            return render(request, self.template_name, {'form': form})
+
+
+Formularios desde el *template*
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Del lado de las plantillas simplemente mostramos el objeto con nombre ``form`` que está siendo pasado desde la vista
+a través del contexto:
+
+.. code-block:: django
+
+    <form action="/contact/" method="post">
+    {{ form.as_p }}
+    <input type="submit" value="Submit" />
+    </form>
+
+En el ejemplo estamos usando el método ``as_p`` para desplegar el formulario como una serie de etiquetas ``<p>`` 
+en HTML. También es posible mostrar el formulario invocando los métodos ``as_ul()`` para una lista sin orden y 
+``as_table()`` para mostrarlo como una tabla.
+
+El API de la clase *Form*
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Un objeto de la clase ``Form`` puede encontrarse asociado o no a un conjunto de datos. La terminología que se utiliza
+en inglés para este concepto es el de *bound form* y *unbound form*. Un formulario con datos (*bound*) es capaz de
+validar los datos, y puede mostrar un "render" en HTML con sus valores correspondientes en los campos. Un formulario 
+sin datos (*unbound*) únicamente puede mostrar en HTML sus campos vacíos.
+
+Para crear un formulario, se instancia la clase correspondiente:
+
+.. code-block:: python
+
+    >>> f = ContactanosForm()
+
+
+Para asociar datos a un formulario, se le debe pasar un diccionario como primer argumento al constructor de la clase:
+
+.. code-block:: python
+
+    >>> data = {'asunto': 'Hola',
+    ...         'mensaje': 'Hola, cómo estás?',
+    ...         'recipiente': 'yo@ejemplo.com',
+    ...         'reenviar_recipiente': True}
+    >>> f = ContactanosForm(data)
+
+La clase form cuenta con los siguientes métodos:
+
+is_bound()
 ..........
 
-UpdateView
+Para distinguir entre un formulario asociado con datos y otro que no, se consulta el método ``is_bound()``:
+
+.. code-block:: python
+
+    >>> f = ContactanosForm()
+    >>> f.is_bound
+    False
+    >>> f = ContactanosForm({'asunto': 'hola'})
+    >>> f.is_bound
+    True
+
+
+is_valid()
 ..........
 
-DeleteView
-..........
+La principal funcionalidad de un formulario es la validación de datos, esto se hace invocando al método ``is_valid()``
+
+.. code-block:: python
+
+    >>> data = {'asunto': 'Hola',
+    ...         'mensaje': 'Hola, todo bien?',
+    ...         'recipiente': 'yo@ejemplo.com',
+    ...         'reenviar_recipiente': True}
+    >>> f = ContactanosForm(data)
+    >>> f.is_valid()
+    True
+
+Si intentamos introducir un dato inválido, u omitir un campo requerido, el método retorna ``False``. Por defecto, 
+todos los campos de un formulario se asumen como requeridos.
+
+.. code-block:: python
+
+    >>> data = {'asunto': '',
+    ...         'mensaje': 'Hola, todo bien?',
+    ...         'recipiente': 'yo@ejemplo.com',
+    ...         'reenviar_recipiente': True}
+    >>> f = ContactanosForm(data)
+    >>> f.is_valid()
+    False
+
+
+errors
+......
+
+Todo objeto de tipo ``Form`` tiene un atributo ``errors``, en donde se obtiene un diccionario con los errores ocurridos
+durante la validación.
+
+.. .. code-block:: python
+
+
+initial
+.......
+
+.. .. code-block:: python
+
+
+fields
+......
+
+.. .. code-block:: python
+
+
+cleaned_data
+............
+
+.. .. code-block:: python
+
+
+label_suffix
+............
+
+.. .. code-block:: python
+
+
+
+Formularios asociados a modelos
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Cuando queremos definir un formulario que corresponda a un modelo específico de nuestra aplicación, no necesitamos 
+definir redundantemente los campos del modelo. Para esto, Django implementa la clase ``ModelForm``, que se encarga
+automáticamente de hacer la correspondencia entre el formulario y su modelo respectivo.
+
+Ahora definiremos un formulario que corresponda a nuestros modelos creados anteriormente: ``Autor`` y ``Libro``. Para
+esto crearemos un archivo ``forms.py`` dentro de la aplicación ``libros``:
+
+.. code-block:: python
+
+    from django.forms import ModelForm
+    from libros.models import Autor, Libro
+
+
+    class AutorForm(ModelForm):
+        class Meta:
+            model = Autor
+            
+
+    class LibroForm(ModelForm):
+        class Meta:
+            model = Libro
+
+
+
+
+
+
+
+.. CreateView
+.. UpdateView
+.. DeleteView
 
 Managers
 --------
             
 Sistema de plantillas
 ---------------------
-
-Formularios
------------
 
 Señales
 -------
