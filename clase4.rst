@@ -203,11 +203,9 @@ requiere de algún tipo de procesamiento, se necesita sobrescribir el método:
         
         def get_redirect_url(self, *args, **kwargs):
             libro = get_object_or_404(Libro, pk=int(kwargs['pk']))
-            print "titulo = %s" % libro.titulo
-            return super(GoogleBookInfoRedirectView, self).get_redirect_url(url="%s?q=%s" % (url, libro.titulo), 
-                    *args, **kwargs)
+            self.url +=  "?q=%s" % libro.titulo
+            return super(GoogleBookInfoRedirectView, self).get_redirect_url(*args, **kwargs)
 
-.. hay un error con este ejemplo, no se está construyendo bien el URL
 
 El atributo ``query_string`` indica que el URL puede recibir argumentos vía GET.
 
@@ -381,6 +379,7 @@ En el ejemplo estamos usando el método ``as_p`` para desplegar el formulario com
 en HTML. También es posible mostrar el formulario invocando los métodos ``as_ul()`` para una lista sin orden y 
 ``as_table()`` para mostrarlo como una tabla.
 
+
 El API de la clase *Form*
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -407,6 +406,7 @@ Para asociar datos a un formulario, se le debe pasar un diccionario como primer 
     >>> f = ContactanosForm(data)
 
 La clase form cuenta con los siguientes métodos:
+
 
 is_bound()
 ..........
@@ -458,32 +458,125 @@ errors
 Todo objeto de tipo ``Form`` tiene un atributo ``errors``, en donde se obtiene un diccionario con los errores ocurridos
 durante la validación.
 
-.. .. code-block:: python
+.. code-block:: python
 
-
-initial
-.......
-
-.. .. code-block:: python
+    >>> f.errors
+    {'asunto': [u'This field is required.']}
 
 
 fields
 ......
 
-.. .. code-block:: python
+A través del atributo ``fields``, el formulario guarda un diccionario con todos sus campos. En donde cada clave será 
+el nombre del campo, y el valor será el objeto correspondiente de tipo ``Field``
+
+.. code-block:: python
+
+    >>> for campo in f.fields.values():
+    ...     print campo
+    ... 
+    <django.forms.fields.CharField object at 0x24bb510>
+    <django.forms.fields.CharField object at 0x24bb5d0>
+    <django.forms.fields.EmailField object at 0x24bb650>
+    <django.forms.fields.BooleanField object at 0x24bb6d0>
+
+
+Ahora intentemos explorar usando ``dir()`` y ``help()`` en esos campos y sus atributos.
+
+Cada campo también tiene un atributo ``errors``, así como una etiqueta en el atributo ``label_tag``. Esto es útil si 
+queremos desplega el formulario de forma personalizada, sin estar restringido a los métodos ``Form.as_p``, 
+``Form.as_ul``, etc.
+
+.. code-block:: django
+
+    <form action="/contactanos/" method="post">
+        {% for field in form %}
+            <div class="fieldWrapper">
+                {{ field.errors }}
+                {{ field.label_tag }} {{ field }}
+            </div>
+        {% endfor %}
+        <p><input type="submit" value="Enviar" /></p>
+    </form>
 
 
 cleaned_data
 ............
 
-.. .. code-block:: python
+Cada campo en un formulario no sólo es responsable de validar sus valores, sino además de normalizarlos en un formato 
+consistente. Por ejemplo, un campo de tipo ``DateField`` se convierte a un objeto Python de tipo ``datetime.date``. 
+Una vez que se ha creado un objeto de tipo ``Form`` y éste ha validado sus datos, es posible acceder al atributo 
+``cleaned_data``:
+
+.. code-block:: python
+
+    >>> data = {'asunto': 'hola',
+    ...         'mensaje': 'Todo bien?',
+    ...         'remitente': 'yo@ejemplo.com',
+    ...         'reenviar_remitente': True}
+    >>> f = ContactanosForm(data)
+    >>> f.is_valid()
+    True
+    >>> f.cleaned_data
+    {'reenviar_remitente': True, 'mensaje': u'Todo bien?', 'remitente': u'yo@ejemplo.com', 'asunto': u'hola'}
+
+Cada vez que se necesite procesar los datos de un formulario desde una vista, esto debe hacerse accediendo a 
+``Form.cleaned_data``.
+
+error_css_class, required_css_class
+...................................
+
+A veces es necesario especificar una clase de estilo para los mensajes de error o de campos requeridos:
+
+.. code-block:: python
+
+    class ContactanosForm(Form):
+        error_css_class = 'error'
+        required_css_class = 'required'
 
 
-label_suffix
-............
+Widgets
+~~~~~~~
 
-.. .. code-block:: python
+Un *widget*, en Django, representa la manera de desplegar en HTML un elemento de entrada de un formulario.
 
+Cada vez que se define un campo de un ``Form``, éste viene asociado con un widget por defecto, según su tipo de dato. 
+Sin embargo, es posible especificar un widget en particular para algún campo:
+
+.. code-block:: python
+
+    from django import forms
+
+    class CommentForm(forms.Form):
+        name = forms.CharField()
+        url = forms.URLField()
+        comment = forms.CharField(widget=forms.Textarea)
+      
+
+Esto hará que el campo ``comment`` se muestre como un ``<textarea>``, en lugar del widget por defecto, que 
+corresponde a un ``<input type='text'>``.
+
+Como todos los widgets se definen como derivados de la clase ``Widget``, es posible para el usuario implementar sus 
+propios widget, en el caso de ser necesario.
+
+Django implementa, entre otros, los siguientes widgets básicos:
+
+* TextInput
+* NumberInput
+* EmailInput
+* URLInput
+* PasswordInput
+* HiddenInput
+* DateInput
+* DateTimeInput
+* TimeInput
+* TextArea
+* CheckboxInput
+* Select
+* NullBooleanSelect
+* SelectMultiple
+* RadioSelect
+* FileInput
 
 
 Formularios asociados a modelos
@@ -493,8 +586,8 @@ Cuando queremos definir un formulario que corresponda a un modelo específico de 
 definir redundantemente los campos del modelo. Para esto, Django implementa la clase ``ModelForm``, que se encarga
 automáticamente de hacer la correspondencia entre el formulario y su modelo respectivo.
 
-Ahora definiremos un formulario que corresponda a nuestros modelos creados anteriormente: ``Autor`` y ``Libro``. Para
-esto crearemos un archivo ``forms.py`` dentro de la aplicación ``libros``:
+Ahora definiremos formularios de edición que correspondan a nuestros modelos creados anteriormente: ``Autor`` y 
+``Libro``. Para esto crearemos un archivo ``forms.py`` dentro de la aplicación ``libros``:
 
 .. code-block:: python
 
@@ -512,23 +605,228 @@ esto crearemos un archivo ``forms.py`` dentro de la aplicación ``libros``:
             model = Libro
 
 
+Un ``ModelForm`` asume todos los campos de su modelo correspondiente. Si se quiere especificar un subconjunto de los 
+campos del modelo en formulario, se define el atributo ``fields`` dentro de los atributos de ``Meta``, de la 
+siguiente forma:
+
+.. code-block:: python
+
+    from django.forms import ModelForm
+    from mi_app.models import Modelo
+    
+    
+    class MiModeloForm(ModelForm):
+        class Meta:
+               model = Modelo
+               fields ['campo1', 'campo2', 'otro_campo']
 
 
+CreateView
+..........
+
+Esta vez utilizaremos una vista genérica basada en clase para utilizar nuestro formulario de agregación de autores. 
+Implementaremos para esto un ``CreateView``, que utilizará nuestro formulario definido para el modelo ``Autor``:
+
+.. code-block:: python
+    
+    from libros.forms import AutorForm
+    
+
+    class AutorCreateView(CreateView):
+        
+        form_class = AutorForm
+        template_name = 'libros/autor_form.html'
+        success_url = '/libros/'
 
 
+``CreateView`` implementa el *Mixin* ``ModelFormMixin``, por lo cual está hecho para trabajar con un objeto ``Form``. 
+No es necesario entonces implementar funciones que procesen los datos del formulario, sólo resta crear el template 
+``autor_form.html`` y mapear los urls necesarios.
 
-.. CreateView
-.. UpdateView
-.. DeleteView
+.. code-block:: django
 
-Managers
---------
-            
+    <!-- templates/libros/autor_form.html -->
+    
+    <h2>Agregar Autor</h2>
+
+    <form action="" method="post">{% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" value="Guardar" />
+    </form> 
+
+
+Agregaremos la siguiente línea a los patrones del archivo ``libros/urls.py`` (es necesario importar 
+``AutorCreateView`` al comienzo del archivo):
+
+.. code-block:: python
+
+    url(r'^autor/create/$', AutorCreateView.as_view(), name='autor_form')
+
+
+Y hora agregaremos un enlace desde el índice para hacer referencia a este URL:
+
+.. code-block:: django
+
+    <!-- templates/libros/index.html -->
+    
+    <h1>Autores destacados</h1>
+    {% if autores_list %}
+        <ul>
+        {% for autor in autores_list %}
+            <li><a href="/libros/autor/{{ autor.id }}/">{{ autor.nombre }}</a></li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>No hay autores definidos en el sistema.</p>
+    {% endif %}
+
+    <a href="/libros/autor/create/">Agregar autor</a>
+
+Esto es todo, ya tenemos una vista para creación de autores.
+
+
+UpdateView
+~~~~~~~~~~
+
+Entre las vistas genéricas de edición, Django implementa ``UpdateView``, el cual muestra un formulario asociado a un 
+modelo para editar y actualizar los campos de un objeto dado.
+
+Primero haremos la plantilla que mostrará el formulario de edición, y la nombraremos ``autor_edit.html``:
+
+.. code-block:: django
+
+    <h2>Editar Autor</h2>
+
+    <form action="" method="post">{% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" value="Guardar" />
+    </form>
+
+
+Ahora agregaremos la siguiente vista al archivo ``libros/views.py``:
+
+.. code-block:: python
+
+    class AutorUpdateView(UpdateView):
+        
+        model = Autor
+        template_name = 'libros/autor_edit.html'
+        success_url = '/libros/'
+        
+        def form_valid(self, form):
+            self.success_url = '/libros/autor/%s/' % self.get_object().id
+            return super(AutorUpdateView, self).form_valid(form)
+
+
+``form_valid()`` es un método que se ejecuta una vez que se ha validado el formulario, y se puede utilizar para 
+introducir comportamiento específico. En este caso se ha utilizado para concatenar al URL el id del objeto que se 
+está tratando, el cual es accesible mediante el método ``get_object()``.
+
+Agregaremos ahora un enlace desde la plantilla de detalle del autor, con el fin de poder editar su información:
+
+.. code-block:: django
+
+    <h1>{{ autor.nombre }}</h1>
+
+    <a href="/libros/autor/edit/{{ autor.id }}/">Editar información de autor</a>
+
+    {% if autor.libro_set.all %}
+        Obras escritas:
+        <ul>
+        {% for libro in autor.libro_set.all %}
+            <li>{{ libro.titulo }} ({{ libro.fecha_pub|date:"Y" }}) <a href="/libros/search/{{ libro.id }}/">[buscar 
+        info]<a/></li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>Este autor no tiene obras asociadas.</p>
+    {% endif %}
+
+    <a href="/libros/">Volver al inicio</a>
+
+
+Y su respectivo patrón en el archivo ``libros.urls.py``:
+
+.. code-block:: python
+
+    url(r'^autor/edit/(?P<pk>\d+)/$', AutorUpdateView.as_view(), name='autor_edit'),
+    
+Es necesario importar la clase ``AutorUpdateView``.
+
+...Si hemos hecho todo correctamente, tenemos un formulario de edición de autores, que se encarga de  crear un 
+``ModelForm`` correspondiente al modelo especificado (Autor), validar automáticamente los datos de entrada y 
+redirigir a la plantilla respectiva.
+
+
+DeleteView
+~~~~~~~~~~
+
+Para finalizar con las funcionalidades de edición, implementaremos una vista ``DeleteView``, que nos permita eliminar 
+al autor desde su vista de edición.
+
+En el archivo ``views.py``, luego de importar ``DeleteView``, agregaremos la siguiente vista:
+
+.. code-block:: python
+   
+    class AutorDeleteView(DeleteView):
+        
+        model = Autor
+        success_url = '/libros/'
+
+Agregaremos la siguiente línea a la lista de patrones en ``urls.py``:
+
+.. code-block:: python
+
+    url(r'^autor/delete/(?P<pk>\d+)/$', AutorDeleteView.as_view(), name='autor_delete'),
+
+Pondremos un enlace al final de ``autor_detail.html`` para eliminar al autor:
+
+.. code-block:: django
+
+    <h1>{{ autor.nombre }}</h1>
+
+    <a href="/libros/autor/edit/{{ autor.id }}/">Editar información de autor</a>
+
+    {% if autor.libro_set.all %}
+        Obras escritas:
+        <ul>
+        {% for libro in autor.libro_set.all %}
+            <li>{{ libro.titulo }} ({{ libro.fecha_pub|date:"Y" }}) <a href="/libros/search/{{ libro.id }}/">[buscar 
+        info]<a/></li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>Este autor no tiene obras asociadas.</p>
+    {% endif %}
+
+    <p><a href="/libros/autor/delete/{{ autor.id  }}/">[Eliminar autor]</a></p>
+
+    <p><a href="/libros/">Volver al inicio</a></p>
+
+Y finalmente crearemos un nuevo template llamado ``autor_confirm_delete.html`` con el siguiente código:
+
+.. code-block:: django
+
+    <form action="" method="post">{% csrf_token %}
+        <p>Está seguro de que desea eliminar a "{{ autor.nombre }}"?</p>
+        <input type="submit" value="Sí" />
+    </form> 
+
+    <a href="/libros/">Volver al inicio</a>
+
+Ahora probemos. Ya es posible eliminar autores desde su vista de detalle.
+
+**Ejercicio práctico:** Implementar lo necesario para poder agregar, editar y eliminar libros desde la plantilla de 
+detalle del autor.
+
+
 Sistema de plantillas
 ---------------------
 
-Señales
--------
+
+
+Managers
+--------
 
 
    

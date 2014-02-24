@@ -1,0 +1,19 @@
+<h1>{{ autor.nombre }}</h1>
+
+<a href="/libros/autor/edit/{{ autor.id }}/">Editar información de autor</a>
+
+{% if autor.libro_set.all %}
+    Obras escritas:
+    <ul>
+    {% for libro in autor.libro_set.all %}
+        <li>{{ libro.titulo }} ({{ libro.fecha_pub|date:"Y" }}) <a href="/libros/search/{{ libro.id }}/">[buscar 
+    info]<a/></li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>Este autor no tiene obras asociadas.</p>
+{% endif %}
+
+<p><a href="/libros/autor/delete/{{ autor.id  }}/">[Eliminar autor]</a></p>
+
+<p><a href="/libros/">Volver al inicio</a></p>

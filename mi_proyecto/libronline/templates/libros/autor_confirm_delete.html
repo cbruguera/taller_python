@@ -1,0 +1,6 @@
+<form action="" method="post">{% csrf_token %}
+    <p>Está seguro de que desea eliminar a "{{ autor.nombre }}"?</p>
+    <input type="submit" value="Sí" />
+</form> 
+
+<a href="/libros/">Volver al inicio</a>

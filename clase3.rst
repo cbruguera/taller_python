@@ -1054,12 +1054,17 @@ Ahora crearemos un archivo ``autor_detail.html`` en el mismo directorio, con el 
 
     <h1>{{ autor.nombre }}</h1>
 
-    Obras escritas:
-    <ul>
-    {% for libro in autor.libro_set.all %}
-        <li>{{ libro.titulo }} ({{ libro.fecha_pub|date:"Y" }})</li>
-    {% endfor %}
-    </ul>
+    {% if autor.libro_set.all %}
+        Obras escritas:
+        <ul>
+        {% for libro in autor.libro_set.all %}
+            <li>{{ libro.titulo }} ({{ libro.fecha_pub|date:"Y" }}) <a href="/libros/search/{{ libro.id }}/">[buscar 
+        info]<a/></li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>Este autor no tiene obras asociadas.</p>
+    {% endif %}
 
     <a href="/libros/">Volver al inicio</a>
 

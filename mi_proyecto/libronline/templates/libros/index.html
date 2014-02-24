@@ -1,0 +1,12 @@
+<h1>Autores destacados</h1>
+{% if autores_list %}
+    <ul>
+    {% for autor in autores_list %}
+        <li><a href="/libros/autor/{{ autor.id }}/">{{ autor.nombre }}</a></li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No hay autores definidos en el sistema.</p>
+{% endif %}
+
+<a href="/libros/autor/create/">Agregar autor</a>
