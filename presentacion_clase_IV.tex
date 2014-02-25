@@ -1,0 +1,1689 @@
+\documentclass{beamer}
+
+\mode<presentation>
+{
+  \usetheme{CambridgeUS} %CambridgeUS
+	\setbeamertemplate{blocks}[rounded]
+	\usecolortheme{wolverine}	%wolverine
+}
+
+
+\usepackage[spanish]{babel}
+\usepackage[latin1]{inputenc} 
+\usepackage{moreverb}
+\usepackage{minted}
+\usemintedstyle{github}
+
+\titlegraphic{\includegraphics[scale=0.36]{_static/logo_posma.png}}
+
+\title{Python: Django Framework}
+\author[Posma Group]{Posma Group}
+\date{}
+
+
+\makeatletter
+\newcommand{\minted@write@detok}[1]{%
+  \immediate\write\FV@OutFile{\detokenize{#1}}}%
+
+\newcommand{\minted@FVB@VerbatimOut}[1]{%
+  \@bsphack
+  \begingroup
+    \FV@UseKeyValues
+    \FV@DefineWhiteSpace
+    \def\FV@Space{\space}%
+    \FV@DefineTabOut
+    %\def\FV@ProcessLine{\immediate\write\FV@OutFile}% %Old, non-Unicode version
+    \let\FV@ProcessLine\minted@write@detok %Patch for Unicode
+    \immediate\openout\FV@OutFile #1\relax
+    \let\FV@FontScanPrep\relax
+%% DG/SR modification begin - May. 18, 1998 (to avoid problems with ligatures)
+    \let\@noligs\relax
+%% DG/SR modification end
+    \FV@Scan}
+    \let\FVB@VerbatimOut\minted@FVB@VerbatimOut
+
+\renewcommand\minted@savecode[1]{
+  \immediate\openout\minted@code\jobname.pyg
+  \immediate\write\minted@code{\expandafter\detokenize\expandafter{#1}}%
+  \immediate\closeout\minted@code}
+\makeatother
+
+
+\begin{document}
+
+
+\begin{frame}
+\titlepage
+\end{frame} 
+
+
+\begin{frame}
+\frametitle{Contenido}
+\tableofcontents
+\end{frame} 
+
+
+\section{Introducción}
+
+
+\begin{frame}
+\frametitle{Introducción}
+\begin{block}{}
+En la clase anterior nos dimos a conocer con Django, el cual es un framework de amplio espectro de funcionalidades para el desarrollo web en Python. En esta oportunidad estudiaremos con más profundidad las características y herramientas del framework Django.
+\end{block}
+\end{frame}  
+
+
+\section{Vistas basadas en clases}
+
+
+\begin{frame}
+\frametitle{Vistas basadas en clases}
+\begin{block}{}
+Hasta ahora hemos definido las vistas como funciones. Ésta, sin embargo, no es la única manera de definir vistas. Una manera alternativa es definiéndolas como clases.
+\end{block}
+\pause
+\begin{block}{}
+Esta forma de definir vistas provee una serie de ventajas:
+\begin{itemize}
+	\item Mejor organización del código respecto a los diferentes métodos HTTP (GET, POST, etc)
+	\pause
+	\item Uso de Programación Orientada a Objetos para estructurar y jerarquizar las vistas
+	\pause
+	\item Uso de vistas genéricas definidas por el framework
+\end{itemize}
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Vistas basadas en clases}
+\begin{block}{}
+Para definir el comportamiento de una vista en caso de recibir una solicitud de tipo GET, utilizando funciones, lo haríamos de la siguiente forma:
+\end{block}
+\begin{block}{}
+\scriptsize
+\begin{minted}{python}
+from django.http import HttpResponse
+
+def mi_vista(request):
+    if request.method == 'GET':
+        # lógica de la vista
+        return HttpResponse('result')
+\end{minted}
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Vistas basadas en clases}
+\begin{block}{}
+La misma vista, pero basada en una clase, la definimos así:
+\end{block}
+\begin{block}{}
+\scriptsize
+\begin{minted}{python}
+from django.http import HttpResponse
+from django.views.generic.base import View
+
+class MiVista(View):
+    def get(self, request):
+        # lógica de la vista
+        return HttpResponse('result')
+\end{minted}
+\end{block}
+\pause
+\begin{block}{}
+Una vista basada en clase actúa de la misma forma que una vista normal, con la particularidad de que permite una mejor manera de organización.
+\end{block}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Vistas basadas en clases}
+\begin{block}{}
+En los archivos de definición de patrones de URL, se espera corresponder con vistas como funciones. Para esto se utiliza el método \texttt{as\_view()}:
+\end{block}
+\begin{block}{}
+\scriptsize
+\begin{minted}{python}
+# urls.py
+from django.conf.urls import patterns
+from myapp.views import MyView
+
+urlpatterns = patterns('',
+    (r'^ayuda/', AyudaView.as_view()),
+)
+\end{minted}
+\end{block}
+\pause
+\begin{block}{}
+El método \texttt{as\_view} también puede recibir cualquier cantidad de argumentos. Éstos sobrescribirán cualquier atributo declarado en la clase de dicha vista.
+\end{block}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Vistas genéricas}
+\begin{block}{}
+Una de las principales ventajas de utilizar clases para definir las vistas, es que tenemos acceso a un considerable número de vistas genéricas definidas por defecto en el framework.
+\end{block}
+\pause
+\begin{block}{}
+Todas las vistas genéricas extienden la clase \texttt{View}. Lo primero que una vista realiza es invocar el método \texttt{dispatch()}, el cual se encarga de invocar al método apropiado dependiendo del tipo de solicitud HTTP (GET, POST, HEAD, etc). 
+\end{block}
+\pause
+\begin{block}{}
+En caso de recibir una solicitud de un tipo no soportado, invoca a \texttt{http\_method\_not\_allowed()}
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{TemplateView}
+\begin{block}{}
+Esta vista retorna un \textit{render} de una plantilla en particular. Bastante útil cuando lo único que se requiere es mostrar un template.
+\end{block}
+\begin{block}{}
+\scriptsize
+\begin{minted}{python}
+from django.views.generic.base import TemplateView
+
+class HomePageView(TemplateView):
+
+    template_name = "home.html"
+\end{minted}
+\end{block}
+\pause
+\begin{block}{}
+El orden de procesamiento de TemplateView es el siguiente:
+\begin{enumerate}
+	\item \texttt{dispatch()}
+	\item \texttt{http\_method\_not\_allowed()}
+	\item \texttt{get\_context\_data()}
+\end{enumerate}
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{TemplateView}
+\begin{block}{}
+Si queremos pasar variables al contexto de la plantilla, sobrescribimos \texttt{get\_context\_data}:
+\end{block}
+\begin{block}{}
+\scriptsize
+\begin{minted}{python}
+from django.views.generic.base import TemplateView
+from articles.models import Article
+
+class HomePageView(TemplateView):
+
+    template_name = "home.html"
+
+    def get_context_data(self, **kwargs):
+        context = super(HomePageView, self).get_context_data(**kwargs)
+        context['latest_articles'] = Article.objects.all()[:5]
+        return context
+\end{minted}
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{RedirectView}
+\begin{block}{}
+Como su nombre lo indica, simplemente efectúa una redirección a un URL dado.
+\end{block}
+\begin{block}{}
+\scriptsize
+\begin{minted}{python}
+from django.views.generic.base import RedirectView
+
+class GoogleRedirectView(RedirectView):
+
+    url = "https://www.google.com/"
+\end{minted}
+\end{block}
+\pause
+\begin{block}{}
+Sin embargo, no es necesario definir una subclase:
+\end{block}
+\begin{block}{}
+\scriptsize
+\begin{minted}{python}
+from django.views.generic.base import RedirectView
+
+urlpatterns = patterns('',
+    url(r'^django-doc/$', RedirectView.as_view(url='http://djangoproject.com')),
+)
+\end{minted}
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{RedirectView}
+\begin{block}{}
+El flujo de ejecución de \texttt{RedirectView} ocurre de la siguiente forma:
+\begin{enumerate}
+	\item \texttt{dispatch()}
+	\item \texttt{http\_method\_not\_allowed()}
+	\item \texttt{get\_redirect\_url()}
+\end{enumerate}
+\end{block}
+\pause
+\begin{block}{}
+Si la construcción del URL requiere algún tipo de procesamiento, se sobrescribe \texttt{get\_redirect\_url}:
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{RedirectView}
+\begin{block}{}
+\scriptsize
+\begin{minted}{python}
+from django.shortcuts import get_object_or_404
+from django.views.generic.base import RedirectView
+
+from libros.models import Libro
+
+
+class GoogleBookInfoRedirectView(RedirectView):
+
+    url = "https://www.google.com/search"
+    query_string = True
+
+    def get_redirect_url(self, *args, **kwargs):
+        libro = get_object_or_404(Libro, pk=int(kwargs['pk']))
+        self.url +=  "?q=%s" % libro.titulo
+        return super(GoogleBookInfoRedirectView, self).get_redirect_url(*args, 
+                **kwargs)
+\end{minted}
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{DetailView}
+\begin{block}{}
+Esta vista se utiliza para obtener información de detalle sobre un objeto en particular, especificando como atributo de la vista el modelo asociado.
+\end{block}
+\pause
+\begin{block}{}
+Por ejemplo, podemos volver a escribir nuestra vista de detalle de autor utilizando vistas génericas:
+\end{block}
+\begin{block}{}
+\scriptsize
+\begin{minted}{python}
+class AutorDetailView(DetailView):
+
+    model = Autor
+    template_name = "libros/autor_detail.html"
+    context_object_name = "autor"
+\end{minted}
+\end{block}
+\pause
+\begin{block}{}
+Ahora agregamos esta línea a \texttt{urls.py}:
+\end{block}
+\begin{block}{}
+\scriptsize
+\begin{minted}{python}
+url(r'^autor/(?P<pk>\d+)/$', AutorDetailView.as_view(), name='autor_detail'),
+\end{minted}
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{DetailView}
+\begin{block}{}
+El flujo de llamadas en un \texttt{DetailView} ocurre en el siguiente orden:
+
+\begin{enumerate}
+	\item \texttt{dispatch()}
+	\item \texttt{http\_method\_not\_allowed()}
+	\item \texttt{get\_template\_names()}
+	\item \texttt{get\_slug\_field()}
+	\item \texttt{get\_queryset()}
+	\item \texttt{get\_object()}
+	\item \texttt{get\_context\_object\_name()}
+	\item \texttt{get\_context\_data()}
+	\item \texttt{get()}
+	\item \texttt{render\_to\_response()}
+\end{enumerate}
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{ListView}
+\begin{block}{}
+Se utiliza para mostrar listados de objetos de algún modelo.
+\end{block}
+\pause
+\begin{block}{}
+Podemos sobrescribir nuestra vista \texttt{libros.views.index} utilizando un \texttt{ListView} en su lugar:
+\end{block}
+\begin{block}{}
+\scriptsize
+\begin{minted}{python}
+class AutorListView(ListView):
+
+    model = Autor
+    template_name = "libros/index.html"
+    context_object_name = "autores_list"
+\end{minted}
+\end{block}
+\pause
+\begin{block}{}
+Si hacemos los cambios necesarios al archivo de URLs, deberíamos preservar el funcionamiento del sitio, ahora con un código más elegante.
+\end{block}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Vistas genéricas}
+\begin{block}{ListView}
+La secuencia de llamadas que Listview ejecuta es la siguiente:
+
+\begin{enumerate}
+	\item \texttt{dispatch()}
+	\item \texttt{http\_method\_not\_allowed()}
+	\item \texttt{get\_template\_names()}
+	\item \texttt{get\_queryset()}
+	\item \texttt{get\_context\_object\_name()}
+	\item \texttt{get\_context\_data()}
+	\item \texttt{get()}
+	\item \texttt{render\_to\_response()}
+\end{enumerate}
+\end{block}
+\end{frame}
+
+
+\section{Formularios}
+
+
+\begin{frame}
+\frametitle{Formularios}
+\begin{block}{}
+Es posible procesar formularios procesando manualmente los objetos \texttt{HttpRequest}, pero Django cuenta con la biblioteca \texttt{django.forms} para el manejo de formularios.
+\end{block}
+\pause
+\begin{block}{}
+A través de la biblioteca de manejo de formularios, es posible:
+\begin{itemize}
+	\item Desplegar un formulario HTML con \textit{widgets} generados automáticamente
+	\pause
+	\item Validar automáticamente los datos introducidos en un formulario
+	\pause
+	\item Convertir los datos introducidos a sus respectivos tipos de datos en Python
+\end{itemize}
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Formularios}
+\begin{block}{La clase Form}
+Un objeto de tipo \texttt{Form} encapsula una secuencia de campos y un conjunto de reglas de validación que deben cumplirse para que el formulario sea aceptado.
+\end{block}
+\pause
+\begin{block}{}
+Podemos utilizar un \texttt{Form} para implementar una funcionalidad de ``Contáctanos'', de la siguiente forma:
+\end{block}
+\begin{block}{}
+\scriptsize
+\begin{minted}{python}
+from django import forms
+
+class ContactanosForm(forms.Form):
+    asunto = forms.CharField(max_length=100)
+    mensaje = forms.CharField()
+    remitente = forms.EmailField()
+    reenviar_remitente = forms.BooleanField(required=False)
+\end{minted}
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{La clase Form}
+\begin{block}{}
+Un objeto de la clase \texttt{Form} puede encontrarse asociado o no a un conjunto de datos. Un formulario con datos (\textit{bound}) es capaz de hacer validaciones y mostrar un "render" en HTML con sus valores correspondientes. Un formulario sin datos (\textit{unbound}) únicamente puede mostrar en HTML sus campos vacíos.
+\end{block}
+\pause
+\begin{block}{}
+Para crear un formulario, se instancia la clase correspondiente:
+\end{block}
+\begin{block}{}
+\scriptsize
+\begin{minted}{python}
+>>> f = ContactanosForm()
+\end{minted}
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{La clase Form}
+\begin{block}{}
+Para asociar datos a un formulario, se le debe pasar un diccionario como primer argumento al constructor de la clase:
+\end{block}
+\begin{block}{}
+\scriptsize
+\begin{minted}{python}
+>>> data = {'asunto': 'Hola',
+...         'mensaje': 'Hola, cómo estás?',
+...         'recipiente': 'yo@ejemplo.com',
+...         'reenviar_recipiente': True}
+>>> f = ContactanosForm(data)
+\end{minted}
+\end{block}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Formularios desde la vista}
+\begin{block}{}
+\scriptsize
+\begin{minted}{python}
+from django.shortcuts import render
+from django.http import HttpResponseRedirect
+
+def contact(request):
+    if request.method == 'POST':
+        form = ContactanosForm(request.POST)
+        if form.is_valid():
+            # Procesar datos
+            return HttpResponseRedirect('/gracias/')
+    else:
+        form = ContactanosForm()
+
+    return render(request, 'contactanos.html', {
+        'form': form,
+    })
+\end{minted}
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Formularios desde la vista}
+\begin{block}{}
+Utilizando vistas basadas en clase, lo haríamos de esta forma:
+\end{block}
+\begin{block}{}
+\scriptsize
+\begin{minted}{python}
+class ContactView(View):
+    form_class = ContactanosForm
+    template_name = 'contactanos.html'
+
+    def get(self, request, *args, **kwargs):
+        form = self.form_class()
+        return render(request, self.template_name, {'form': form})
+
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(request.POST)
+        if form.is_valid():
+            # procesar datos
+            return HttpResponseRedirect('/gracias/')
+
+        return render(request, self.template_name, {'form': form})
+\end{minted}
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Formularios desde la vista}
+\begin{block}{}
+Lo anterior puede implementarse de una manera todavía más sencilla, utilizando la vista genérica \texttt{FormView}:
+\end{block}
+\pause
+\begin{block}{}
+\scriptsize
+\begin{minted}{python}
+from django.views.generic.base import FormView
+from .forms import ContactanosForm
+
+class ContactView(FormView):
+    form_class = ContactanosForm
+    template_name = 'contactanos.html'
+    success_url = '/gracias/'
+
+    def form_valid(self, form):
+        # procesar datos
+        return super(ContactView, self).form_valid(form)
+\end{minted}
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Formularios desde el template}
+\begin{block}{}
+Del lado de las plantillas simplemente mostramos el objeto con nombre form que está siendo pasado desde la vista a través del contexto:
+\end{block}
+\begin{block}{}
+\scriptsize
+\begin{minted}{django}
+<form action="/contact/" method="post">
+{{ form.as_p }}
+<input type="submit" value="Submit" />
+</form>
+\end{minted}
+\end{block}
+\pause
+\begin{block}{}
+En el ejemplo estamos usando el método \texttt{as\_p} para desplegar el formulario como una serie de etiquetas \texttt{<p>} en HTML. También es posible mostrar el formulario invocando los métodos \texttt{as\_ul()} para una lista sin orden y \texttt{as\_table()} para mostrarlo como una tabla.
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{El API de la clase Form}
+\begin{block}{}
+La clase form cuenta con los siguientes métodos:
+\end{block}
+\begin{block}{\texttt{is\_bound()}}
+\scriptsize
+\begin{minted}{python}
+>>> f = ContactanosForm()
+>>> f.is_bound
+False
+>>> f = ContactanosForm({'asunto': 'hola'})
+>>> f.is_bound
+True
+\end{minted}
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{El API de la clase Form}
+\begin{block}{\texttt{is\_valid()}}
+La principal funcionalidad de los formularios es la validación automática de los datos.
+\end{block}
+\begin{block}{}
+\scriptsize
+\begin{minted}{python}
+>>> data = {'asunto': 'Hola',
+...         'mensaje': 'Hola, todo bien?',
+...         'recipiente': 'yo@ejemplo.com',
+...         'reenviar_recipiente': True}
+>>> f = ContactanosForm(data)
+>>> f.is_valid()
+True
+\end{minted}
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{El API de la clase Form}
+\begin{block}{\texttt{is\_valid()}}
+Si intentamos introducir un dato inválido u omitir un campo requerido, el método retorna \texttt{False}. Por defecto, todos los campos de un formulario se asumen como requeridos.
+\end{block}
+\begin{block}{}
+\scriptsize
+\begin{minted}{python}
+>>> data = {'asunto': '',
+...         'mensaje': 'Hola, todo bien?',
+...         'recipiente': 'yo@ejemplo.com',
+...         'reenviar_recipiente': True}
+>>> f = ContactanosForm(data)
+>>> f.is_valid()
+False
+\end{minted}
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{El API de la clase Form}
+\begin{block}{\texttt{errors}}
+Todo objeto de tipo \texttt{Form} tiene un atributo \texttt{errors}, en donde se obtiene un diccionario con los errores ocurridos durante la validación.
+\end{block}
+\begin{block}{}
+\scriptsize
+\begin{minted}{python}
+>>> f.errors
+{'asunto': [u'This field is required.']}
+\end{minted}
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{El API de la clase Form}
+\begin{block}{\texttt{fields}}
+A través del atributo fields, el formulario guarda un diccionario con todos sus campos. En donde cada clave será el nombre del campo, y el valor será el objeto correspondiente de tipo \texttt{Field}
+\end{block}
+\begin{block}{}
+\scriptsize
+\begin{minted}{python}
+>>> for campo in f.fields.values():
+...     print campo
+...
+<django.forms.fields.CharField object at 0x24bb510>
+<django.forms.fields.CharField object at 0x24bb5d0>
+<django.forms.fields.EmailField object at 0x24bb650>
+<django.forms.fields.BooleanField object at 0x24bb6d0>
+\end{minted}
+\end{block}
+\pause
+\begin{block}{}
+Ahora intentemos explorar usando \texttt{dir()} y \texttt{help()} en esos campos y sus atributos.
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{El API de la clase Form}
+\begin{block}{\texttt{fields}}
+Cada campo también tiene un atributo \texttt{errors}, así como un atributo \texttt{label} y \texttt{label\_tag}. Esto es útil si queremos desplegar el formulario de forma personalizada, sin estar restringido a los métodos \texttt{as\_p}, \texttt{as\_ul}, etc.
+\end{block}
+\pause
+\begin{block}{}
+\scriptsize
+\begin{minted}{django}
+<form action="/contactanos/" method="post">
+    {% for field in form %}
+        <div class="fieldWrapper">
+            {{ field.errors }}
+            {{ field.label_tag }} {{ field }}
+        </div>
+    {% endfor %}
+    <p><input type="submit" value="Enviar" /></p>
+</form>
+\end{minted}
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{El API de la clase Form}
+\begin{block}{\texttt{cleaned\_data}}
+Cada campo en un formulario no sólo es responsable de validar sus valores, sino además de normalizarlos en un formato consistente. Por ejemplo, un campo de tipo \texttt{DateField} se convierte a un objeto Python de tipo \texttt{datetime.date}.
+\end{block}
+\pause
+\begin{block}{}
+Una vez que se ha creado un objeto de tipo \texttt{Form} y éste ha validado sus datos, es posible acceder al atributo \texttt{cleaned\_data}:
+\end{block}
+\begin{block}{}
+\scriptsize
+\begin{minted}{python}
+>>> f.is_valid()
+True
+>>> f.cleaned_data
+{'reenviar_remitente': True, 'mensaje': u'Todo bien?', 
+'remitente': u'yo@ejemplo.com', 'asunto': u'hola'}
+\end{minted}
+\end{block}
+\pause
+\begin{block}{}
+Cada vez que se necesite procesar los datos de un formulario desde una vista, esto debe hacerse accediendo a \texttt{cleaned\_data}.
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{El API de la clase Form}
+\begin{block}{\texttt{error\_css\_class}, \texttt{required\_css\_class}}
+A veces es necesario especificar una clase de estilo para los mensajes de error o de campos requeridos:
+\end{block}
+\begin{block}{}
+\scriptsize
+\begin{minted}{python}
+class ContactanosForm(Form):
+    error_css_class = 'error'
+    required_css_class = 'required'
+\end{minted}
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Widgets}
+\begin{block}{}
+Un \texttt{widget} implementa la manera de mostrar un elemento de un formulario. Cada vez que se define un campo de un \texttt{Form}, éste viene asociado con un widget por defecto según su tipo de dato.
+\end{block}
+\pause
+\begin{block}{}
+Sin embargo, es posible especificar un widget en particular para algún campo:
+\end{block}
+\begin{block}{}
+\scriptsize
+\begin{minted}{python}
+from django import forms
+
+class CommentForm(forms.Form):
+    name = forms.CharField()
+    url = forms.URLField()
+    comment = forms.CharField(widget=forms.Textarea)
+\end{minted}
+\end{block}
+\pause
+\begin{block}{}
+Esto hará que el campo se muestre como un \texttt{<textarea>}, en lugar de un \texttt{<input type='text'>}, que es el widget por defecto.
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Widgets}
+\begin{block}{}
+Todos los widgets heredan de la clase \texttt{django.forms.Widget}, y es posible para el usuario implementar sus propios widgets en el caso de ser necesario.
+\end{block}
+\pause
+\begin{block}{}
+Django implementa los siguientes widgets básicos:
+
+\begin{itemize}
+	\item \texttt{TextInput}
+	\item \texttt{NumberInput}
+	\item \texttt{EmailInput}
+	\item \texttt{URLInput}
+	\item \texttt{PasswordInput}
+	\item \texttt{HiddenInput}
+	\item \texttt{DateInput}
+	\item \texttt{DateTimeInput}
+\end{itemize}
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Widgets}
+\begin{block}{}
+\begin{itemize}
+	\item \texttt{TimeInput}
+	\item \texttt{TextArea}
+	\item \texttt{CheckboxInput}
+	\item \texttt{Select}
+	\item \texttt{NullBooleanSelect}
+	\item \texttt{SelectMultiple}
+	\item \texttt{RadioSelect}
+	\item \texttt{FileInput}	
+\end{itemize}
+\end{block}
+\pause
+\begin{block}{}
+...Entre otros.
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Formularios en base a modelos}
+\begin{block}{}
+Django implementa la clase \texttt{ModelForm}, que se encarga automáticamente de hacer la correspondencia entre el formulario y su modelo respectivo.
+\end{block}
+\pause
+\begin{block}{}
+Para definir los formularios de edición correspondientes a nuestros modelos Autor y Libro, crearemos un archivo \texttt{forms.py} dentro de la aplicación \texttt{libros}:
+\end{block}
+\begin{block}{}
+\scriptsize
+\begin{minted}{python}
+from django.forms import ModelForm
+from libros.models import Autor, Libro
+
+class AutorForm(ModelForm):
+    class Meta:
+        model = Autor
+
+class LibroForm(ModelForm):
+    class Meta:
+        model = Libro
+\end{minted}
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Formularios en base a modelos}
+\begin{block}{}
+Un \texttt{ModelForm} asume todos los campos de su modelo correspondiente. Si se quiere especificar un subconjunto de los campos del modelo en formulario, se define el atributo fields dentro de los atributos de \texttt{Meta}, de la siguiente forma
+\end{block}
+\pause
+\begin{block}{}
+\scriptsize
+\begin{minted}{python}
+from django.forms import ModelForm
+from mi_app.models import Modelo
+
+class MiModeloForm(ModelForm):
+    class Meta:
+           model = Modelo
+           fields ['campo1', 'campo2', 'otro_campo']
+\end{minted}
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{CreateView}
+\begin{block}{}
+La vista genérica \texttt{CreateView} implementa funcionalidades para el manejo de formularios basados en modelos (\texttt{ModelForm}).
+\end{block}
+\pause
+\begin{block}{}
+Vamos a utilizar un \texttt{CreateView} para definir una vista de creación de autores. Para esto agregaremos en \texttt{views.py}:
+\end{block}
+\begin{block}{}
+\scriptsize
+\begin{minted}{python}
+from django.views.generic.edit import CreateView
+from libros.forms import AutorForm
+
+class AutorCreateView(CreateView):
+    form_class = AutorForm
+    template_name = 'libros/autor_form.html'
+    success_url = '/libros/'
+\end{minted}
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{CreateView}
+\begin{block}{}
+Ahora sólo resta crear el template \texttt{autor\_form.html} y mapear los URLs necesarios.
+\end{block}
+\begin{block}{}
+\scriptsize
+\begin{minted}{django}
+<!-- templates/libros/autor_form.html -->
+<h2>Agregar Autor</h2>
+
+<form action="" method="post">{% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" value="Guardar" />
+</form>
+\end{minted}
+\end{block}
+\pause
+\begin{block}{}
+\scriptsize
+\begin{minted}{python}
+# libros/urls.py
+url(r'^autor/create/$', AutorCreateView.as_view()),
+\end{minted}
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{CreateView}
+\begin{block}{}
+Ahora agregaremos un enlace desde el índice para hacer referencia al URL:
+\end{block}
+\begin{block}{}
+\scriptsize
+\begin{minted}{django}
+<!-- templates/libros/index.html -->
+
+<h1>Autores destacados</h1>
+{% if autores_list %}
+    <ul>
+    {% for autor in autores_list %}
+        <li><a href="/libros/autor/{{ autor.id }}/">{{ autor.nombre }}</a></li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No hay autores definidos en el sistema.</p>
+{% endif %}
+
+<a href="/libros/autor/create/">Agregar autor</a>
+\end{minted}
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{UpdateView}
+\begin{block}{}
+\texttt{UpdateView} muestra un formulario asociado a un modelo para editar y actualizar los campos de un objeto dado.
+\end{block}
+\pause
+\begin{block}{}
+Primero haremos la plantilla que mostrará el formulario de edición, y la nombraremos \texttt{autor\_edit.html}:
+\end{block}
+\begin{block}{}
+\scriptsize
+\begin{minted}{django}
+<h2>Editar Autor</h2>
+
+<form action="" method="post">{% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" value="Guardar" />
+</form>
+\end{minted}
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{UpdateView}
+\begin{block}{}
+Ahora agreguemos la siguiente vista al archivo \texttt{libros/views.py}:
+\end{block}
+\begin{block}{}
+\scriptsize
+\begin{minted}{python}
+class AutorUpdateView(UpdateView):
+
+    model = Autor
+    template_name = 'libros/autor_edit.html'
+    success_url = '/libros/'
+
+    def form_valid(self, form):
+        self.success_url = '/libros/autor/%s/' % self.get_object().id
+        return super(AutorUpdateView, self).form_valid(form)
+\end{minted}
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{UpdateView}
+\begin{block}{}
+Agregaremos ahora un enlace desde la plantilla de detalle del autor, con el fin de poder editar su información:
+\end{block}
+\begin{block}{}
+\scriptsize
+\begin{minted}{django}
+<h1>{{ autor.nombre }}</h1>
+
+<a href="/libros/autor/edit/{{ autor.id }}/">Editar información de autor</a>
+
+{% if autor.libro_set.all %}
+    Obras escritas:
+    <ul>
+    {% for libro in autor.libro_set.all %}
+        <li>{{ libro.titulo }} ({{ libro.fecha_pub|date:"Y" }}) <a href="/libros/search/{{ libro.id }}/">[buscar
+    info]<a/></li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>Este autor no tiene obras asociadas.</p>
+{% endif %}
+
+<a href="/libros/">Volver al inicio</a>
+\end{minted}
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{UpdateView}
+\begin{block}{}
+Ahora el respectivo patrón en el archivo \texttt{libros/urls.py}. Es necesario importar la clase \texttt{AutorUpdateView}:
+\end{block}
+\begin{block}{}
+\scriptsize
+\begin{minted}{python}
+url(r'^autor/edit/(?P<pk>\d+)/$', AutorUpdateView.as_view()),
+\end{minted}
+\end{block}
+\pause
+\begin{block}{}
+...Si hemos hecho todo correctamente, tenemos un formulario de edición de autores.
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{DeleteView}
+\begin{block}{}
+Para finalizar con las vistas genéricas de edición, implementaremos una vista \texttt{DeleteView}, que nos permita eliminar al autor desde su vista de edición.
+\end{block}
+\pause
+\begin{block}{}
+En el archivo \texttt{views.py} agregaremos la siguiente vista:
+\end{block}
+\begin{block}{}
+\scriptsize
+\begin{minted}{python}
+class AutorDeleteView(DeleteView):
+
+    model = Autor
+    success_url = '/libros/'
+\end{minted}
+\end{block}
+\pause
+\begin{block}{}
+Y agregaremos la siguiente línea a la lista de patrones en \texttt{urls.py}:
+\end{block}
+\begin{block}{}
+\scriptsize
+\begin{minted}{python}
+url(r'^autor/delete/(?P<pk>\d+)/$', AutorDeleteView.as_view()),
+\end{minted}
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{DeleteView}
+\begin{block}{}
+Pondremos un enlace al final de \texttt{autor\_detail.html} para eliminar al autor:
+\end{block}
+\begin{block}{}
+\scriptsize
+\begin{minted}{django}
+
+...
+
+<p><a href="/libros/autor/delete/{{ autor.id  }}/">[Eliminar autor]</a></p>
+
+<p><a href="/libros/">Volver al inicio</a></p>
+\end{minted}
+\end{block}
+\pause
+\begin{block}{}
+Y finalmente crearemos un nuevo template llamado \texttt{autor\_confirm\_delete.html} con el siguiente código:
+\end{block}
+\begin{block}{}
+\scriptsize
+\begin{minted}{django}
+<form action="" method="post">{% csrf_token %}
+    <p>Está seguro de que desea eliminar a "{{ autor.nombre }}"?</p>
+    <input type="submit" value="Sí" />
+</form>
+
+<a href="/libros/">Volver al inicio</a>
+\end{minted}
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Iteradores}
+\begin{block}{Ejercicio Práctico}
+Implementar lo necesario para poder agregar, editar y eliminar \textbf{libros} desde la plantilla de detalle del autor.
+\end{block}
+\end{frame}
+
+
+\section{Sistema de plantillas}
+
+
+\begin{frame}[fragile]
+\frametitle{Templates}
+\begin{block}{}
+Un \textit{template} es sencillamente cualquier archivo de texto como HTML, XML, CSV, etc. El cual permite la inclusión de ciertas etiquetas y acceso a variables.
+\end{block}
+\pause
+\begin{block}{}
+\scriptsize
+\begin{minted}{django}
+{% block titulo %}{{ seccion.titulo }}{% endblock %}
+
+{% block contenido %}
+<h1>{{ seccion.titulo }}</h1>
+
+{% for articulo in lista_articulo %}
+    <h2>
+    <a href="{{ articulo.get_url }}">
+        {{ articulo.headline|upper }}
+    </a>
+    </h2>
+
+    <p>{{ articulo.preview|truncatewords:"100" }}</p>
+{% endfor %}
+
+{% endblock %}
+\end{minted}
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Templates}
+\begin{block}{Variables}
+\begin{itemize}
+	\item Las variables se denotan de la forma: \texttt{\{\{ variable \}\}}.
+	\pause
+	\item Cuando el motor de plantillas encuentra una variable, evalúa esa variable y la reemplaza por su resultado.
+	\pause
+	\item Los nombres de variables consisten en cualquier combinación de caracteres alfanuméricos y underscore (``\_'')
+	\pause
+	\item Puede accederse a cualquier atributo de la variable utilizando el punto (``.'')
+\end{itemize}
+\end{block}
+\pause
+\begin{block}{}
+\scriptsize
+\begin{minted}{django}
+<ul>
+  {% for articulo in lista_articulo %}
+      <li>{{ articulo.titulo }}</li>
+  {% endfor %}
+</ul>
+\end{minted}
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Templates}
+\begin{block}{}
+La invocación de métodos se hace sin paréntesis, como si fuese un atributo, y los condicionales y ciclos no están 
+precedidos de dos puntos ``:''.
+\end{block}
+\begin{block}{}
+\scriptsize
+\begin{minted}{django}
+{% if autor.libro_set.all %}
+    Obras escritas:
+    <ul>
+    {% for libro in autor.libro_set.all %}
+        <li>{{ libro.titulo }} <a href="/libros/search/{{ libro.id }}/"></li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>Este autor no tiene obras asociadas.</p>
+{% endif %}
+\end{minted}
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Filtros}
+\begin{block}{}
+Los filtros se aplican para modificar el valor de una variable antes de mostrarlo, y lucen de la forma:
+\scriptsize
+\begin{minted}{django}
+{{ nombre|lower }}
+\end{minted}
+\end{block}
+\pause
+\begin{block}{}
+En este caso, todos los caracteres de la cadena \texttt{nombre} serán convertidos a minúscula. Django implementa una gran cantidad de filtros nativos. Estudiaremos algunos...
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Filtros}
+\begin{block}{add}
+Suma una valor adicional al existente:
+\scriptsize
+\begin{minted}{django}
+{{ cantidad|add:"2" }}
+\end{minted}
+\end{block}
+\pause
+\begin{block}{addslashes}
+``Escapa'' los caracteres de comilla antes de ponerlos en el template:
+\scriptsize
+\begin{minted}{django}
+{{ cadena|addslashes }}
+\end{minted}
+\end{block}
+\pause
+\begin{block}{date}
+Muestra una variable de tipo fecha dado un formato específico:
+\scriptsize
+\begin{minted}{django}
+{{ fecha|date:"D d M Y" }}
+\end{minted}
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Filtros}
+\begin{block}{default}
+Si una variable es \texttt{False} o vacía, se usa la expresión dada por defecto:
+\scriptsize
+\begin{minted}{django}
+{{ email|default:"Ingrese su email" }}
+\end{minted}
+\end{block}
+\pause
+\begin{block}{length}
+\scriptsize
+\begin{minted}{django}
+{{ autor.libro_set.all|length }}
+\end{minted}
+\end{block}
+\pause
+\begin{block}{striptags}
+Suprime todas las etiquetas HTML o XML de una cadena de texto.
+\scriptsize
+\begin{minted}{django}
+{{ valor|striptags }}
+\end{minted}
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Filtros}
+\begin{block}{random}
+Retorna un elemento aleatorio de una colección:
+\end{block}
+\begin{block}{}
+\scriptsize
+\begin{minted}{django}
+{{ lista|random }}
+\end{minted}
+\end{block}
+\pause
+\begin{block}{}
+Django implementa muchísimos más filtros por defecto, y es posible para el usuario definir sus propios filtros. Para una información más detallada, referirse a la documentación oficial de django (https://www.djangoproject.com/).
+\end{block}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Template tags}
+\begin{block}{}
+Un \textit{template tag} se define como ``\{\% tag \thinspace \%\}``, y definen comportamientos complejos del sistema de templates, como 
+los ciclos y condicionales que hemos visto hasta ahora.
+\end{block}
+\pause
+\begin{block}{}
+Adicionales a los condicionales y ciclos, estudiaremos algunas de las etiquetas más importantes.
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Template tags}
+\begin{block}{\{\% comment \ \%\}}
+Comenta un segmento del texto:
+\end{block}
+\begin{block}{}
+\scriptsize
+\begin{minted}{django}
+<p>Publicado el {{ pub_date|date:"DD-MM-YY" }}</p>
+{% comment %}
+    <p>eliminar <input type="button"></p>
+{% endcomment %}
+\end{minted}
+\end{block}
+\pause
+\begin{block}{\{\% csrf\_token \ \%\}}
+Esta etiqueta existe para proteger el sitio de ataques de CSRF. Se coloca en los formularios que utilicen método POST.
+\end{block}
+\begin{block}{}
+\scriptsize
+\begin{minted}{django}
+<form action="." method="post">{% csrf_token %}
+\end{minted}
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Template tags}
+\begin{block}{\{\% cycle \ \%\}}
+\texttt{cycle} va retornando secuencialmente los elementos de una tupla cada vez que la etiqueta aparece. Esto es muy útil para alternar entre valores para modificar el template:
+\end{block}
+\begin{block}{}
+\scriptsize
+\begin{minted}{django}
+{% for obj in una_lista %}
+    <tr class="{% cycle 'dark' 'light' %}">
+        ...
+    </tr>
+{% endfor %}
+\end{minted}
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Template tags}
+\begin{block}{\{\% autoescape \ \%\}}
+Controla la interpretación de caracteres HTML dentro de una cadena de texto. Si la opción está en \texttt{on}, las etiquetas 
+HTML no serán interpretadas como tal.
+\end{block}
+\begin{block}{}
+\scriptsize
+\begin{minted}{django}
+{% autoescape on %}
+    {{ body }}
+{% endautoescape %}
+\end{minted}
+\end{block}
+\pause
+\begin{block}{\{\% url \ \%\}}
+Devuelve un URL dado una vista definida en algún archivo de URLs.
+\end{block}
+\begin{block}{}
+\scriptsize
+\begin{minted}{django}
+{% url 'nombre_de_una_vista' arg1=v1 arg2=v2 %}
+\end{minted}
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Herencia de Templates}
+\begin{block}{}
+Una de las particularidades del sistema de plantillas de Django, es que éstas pueden diseñarse jerárquicamente, a través de la herencia y sobrescritura de templates.
+\end{block}
+\pause
+\begin{block}{}
+Usualmente se define un template base que contenga la estructura más externa del HTML, y que se encargue de incluir todos los archivos de estilo y javascript necesarios globalmente. Y entonces los demás templates heredan de éste.
+\end{block}
+\pause
+\begin{block}{}
+Creemos un archivo llamado ``base.html'' con el siguiente código:
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Herencia de Templates}
+\begin{block}{}
+\scriptsize
+\begin{minted}{django}
+<!DOCTYPE html>
+<head>
+    <link rel="stylesheet" href="style.css" />
+    <title>{% block titulo %}Bienvenidos a libronline{% endblock %}</title>
+</head>
+
+<body>
+    <div id="sidebar">
+        {% block menu %}
+        <ul>
+            <li><a href="/libros/">Índice de autores</a></li>
+            <li><a href="#">Contactenos</a></li>
+        </ul>
+        {% endblock %}
+    </div>
+
+    <h1>Libronline, tu red de lectura</h1>
+    <div id="content">
+    {% block contenido %}{% endblock %}
+    </div>
+</body>
+</html>
+\end{minted}
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Herencia de Templates}
+\begin{block}{}
+Y ahora sobrescribiremos el template que está en \texttt{libros/index.html} para que herede de éste.
+\end{block}
+\begin{block}{}
+\scriptsize
+\begin{minted}{django}
+{% extends "base.html" %}
+
+{% block titulo %}Bienvenidos a libronline - Autores {% endblock %}
+
+{% block contenido %}
+<h1>Autores destacados</h1>
+{% if autores_list %}
+    <ul>
+    {% for autor in autores_list %}
+        <li><a href="/libros/autor/{{ autor.id }}/">{{ autor.nombre }}</a></li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No hay autores definidos en el sistema.</p>
+{% endif %}
+
+<a href="/libros/autor/create/">Agregar autor</a>
+{% endblock %}
+\end{minted}
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Herencia de Templates}
+\begin{block}{}
+De esta forma cada template derivado de \texttt{base.html}, se encarga de sobrescribir los bloques que necesite, refiriéndose a ellos por sus mismos nombres en el template base.
+\end{block}
+\pause
+\begin{block}{}
+La herencia de templates permite una estructuración ordenada y funcional de las plantillas en el proyecto, promoviendo el reciclaje y la legibilidad del código HTML.
+\end{block}
+\end{frame}
+
+
+\section{Managers}
+
+
+\begin{frame}[fragile]
+\frametitle{Managers}
+\begin{block}{}
+Todos los modelos de Django incluyen un objeto \texttt{Manager} que se encargará de implementar las conexiones a la fuente de datos.
+\end{block}
+\pause
+\begin{block}{}
+Por defecto, cada modelo tiene un atributo llamado \texttt{objects}, el cual es un objeto de tipo \texttt{Manager}. Pero podríamos querer que el manejador se llame de otra forma, o implementar varios objetos \texttt{Manager} dentro del mismo modelo.
+\end{block}
+\pause
+\begin{block}{}
+\scriptsize
+\begin{minted}{python}
+from django.db import models
+
+class Persona(models.Model):
+    #...
+    gente = models.Manager()
+\end{minted}
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Managers}
+\begin{block}{}
+Es posible extender la clase \texttt{Manager} creando nuevos manejadores. Por ejemplo, podemos definir un \texttt{AcademicBookManager}, que retorne los libros de una vez filtrando por género:
+\end{block}
+\begin{block}{}
+\scriptsize
+\begin{minted}{python}
+from django.db import models
+
+class AcademicBookManager(models.Manager):
+
+    def get_queryset(self):
+        return super(AcademicBookManager, self).get_queryset().filter(genero=4)
+\end{minted}
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Managers}
+\begin{block}{}
+Agregamos ahora los manejadores al comienzo de la clase \texttt{Libro}:
+\end{block}
+\begin{block}{}
+\scriptsize
+\begin{minted}{python}
+class Libro(models.Model):
+
+    objects = models.Manager()
+    academic = AcademicBookManager()
+    # ...
+\end{minted}
+\end{block}
+\pause
+\begin{block}{}
+Ahora tenemos nuestro modelo con su manejador \texttt{objects} como es lo normal, pero adicionalmente podemos usar el 
+otro \texttt{Manager}:
+\end{block}
+\begin{block}{}
+\scriptsize
+\begin{minted}{python}
+Libro.academic.all()
+\end{minted}
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Manejo de SQL}
+\begin{block}{}
+Otra característica útil de definir nuestros propios manejadores de modelos, es la posibilidad de lidiar directamente con la base de datos.
+\end{block}
+\pause
+\begin{block}{}
+La clase Manager cuenta con el método \texttt{raw()} para ejecutar \textit{queries} directamente:
+\end{block}
+\begin{block}{}
+\scriptsize
+\begin{minted}{python}
+>>> from libros.models import Autor
+>>> for a in Autor.objects.raw('Select * from libros_autor'):
+...     print a
+...
+Herman Hesse
+Paulo Coelho
+Serafin Mazparrote
+Milan Kundera
+\end{minted}
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Manejo de SQL}
+\begin{block}{}
+Es posible pasar cualquier cantidad de parámetros a la función \texttt{raw()} como una lista o un diccionario de argumentos:
+\end{block}
+\begin{block}{}
+\scriptsize
+\begin{minted}{python}
+>>> apellido = 'Perez'
+>>> Persona.objects.raw('SELECT * FROM myapp_persona WHERE last_name = %s', 
+...     [apellido])
+\end{minted}
+\end{block}
+\pause
+\begin{block}{}
+Este mecanismo protege las consultas a base de datos de posibles ataques de SQL injection. No se recomienda formatear directamente el texto del query con los parámetros.
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Manejo de SQL}
+\begin{block}{}
+A veces es necesario efectuar instrucciones en SQL sin atarlas necesariamente a un modelo. A través del objeto \texttt{django.db.connection} pueden efectuarse muchas operaciones directas con la base de datos.
+\end{block}
+\pause
+\begin{block}{}
+\scriptsize
+\begin{minted}{python}
+from django.db import connection
+
+def mi_funcion_sql(self):
+    cursor = connection.cursor()
+
+    cursor.execute("UPDATE bar SET foo = 1 WHERE baz = %s", [self.baz])
+    cursor.execute("SELECT foo FROM bar WHERE baz = %s", [self.baz])
+
+    row = cursor.fetchone()
+    return row
+\end{minted}
+\end{block}
+\pause
+\begin{block}{}
+También existe el método \texttt{cursor.fetchall()} para obtener todas las filas de una consulta con varios resultados.
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Manejo de SQL}
+\begin{block}{}
+Es posible utilizar un cursor como un manejador de contexto, de la siguiente forma:
+\end{block}
+\begin{block}{}
+\scriptsize
+\begin{minted}{python}
+with connection.cursor() as c:
+    c.execute(...)
+\end{minted}
+\end{block}
+\pause
+\begin{block}{}
+Esto, como con los archivos, nos permite cierta legibilidad, nos evita la necesidad de cerrarlo, y encapsula secciones del código para evitar efectos secundarios.
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Stored Procedures}
+\begin{block}{}
+El objeto cursor, además de execute para hacer las consultas, tiene un método \texttt{callproc}, para invocar \textit{stored procedures} en la base de datos:
+\end{block}
+\pause
+\begin{block}{}
+\scriptsize
+\begin{minted}{python}
+from django.db import connection
+
+with connection.cursor() as cur:
+    cur.callproc('proc_name')
+\end{minted}
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Stored Procedures}
+\begin{block}{}
+Si necesitamos definir un modelo cuya fuente de datos utilice stored procedures, lo más adecuado es definir un \texttt{Manager} específico para que implemente las llamadas necesarias:
+\end{block}
+\pause
+\begin{block}{}
+\scriptsize
+\begin{minted}{python}
+from django.db import models, connection
+
+
+class StoredProcedureManager(models.Manager):
+
+    def metodo_consulta(self, arg1, arg2):
+        PROC_NAME = 'consulta_proc'
+     
+        cur = connection.cursor()
+        cur.callproc(PROC_NAME, [arg1, arg2])
+        result = cur.fetchall()
+        cur.close()
+        return result     
+\end{minted}
+\end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Conclusión}
+\begin{block}{}
+\textit{Django} es un framework bastante extenso, por lo cual es difícil cubrir todas sus funcionalidades desde un principio. Sin embargo, hemos cubierto lo suficiente para tener una concepción integral acerca de las herramientas que este framework provee, así como la posibilidad de modificar y extender dichas herramientas.
+\end{block}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{}
+\huge
+\begin{block}{}
+Muchas gracias!!
+\end{block}
+\end{frame}
+
+
+\end{document}

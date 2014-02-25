@@ -1034,10 +1034,6 @@ para alternar entre valores para modificar el template:
     {% endfor %}
 
 
-Existe una lista bastante extensa de *template tags* implementadas en Django, para una información más amplia, debe 
-consultarse la `documentación oficial <https://docs.djangoproject.com/en/dev/ref/templates/builtins/>`_.
-
-
 {% autoescape %}
 ................
 
@@ -1060,6 +1056,9 @@ Devuelve un URL dado una vista definida en algún archivo de URLs.
 
     {% url 'nombre_de_una_vista' arg1=v1 arg2=v2 %}
     
+
+Existe una lista bastante extensa de *template tags* implementadas en Django, para una información más amplia, debe 
+consultarse la `documentación oficial <https://docs.djangoproject.com/en/dev/ref/templates/builtins/>`_.
 
 Herencia de templates
 ~~~~~~~~~~~~~~~~~~~~~
@@ -1094,7 +1093,6 @@ Crearemos un nuevo archivo html en la carpeta de templates:
 
         <h1>Libronline, tu red de lectura</h1>
         <div id="content">
-            
             {% block contenido %}{% endblock %}
         </div>
     </body>
@@ -1172,7 +1170,7 @@ Por ejemplo, podemos definir un ``AcademicBookManager``, que retorne los libros 
             return super(AcademicBookManager, self).get_queryset().filter(genero=4)
 
 
-Y agregamos los atributos de los manejadores al comienzo de la clase ``Libro``:
+Y agregamos los manejadores al comienzo de la clase ``Libro``:
 
 .. code-block:: python
 
@@ -1292,8 +1290,7 @@ Si necesitamos definir un modelo cuya fuente de datos utilice *stored procedures
         
         def get_queryset(self):
             cur = connection.cursor()
-            return cur.execute('SELECT store_proc')
-            # return cur.callproc('store_proc')
+            return cur.callproc('store_proc')
 
 
 Django es un framework bastante extenso, por lo cual es difícil cubrir todas sus funcionalidades desde un principio. 
