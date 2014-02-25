@@ -1038,8 +1038,8 @@ Existe una lista bastante extensa de *template tags* implementadas en Django, pa
 consultarse la `documentación oficial <https://docs.djangoproject.com/en/dev/ref/templates/builtins/>`_.
 
 
-autoescape
-..........
+{% autoescape %}
+................
 
 Controla la interpretación de caracteres HTML dentro de una cadena de texto. Si la opción está en ``on``, las etiquetas 
 HTML no serán interpretadas como tal.
@@ -1051,8 +1051,8 @@ HTML no serán interpretadas como tal.
     {% endautoescape %}
 
 
-url
-...
+{% url %}
+.........
 
 Devuelve un URL dado una vista definida en algún archivo de URLs.
 
