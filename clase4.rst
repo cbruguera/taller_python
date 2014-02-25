@@ -1186,6 +1186,10 @@ Es posible utilizar un *cursor* como un manejador de contexto, de la siguiente f
 Esto, como con los archivos, nos permite cierta legibilidad, nos evita la necesidad de cerrarlo, y encapsula 
 secciones del código para evitar efectos secundarios.
 
+
+Stored Procedures
+.................
+
 El objeto cursor, además de ``execute`` para hacer las consultas, tiene un método ``callproc``, para invocar *stored 
 procedures* en la base de datos:
 
