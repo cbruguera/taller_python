@@ -316,6 +316,29 @@ forma:
         remitente = forms.EmailField()
         reenviar_remitente = forms.BooleanField(required=False)
 
+        
+Un objeto de la clase ``Form`` puede encontrarse asociado o no a un conjunto de datos. La terminología que se utiliza
+en inglés para este concepto es el de *bound form* y *unbound form*. Un formulario con datos (*bound*) es capaz de
+validar los datos, y puede mostrar un "render" en HTML con sus valores correspondientes en los campos. Un formulario 
+sin datos (*unbound*) únicamente puede mostrar en HTML sus campos vacíos.
+
+Para crear un formulario, se instancia la clase correspondiente:
+
+.. code-block:: python
+
+    >>> f = ContactanosForm()
+
+
+Para asociar datos a un formulario, se le debe pasar un diccionario como primer argumento al constructor de la clase:
+
+.. code-block:: python
+
+    >>> data = {'asunto': 'Hola',
+    ...         'mensaje': 'Hola, cómo estás?',
+    ...         'recipiente': 'yo@ejemplo.com',
+    ...         'reenviar_recipiente': True}
+    >>> f = ContactanosForm(data)
+
 
 Formularios desde la vista
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -351,13 +374,12 @@ Utilizando vistas basadas en clase, lo haríamos de esta forma:
 
     from .forms import ContactanosForm
 
-    class ContactanosView(View):
+    class ContactView(View):
         form_class = ContactanosForm
-        initial = {'key': 'value'}
         template_name = 'contactanos.html'
 
         def get(self, request, *args, **kwargs):
-            form = self.form_class(initial=self.initial)
+            form = self.form_class()
             return render(request, self.template_name, {'form': form})
 
         def post(self, request, *args, **kwargs):
@@ -367,6 +389,24 @@ Utilizando vistas basadas en clase, lo haríamos de esta forma:
                 return HttpResponseRedirect('/gracias/')
 
             return render(request, self.template_name, {'form': form})
+
+
+Se puede hacer aún más sencillo todavía, utilizando la vista genérica ``FormView``:
+
+.. code-block:: python
+
+    from django.views.generic.base import FormView
+
+    from .forms import ContactanosForm
+
+    class ContactView(FormView):
+        form_class = ContactanosForm
+        template_name = 'contactanos.html'
+        success_url = '/gracias/'
+
+        def form_valid(self, form):
+            # procesar datos
+            return super(ContactanosView, self).form_valid(form)
 
 
 Formularios desde el *template*
@@ -389,28 +429,6 @@ en HTML. También es posible mostrar el formulario invocando los métodos ``as_ul(
 
 El API de la clase *Form*
 ~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Un objeto de la clase ``Form`` puede encontrarse asociado o no a un conjunto de datos. La terminología que se utiliza
-en inglés para este concepto es el de *bound form* y *unbound form*. Un formulario con datos (*bound*) es capaz de
-validar los datos, y puede mostrar un "render" en HTML con sus valores correspondientes en los campos. Un formulario 
-sin datos (*unbound*) únicamente puede mostrar en HTML sus campos vacíos.
-
-Para crear un formulario, se instancia la clase correspondiente:
-
-.. code-block:: python
-
-    >>> f = ContactanosForm()
-
-
-Para asociar datos a un formulario, se le debe pasar un diccionario como primer argumento al constructor de la clase:
-
-.. code-block:: python
-
-    >>> data = {'asunto': 'Hola',
-    ...         'mensaje': 'Hola, cómo estás?',
-    ...         'recipiente': 'yo@ejemplo.com',
-    ...         'reenviar_recipiente': True}
-    >>> f = ContactanosForm(data)
 
 La clase form cuenta con los siguientes métodos:
 
@@ -490,8 +508,8 @@ el nombre del campo, y el valor será el objeto correspondiente de tipo ``Field``
 
 Ahora intentemos explorar usando ``dir()`` y ``help()`` en esos campos y sus atributos.
 
-Cada campo también tiene un atributo ``errors``, así como una etiqueta en el atributo ``label_tag``. Esto es útil si 
-queremos desplega el formulario de forma personalizada, sin estar restringido a los métodos ``Form.as_p``, 
+Cada campo también tiene un atributo ``errors``, así como un atributo ``label`` y ``label_tag``. Esto es útil si 
+queremos desplegar el formulario de forma personalizada, sin estar restringido a los métodos ``Form.as_p``, 
 ``Form.as_ul``, etc.
 
 .. code-block:: django
@@ -586,8 +604,8 @@ Django implementa, entre otros, los siguientes widgets básicos:
 * FileInput
 
 
-Formularios asociados a modelos
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Formularios en base a modelos
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Cuando queremos definir un formulario que corresponda a un modelo específico de nuestra aplicación, no necesitamos 
 definir redundantemente los campos del modelo. Para esto, Django implementa la clase ``ModelForm``, que se encarga
@@ -628,6 +646,10 @@ siguiente forma:
                fields ['campo1', 'campo2', 'otro_campo']
 
 
+
+.. añadir información sobre Mixins para explicar cómo CreateView soporta formularios
+
+               
 CreateView
 ..........
 
@@ -636,9 +658,9 @@ Implementaremos para esto un ``CreateView``, que utilizará nuestro formulario de
 
 .. code-block:: python
     
+    from django.views.generic.edit import CreateView
     from libros.forms import AutorForm
     
-
     class AutorCreateView(CreateView):
         
         form_class = AutorForm
@@ -670,7 +692,7 @@ Agregaremos la siguiente línea a los patrones del archivo ``libros/urls.py`` (es
     url(r'^autor/create/$', AutorCreateView.as_view(), name='autor_form')
 
 
-Y hora agregaremos un enlace desde el índice para hacer referencia a este URL:
+Y ahora agregaremos un enlace desde el índice para hacer referencia a este URL:
 
 .. code-block:: django
 
@@ -710,7 +732,7 @@ Primero haremos la plantilla que mostrará el formulario de edición, y la nombrar
     </form>
 
 
-Ahora agregaremos la siguiente vista al archivo ``libros/views.py``:
+Ahora agreguemos la siguiente vista al archivo ``libros/views.py``:
 
 .. code-block:: python
 
@@ -752,13 +774,12 @@ Agregaremos ahora un enlace desde la plantilla de detalle del autor, con el fin 
     <a href="/libros/">Volver al inicio</a>
 
 
-Y su respectivo patrón en el archivo ``libros.urls.py``:
+Y su respectivo patrón en el archivo ``libros/urls.py``. Es necesario importar la clase ``AutorUpdateView``.
 
 .. code-block:: python
 
     url(r'^autor/edit/(?P<pk>\d+)/$', AutorUpdateView.as_view(), name='autor_edit'),
     
-Es necesario importar la clase ``AutorUpdateView``.
 
 ...Si hemos hecho todo correctamente, tenemos un formulario de edición de autores, que se encarga de  crear un 
 ``ModelForm`` correspondiente al modelo especificado (Autor), validar automáticamente los datos de entrada y 
@@ -768,7 +789,7 @@ redirigir a la plantilla respectiva.
 DeleteView
 ~~~~~~~~~~
 
-Para finalizar con las funcionalidades de edición, implementaremos una vista ``DeleteView``, que nos permita eliminar 
+Para finalizar con las vistas genéricas de edición, implementaremos una vista ``DeleteView``, que nos permita eliminar 
 al autor desde su vista de edición.
 
 En el archivo ``views.py``, luego de importar ``DeleteView``, agregaremos la siguiente vista:
@@ -838,8 +859,6 @@ ciertas etiquetas y acceso a variables.. Por ejemplo:
 
 .. code-block:: django
 
-    {% extends "base_generic.html" %}
-
     {% block titulo %}{{ seccion.titulo }}{% endblock %}
 
     {% block contenido %}
@@ -864,7 +883,7 @@ Variables
 Las variables se denotan de esta forma: ``{{ variable }}``. Cuando el motor de plantillas encuentra una variable, 
 evalúa esa variable y la reemplaza por su resultado. Los nombres de variables consisten en cualquier combinación de 
 caracteres alfanuméricos y underscore ("_"). Puede accederse a cualquier atributo de la variable utilizando el punto 
-("."). También es posible utilizar los bucles y condicionales de python:
+("."):
 
 .. code-block:: django
 
@@ -896,8 +915,37 @@ Filtros
 ~~~~~~~
 
 Los filtros se aplican para modificar el valor de una variable, y lucen de esta forma: ``{{ nombre|lower }}``. En 
-este caso, se convierten todos los caracteres de la cadena en minúscula. Django inmplementa una serie de filtros por 
+este caso, se convierten todos los caracteres de la cadena en minúscula. Django implementa una serie de filtros por 
 defecto:
+
+add
+...
+
+Suma una valor adicional al existente. Por ejemplo:
+
+.. code-block:: django
+
+    {{ cantidad|add:"2" }}
+
+
+addslashes
+..........
+
+"Escapa" los caracteres de comilla antes de ponerlos en el template:
+
+.. code-block:: django
+
+    {{ cadena|addslashes }}
+
+
+date
+....
+
+Muestra una variable de tipo fecha dado un formato específico:
+
+.. code-block:: django
+
+    {{ fecha|date:"D d M Y" }}
 
 
 default
@@ -929,6 +977,15 @@ Suprime todas las etiquetas HTML o XML de una cadena de texto.
 
     {{ valor|striptags }}
 
+
+random
+......
+
+Retorna un elemento aleatorio de una colección:
+
+.. code-block:: django
+
+    {{ lista|random }}
 
 
 Template tags
@@ -980,6 +1037,29 @@ para alternar entre valores para modificar el template:
 Existe una lista bastante extensa de *template tags* implementadas en Django, para una información más amplia, debe 
 consultarse la `documentación oficial <https://docs.djangoproject.com/en/dev/ref/templates/builtins/>`_.
 
+
+autoescape
+..........
+
+Controla la interpretación de caracteres HTML dentro de una cadena de texto. Si la opción está en ``on``, las etiquetas 
+HTML no serán interpretadas como tal.
+
+.. code-block:: django
+
+    {% autoescape on %}
+        {{ body }}
+    {% endautoescape %}
+
+
+url
+...
+
+Devuelve un URL dado una vista definida en algún archivo de URLs.
+
+.. code-block:: django
+
+    {% url 'nombre_de_una_vista' arg1=v1 arg2=v2 %}
+    
 
 Herencia de templates
 ~~~~~~~~~~~~~~~~~~~~~
