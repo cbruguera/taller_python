@@ -3,6 +3,12 @@
 from django.db import models
 
 
+class AcademicBookManager(models.Manager):
+    
+    def get_queryset(self):
+        return super(AcademicBookManager, self).get_queryset().filter(genero=4)
+
+
 class Autor(models.Model):
     nombre = models.CharField(max_length=200)
     
@@ -12,7 +18,12 @@ class Autor(models.Model):
     def __unicode__(self):
         return self.nombre
     
-class Libro(models.Model):    
+
+class Libro(models.Model):
+    
+    objects = models.Manager()
+    academic = AcademicBookManager()
+    
     GENERO_CHOICES = (
         (1, 'Narración'),
         (2, 'Crónica'),

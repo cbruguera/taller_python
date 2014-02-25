@@ -80,7 +80,7 @@ esperando una función, no una clase. Para esto la clase ``View`` implementa el m
     )
 
 
-El método ``as_view`` también puede recibir cualquier cantidad de argumentos. Éstos sobreescribirán cualquier 
+El método ``as_view`` también puede recibir cualquier cantidad de argumentos. Éstos sobrescribirán cualquier 
 atributo declarado en la clase de dicha vista.
 
 
@@ -268,13 +268,19 @@ esta vez con un código un poco más elegante.
 Como podemos ver, es una ventaja notable el uso de vistas genéricas basadas en clase. Ésta es la manera recomendada 
 de implementar vistas.
 
-Adicionalmente, Django implementa muchas otras vistas genéricas, entre ellas:
+La secuencia de llamadas que ``Listview`` ejecuta es la siguiente:
 
-* CreateView
-* UpdateView
-* DeleteView
+1) ``dispatch()``
+2) ``http_method_not_allowed()``
+3) ``get_template_names()``
+4) ``get_queryset()``
+5) ``get_context_object_name()``
+6) ``get_context_data()``
+7) ``get()``
+8) ``render_to_response()``
 
-Éstas las estaremos estudiando más adelante.
+Adicionalmente, Django implementa muchas otras vistas genéricas, entre ellas ``CreateView``, ``UpdateView`` y 
+``DeleteView``, las cuales estaremos estudiando más adelante.
 
 
 Formularios
@@ -288,6 +294,7 @@ A través de la biblioteca de manejo de formularios, es posible:
 * Desplegar un formulario HTML con *widgets* generados automáticamente.
 * Validar automáticamente los datos introducidos en un formulario.
 * Convertir los datos introducidos a sus respectivos tipos de datos esperados en Python.
+
 
 Clase *Form*
 ~~~~~~~~~~~~
@@ -538,7 +545,7 @@ A veces es necesario especificar una clase de estilo para los mensajes de error 
 Widgets
 ~~~~~~~
 
-Un *widget*, en Django, representa la manera de desplegar en HTML un elemento de entrada de un formulario.
+Un *widget*, en Django, implementa la manera de desplegar en HTML un elemento de entrada de un formulario.
 
 Cada vez que se define un campo de un ``Form``, éste viene asociado con un widget por defecto, según su tipo de dato. 
 Sin embargo, es posible especificar un widget en particular para algún campo:
@@ -556,8 +563,8 @@ Sin embargo, es posible especificar un widget en particular para algún campo:
 Esto hará que el campo ``comment`` se muestre como un ``<textarea>``, en lugar del widget por defecto, que 
 corresponde a un ``<input type='text'>``.
 
-Como todos los widgets se definen como derivados de la clase ``Widget``, es posible para el usuario implementar sus 
-propios widget, en el caso de ser necesario.
+Como todos los widgets se definen como derivados de la clase ``django.forms.Widget``, es posible para el usuario 
+implementar sus propios widgets, en el caso de ser necesario.
 
 Django implementa, entre otros, los siguientes widgets básicos:
 
@@ -823,11 +830,388 @@ detalle del autor.
 Sistema de plantillas
 ---------------------
 
+Hasta ahora hemos estado usando los plantillas de Django de una manera superficial, aunque ya debemos entender 
+ciertos conceptos, es el momento de exponer con más detalle el el sistema de *templates* de Django.
+
+Un template es sencillamente cualquier archivo de texto como HTML, XML, CSV, etc. El cual permite la inclusión de 
+ciertas etiquetas y acceso a variables.. Por ejemplo:
+
+.. code-block:: django
+
+    {% extends "base_generic.html" %}
+
+    {% block titulo %}{{ seccion.titulo }}{% endblock %}
+
+    {% block contenido %}
+    <h1>{{ seccion.titulo }}</h1>
+    
+    {% for articulo in lista_articulo %}
+        <h2>
+        <a href="{{ articulo.get_url }}">
+            {{ articulo.headline|upper }}
+        </a>
+        </h2>
+        
+        <p>{{ articulo.preview|truncatewords:"100" }}</p>
+    {% endfor %}
+        
+    {% endblock %}
+
+
+Variables
+~~~~~~~~~
+
+Las variables se denotan de esta forma: ``{{ variable }}``. Cuando el motor de plantillas encuentra una variable, 
+evalúa esa variable y la reemplaza por su resultado. Los nombres de variables consisten en cualquier combinación de 
+caracteres alfanuméricos y underscore ("_"). Puede accederse a cualquier atributo de la variable utilizando el punto 
+("."). También es posible utilizar los bucles y condicionales de python:
+
+.. code-block:: django
+
+    <ul>
+    {% for articulo in lista_articulo %}
+        <li>{{ articulo.titulo }}</li>
+    {% endfor %}
+    </ul>
+    
+
+La invocación de métodos se hace sin paréntesis, como si fuese un atributo, y los condicionales y ciclos no están 
+precedidos de dos puntos ":".
+
+.. code-block:: django
+
+    {% if autor.libro_set.all %}
+        Obras escritas:
+        <ul>
+        {% for libro in autor.libro_set.all %}
+            <li>{{ libro.titulo }} <a href="/libros/search/{{ libro.id }}/"></li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>Este autor no tiene obras asociadas.</p>
+    {% endif %}
+
+
+Filtros
+~~~~~~~
+
+Los filtros se aplican para modificar el valor de una variable, y lucen de esta forma: ``{{ nombre|lower }}``. En 
+este caso, se convierten todos los caracteres de la cadena en minúscula. Django inmplementa una serie de filtros por 
+defecto:
+
+
+default
+.......
+
+Si una variable es ``False`` o vacía, se usa la expresión dada por defecto.
+
+.. code-block:: django
+
+    {{ email|default:"Ingrese su email" }}
+
+    
+length
+......
+
+Retorna la longitud del valor. Funciona para cadenas o listas. Por ejemplo:
+
+.. code-block:: django
+
+    {{ autor.libro_set.all|length }}
+
+    
+striptags
+.........
+
+Suprime todas las etiquetas HTML o XML de una cadena de texto.
+
+.. code-block:: django
+
+    {{ valor|striptags }}
+
+
+
+Template tags
+~~~~~~~~~~~~~
+
+Un *template tag* se define como ``{% tag %}``, y definen comportamientos complejos del sistema de templates, como 
+los ciclos y condicionales que hemos visto hasta ahora. Django implementa las siguientes etiquetas:
+
+{% comment %}
+.............
+
+Comenta un segmento del texto:
+
+.. code-block:: django
+
+    <p>Publicado el {{ pub_date|date:"DD-MM-YY" }}</p>
+    {% comment %}
+        <p>eliminar <input type="button"></p>
+    {% endcomment %}
+
+
+{% csrf_token %}
+................
+
+Esta etiqueta existe para proteger el sitio de ataques de csrf (*Cross Site Request Forgeries*). Con los cuales se 
+intenta acceder a un URL desde un huesped remoto, a través de algún código *javascript* por ejemplo. Se coloca en los 
+formularios que utilicen método POST, para evitar efectos secundarios indeseados.
+
+.. code-block:: django
+
+    <form action="." method="post">{% csrf_token %}
+    
+
+{% cycle %}
+...........
+
+``cycle`` va retornando secuencialmente los elementos de una tupla cada vez que la etiqueta aparece. Esto es muy útil 
+para alternar entre valores para modificar el template:
+
+.. code-block:: django
+
+    {% for obj in una_lista %}
+        <tr class="{% cycle 'dark' 'light' %}">
+            ...
+        </tr>
+    {% endfor %}
+
+
+Existe una lista bastante extensa de *template tags* implementadas en Django, para una información más amplia, debe 
+consultarse la `documentación oficial <https://docs.djangoproject.com/en/dev/ref/templates/builtins/>`_.
+
+
+Herencia de templates
+~~~~~~~~~~~~~~~~~~~~~
+
+Una de las particularidades del sistema de plantillas de Django, es que éstas pueden diseñarse jerárquicamente, a 
+través de la herencia y sobrescritura de templates. Esto se hace mediante las etiquetas ``{% extends %}`` y 
+``{% block %}``. Usualmente se define un template base que contenga la estructura más externa del HTML, y que se 
+encargue de incluir todos los archivos de estilo y javascript necesarios globalmente. Y entonces los demás templates 
+heredan de éste.
+
+Crearemos un nuevo archivo html en la carpeta de templates:
+
+.. code-block:: django
+
+    <!DOCTYPE html>
+    <html lang="es">
+    <head>
+        <link rel="stylesheet" href="style.css" />
+        <title>{% block titulo %}Bienvenidos a libronline{% endblock %}</title>
+    </head>
+
+    <body>
+        <div id="sidebar">
+            {% block menu %}
+            <ul>
+                <li><a href="/libros/">Índice de autores</a></li>
+                <li><a href="#">Blog</a></li>
+                <li><a href="#">Contactenos</a></li>
+            </ul>
+            {% endblock %}
+        </div>
+
+        <h1>Libronline, tu red de lectura</h1>
+        <div id="content">
+            
+            {% block contenido %}{% endblock %}
+        </div>
+    </body>
+    </html>
+
+A este template lo llamaremos ``base.html``. Y sobrescribiremos el template que está en ``libros/index.html`` para 
+que herede de éste.
+
+.. code-block:: django
+
+    {% extends "base.html" %}
+
+    {% block titulo %}Bienvenidos a libronline - Autores {% endblock %}
+
+    {% block contenido %}
+    <h1>Autores destacados</h1>
+    {% if autores_list %}
+        <ul>
+        {% for autor in autores_list %}
+            <li><a href="/libros/autor/{{ autor.id }}/">{{ autor.nombre }}</a></li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>No hay autores definidos en el sistema.</p>
+    {% endif %}
+
+    <a href="/libros/autor/create/">Agregar autor</a>
+    {% endblock %}
+
+
+De esta forma cada template derivado de ``base.html``, se encarga de sobrescribir los bloques que necesite, 
+refiriéndose a ellos por sus mismos nombres en el template base. 
+
+La herencia de templates permite una estructuración ordenada y funcional de las plantillas en el proyecto, 
+promoviendo el reciclaje y la legibilidad del código HTML.
 
 
 Managers
 --------
 
+Todos los modelos de Django incluyen un ``Manager`` que se encargará de implementar las conexiones a la base de 
+datos. Por defecto, cada modelo tiene un atributo llamado ``objects``, el cual es un objeto de tipo ``Manager``. 
+Podríamos querer que el Manager se llame de otra forma, o implementar varios managers distintos para un mismo modelo.
 
-   
+.. code-block:: python
 
+    from django.db import models
+
+    class Persona(models.Model):
+        #...
+        gente = models.Manager()
+        
+Luego de definir un modelo como el de este ejemplo, podemos acceder a un listado de todas las instancias existentes a 
+través de el atributo ``gente``, en lugar del habitual ``objects``:
+
+.. code-block:: python
+
+    Persona.gente.all()
+    
+
+Es posible extender la clase ``Manager`` creando nuevos manejadores. Esto permite al programador manipular los 
+queries en SQL directamente, añadiendo al modelo funcionalidad a nivel de tablas. Para añadir funcionalidad a nivel 
+de una fila, no es necesario personalizar un Manager, basta con implementar un método en el modelo.
+
+Por ejemplo, podemos definir un ``AcademicBookManager``, que retorne los libros de una vez filtrando por género, 
+únicamente aquellos libros académicos. Para esto definimos la siguiente clase en ``models.py``:
+
+.. code-block:: python
+    
+    from django.db import models
+
+    class AcademicBookManager(models.Manager):
+        
+        def get_queryset(self):
+            return super(AcademicBookManager, self).get_queryset().filter(genero=4)
+
+
+Y agregamos los atributos de los manejadores al comienzo de la clase ``Libro``:
+
+.. code-block:: python
+
+    class Libro(models.Model):
+    
+        objects = models.Manager()
+        academic = AcademicBookManager()
+        # ...
+        
+
+Ahora tenemos nuestro modelo con su manejador ``objects`` como es lo normal, pero adicionalmente podemos invocar el 
+otro Manager:
+
+.. code-block:: python
+
+    Libro.academic.all()
+    
+
+SQL en los modelos
+~~~~~~~~~~~~~~~~~~
+
+Otra característica útil de definir nuestros propios Managers, es la posibilidad de lidiar directamente con los 
+queries a BD. 
+
+La clase ``Manager`` cuenta con el método ``raw()`` para ejecutar *queries* a la base de datos directamente:
+
+.. code-block:: python
+
+    >>> from libros.models import Autor
+    >>> for a in Autor.objects.raw('Select * from libros_autor'):
+    ...     print a
+    ... 
+    Herman Hesse
+    Paulo Coelho
+    Serafin Mazparrote
+    Milan Kundera
+    
+
+Por supuesto, esto no es nada interesante, obtenemos lo mismo invocando a ``all()``, pero hemos podido ver que aunque 
+Django ofrece una capa de abstracción entre el programador y la base de datos, ésta sigue estando accesible 
+fácilmente a través del *Manager* de un modelo.
+
+Pase de parámetros a raw()
+..........................
+
+Es posible pasar cualquier cantidad de parámetros a la función ``raw()`` como una lista o un diccionario de 
+argumentos. Por ejemplo:
+
+.. code-block:: python
+
+    >>> apellido = 'Perez'
+    >>> Persona.objects.raw('SELECT * FROM myapp_persona WHERE last_name = %s', [apellido])
+    
+
+Este mecanismo protege las consultas a base de datos de posibles ataques de *SQL injection*. Por esto no se 
+recomienda formatear directamente el texto del query con los parámetros necesarios.
+
+
+SQL directo
+~~~~~~~~~~~
+
+A veces es necesario efectuar instrucciones en SQL sin atarlas necesariamente a un modelo. A través de la biblioteca 
+``django.db`` pueden efectuarse muchas operaciones referentes a la base de datos. Por lo general, utilizamos el 
+objeto ``django.db.connection``, sobre el cual ejecutamos el método ``cursor()`` para obtener un cursor, y sobre éste 
+ejecutamos los *queries* necesarios:
+
+.. code-block:: python
+
+    from django.db import connection
+
+    def my_custom_sql(self):
+        cursor = connection.cursor()
+
+        cursor.execute("UPDATE bar SET foo = 1 WHERE baz = %s", [self.baz])
+        cursor.execute("SELECT foo FROM bar WHERE baz = %s", [self.baz])
+        
+        row = cursor.fetchone()
+        return row
+        
+        
+También existe el método ``cursor.fetchall()`` para obtener todas las filas de una consulta con varios resultados.
+
+Es posible utilizar un *cursor* como un manejador de contexto, de la siguiente forma:
+
+.. code-block:: python
+
+    with connection.cursor() as c:
+        c.execute(...)
+       
+
+Esto, como con los archivos, nos permite cierta legibilidad, nos evita la necesidad de cerrarlo, y encapsula 
+secciones del código para evitar efectos secundarios.
+
+El objeto cursor, además de ``execute`` para hacer las consultas, tiene un método ``callproc``, para invocar *stored 
+procedures* en la base de datos:
+
+.. code-block:: python
+
+    from django.db import connection
+    
+    with connection.cursor() as cur:
+        cur.callproc('proc_name')
+
+
+Si necesitamos definir un modelo cuya fuente de datos utilice *stored procedures*, lo más adecuado es definir un 
+``Manager`` específico para que implemente las llamadas necesarias:
+
+.. code-block:: python
+
+   from django.db import models, connection
+
+    class StoredProcedureManager(models.Manager):
+        
+        def get_queryset(self):
+            cur = connection.cursor()
+            return cur.execute('SELECT store_proc')
+            # return cur.callproc('store_proc')
+
+
+Django es un framework bastante extenso, por lo cual es difícil cubrir todas sus funcionalidades desde un principio. 
+Sin embargo, hemos cubierto lo suficiente para tener una concepción integral acerca de las herramientas que este 
+framework provee, así como la posibilidad de modificar y extender dichas herramientas.
