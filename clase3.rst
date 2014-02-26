@@ -291,7 +291,7 @@ A continuación, ejecutaremos la siguiente instrucción:
     $ python manage.py syncdb
 
 
-La instrucción ``syncdb`` crea la tablas necesarias del proyeto en la base de datos, de acuerdo a los
+La instrucción ``syncdb`` crea la tablas necesarias del proyecto en la base de datos, de acuerdo a los
 parámetros de configuración establecidos en el archivo ``settings.py``.
 
 La primera vez que se ejecuta, el sistema preguntará al usuario si desea crear un usuario con permisos 
